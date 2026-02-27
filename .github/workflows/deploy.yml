@@ -1,0 +1,41 @@
+# This workflow automatically publishes the site to GitHub Pages
+# every time you push changes to the main branch
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]  # Run whenever main branch is updated
+
+# Give this workflow permission to deploy to Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # Step 1: Download the repository files
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Step 2: Configure GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Step 3: Package up all files for upload
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'  # Upload everything from the root folder
+
+      # Step 4: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
