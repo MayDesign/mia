@@ -499,13 +499,68 @@
             transform: translateX(0);
         }
 
-        .stagger-1 { transition-delay: 0.1s; }
-        .stagger-2 { transition-delay: 0.2s; }
-        .stagger-3 { transition-delay: 0.3s; }
-        .stagger-4 { transition-delay: 0.4s; }
-        .stagger-5 { transition-delay: 0.5s; }
-        .stagger-6 { transition-delay: 0.6s; }
-        .stagger-7 { transition-delay: 0.7s; }
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .stagger-1 { transition-delay: 0.05s; }
+        .stagger-2 { transition-delay: 0.1s; }
+        .stagger-3 { transition-delay: 0.15s; }
+        .stagger-4 { transition-delay: 0.2s; }
+        .stagger-5 { transition-delay: 0.25s; }
+        .stagger-6 { transition-delay: 0.3s; }
+        .stagger-7 { transition-delay: 0.35s; }
+
+        /* Mobile-specific animations */
+        @media (max-width: 768px) {
+            .fade-in {
+                transform: translateY(30px);
+            }
+            
+            .nav-item {
+                opacity: 0;
+                transform: translateY(20px);
+                animation: navFadeIn 0.5s ease forwards;
+            }
+            
+            .nav-item:nth-child(1) { animation-delay: 0.1s; }
+            .nav-item:nth-child(2) { animation-delay: 0.2s; }
+            .nav-item:nth-child(3) { animation-delay: 0.3s; }
+            .nav-item:nth-child(4) { animation-delay: 0.4s; }
+            
+            @keyframes navFadeIn {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .status {
+                opacity: 0;
+                animation: statusFadeIn 0.6s ease 0.5s forwards;
+            }
+            
+            @keyframes statusFadeIn {
+                to { opacity: 1; }
+            }
+            
+            .title {
+                animation: titlePulse 0.8s ease;
+            }
+            
+            @keyframes titlePulse {
+                0% { opacity: 0; transform: scale(0.95); }
+                100% { opacity: 1; transform: scale(1); }
+            }
+        }
 
         /* Footer */
         footer {
@@ -1035,8 +1090,8 @@
         // Scroll reveal animations
         const observerOptions = {
             root: null,
-            rootMargin: '0px 0px -10% 0px',
-            threshold: 0.1
+            rootMargin: '0px 0px -15% 0px',
+            threshold: 0.05
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -1047,9 +1102,21 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.fade-in, .fade-in-left').forEach(el => {
+        document.querySelectorAll('.fade-in, .fade-in-left, .scale-in').forEach(el => {
             observer.observe(el);
         });
+
+        // Mobile: add touch feedback
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.entry, .tool, .nav-item').forEach(el => {
+                el.addEventListener('touchstart', () => {
+                    el.style.transform = 'scale(0.98)';
+                }, { passive: true });
+                el.addEventListener('touchend', () => {
+                    el.style.transform = '';
+                }, { passive: true });
+            });
+        }
     </script>
 </body>
 </html>
