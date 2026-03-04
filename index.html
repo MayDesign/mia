@@ -17,6 +17,15 @@
             --mono: 'JetBrains Mono', monospace;
         }
 
+        html[data-theme="light"] {
+            --bg: #FAFAF8;
+            --surface: #FFFFFF;
+            --text: #1A1A18;
+            --text-dim: #9A9890;
+            --accent: #8B6914;
+            --accent-dim: rgba(139, 105, 20, 0.1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html { font-size: 16px; }
@@ -157,10 +166,15 @@
         }
 
         /* Language toggle */
-        .lang {
+        .controls {
             position: absolute;
             bottom: 48px;
             right: 48px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .lang, .theme {
             font-size: 12px;
             color: var(--text-dim);
             background: none;
@@ -170,7 +184,7 @@
             transition: all 0.2s;
         }
 
-        .lang:hover {
+        .lang:hover, .theme:hover {
             color: var(--text);
             border-color: var(--text);
         }
@@ -636,11 +650,15 @@
                 font-size: 11px;
             }
             
-            .lang { 
+            .controls {
                 position: absolute;
                 top: 20px;
                 right: 20px;
                 bottom: auto;
+                gap: 8px;
+            }
+            
+            .lang, .theme { 
                 padding: 6px 12px;
                 font-size: 11px;
             }
@@ -809,7 +827,10 @@
             </div>
         </div>
 
-        <button class="lang" id="langBtn">中文</button>
+        <div class="controls">
+            <button class="lang" id="langBtn">中文</button>
+            <button class="theme" id="themeBtn">☀</button>
+        </div>
     </section>
 
     <!-- Writing -->
@@ -1055,6 +1076,20 @@
         btn.onclick = () => setLang(html.lang === 'zh' ? 'en' : 'zh');
         const saved = localStorage.getItem(KEY);
         if (saved) setLang(saved);
+
+        // Theme
+        const themeBtn = document.getElementById('themeBtn');
+        const THEME_KEY = 'mia-theme';
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            themeBtn.textContent = theme === 'light' ? '☾' : '☀';
+            localStorage.setItem(THEME_KEY, theme);
+        }
+
+        themeBtn.onclick = () => setTheme(html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        if (savedTheme) setTheme(savedTheme);
 
         // Cursor trail
         const trail = document.getElementById('trail');
