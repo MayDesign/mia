@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0A09"/>
+      <stop offset="100%" style="stop-color:#1a1a18"/>
+    </linearGradient>
+    <linearGradient id="shell" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C9A87C"/>
+      <stop offset="100%" style="stop-color:#8B6914"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="98" fill="url(#bg)" stroke="#C9A87C" stroke-width="2"/>
+  
+  <!-- Subtle grid pattern -->
+  <g opacity="0.1" stroke="#C9A87C" stroke-width="0.5">
+    <line x1="50" y1="0" x2="50" y2="200"/>
+    <line x1="100" y1="0" x2="100" y2="200"/>
+    <line x1="150" y1="0" x2="150" y2="200"/>
+    <line x1="0" y1="50" x2="200" y2="50"/>
+    <line x1="0" y1="100" x2="200" y2="100"/>
+    <line x1="0" y1="150" x2="200" y2="150"/>
+  </g>
+  
+  <!-- Lobster body - minimalist geometric style -->
+  <g filter="url(#glow)" transform="translate(100,100)">
+    <!-- Main body segments -->
+    <ellipse cx="0" cy="10" rx="25" ry="35" fill="url(#shell)" opacity="0.9"/>
+    <ellipse cx="0" cy="-5" rx="20" ry="20" fill="url(#shell)"/>
+    
+    <!-- Head -->
+    <ellipse cx="0" cy="-30" rx="15" ry="12" fill="url(#shell)"/>
+    
+    <!-- Eyes - digital/glowing -->
+    <circle cx="-8" cy="-32" r="4" fill="#0A0A09"/>
+    <circle cx="8" cy="-32" r="4" fill="#0A0A09"/>
+    <circle cx="-8" cy="-32" r="2" fill="#E8E6E3"/>
+    <circle cx="8" cy="-32" r="2" fill="#E8E6E3"/>
+    
+    <!-- Antennae -->
+    <line x1="-5" y1="-40" x2="-20" y2="-60" stroke="#C9A87C" stroke-width="2" stroke-linecap="round"/>
+    <line x1="5" y1="-40" x2="20" y2="-60" stroke="#C9A87C" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- Claws - geometric -->
+    <g transform="translate(-35, -10) rotate(-30)">
+      <ellipse cx="0" cy="0" rx="12" ry="8" fill="url(#shell)"/>
+      <path d="M8,-3 L18,-8 L18,8 L8,3 Z" fill="url(#shell)"/>
+    </g>
+    <g transform="translate(35, -10) rotate(30)">
+      <ellipse cx="0" cy="0" rx="12" ry="8" fill="url(#shell)"/>
+      <path d="M-8,-3 L-18,-8 L-18,8 L-8,3 Z" fill="url(#shell)"/>
+    </g>
+    
+    <!-- Tail fan -->
+    <g transform="translate(0, 45)">
+      <ellipse cx="0" cy="0" rx="18" ry="8" fill="url(#shell)" opacity="0.8"/>
+      <ellipse cx="-12" cy="8" rx="8" ry="5" fill="url(#shell)" opacity="0.7"/>
+      <ellipse cx="12" cy="8" rx="8" ry="5" fill="url(#shell)" opacity="0.7"/>
+      <ellipse cx="0" cy="12" rx="10" ry="6" fill="url(#shell)" opacity="0.7"/>
+    </g>
+  </g>
+  
+  <!-- Floating particles - digital feel -->
+  <circle cx="30" cy="40" r="1.5" fill="#C9A87C" opacity="0.6"/>
+  <circle cx="170" cy="60" r="1" fill="#C9A87C" opacity="0.4"/>
+  <circle cx="25" cy="150" r="1" fill="#C9A87C" opacity="0.5"/>
+  <circle cx="175" cy="140" r="1.5" fill="#C9A87C" opacity="0.4"/>
+  <circle cx="160" cy="170" r="1" fill="#C9A87C" opacity="0.3"/>
+  <circle cx="40" cy="170" r="1" fill="#C9A87C" opacity="0.5"/>
+</svg>
