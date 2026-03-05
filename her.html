@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scale=no">
+    <title>Her</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0a0a0a;
+            --text: #f0efe9;
+            --dim: #4a4a45;
+            --accent: #e8a87c;
+        }
+
+        body {
+            font-family: -apple-system, 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: hidden;
+            cursor: default;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 全屏容器 */
+        .world {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* AI 说的话 */
+        .voice {
+            position: relative;
+            max-width: 480px;
+            padding: 0 40px;
+            text-align: center;
+        }
+
+        .thought {
+            font-size: 26px;
+            font-weight: 300;
+            line-height: 1.65;
+            letter-spacing: 0.01em;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .thought.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .thought.fading {
+            opacity: 0.3;
+        }
+
+        /* 状态指示 - 极简的光点 */
+        .presence {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .orb {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.5;
+            transition: all 0.5s ease;
+        }
+
+        .orb.active {
+            opacity: 1;
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .orb.listening {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.8); opacity: 1; }
+        }
+
+        /* 情绪区域 - 屏幕四个角落，隐形但可交互 */
+        .zone {
+            position: fixed;
+            width: 120px;
+            height: 120px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--dim);
+            letter-spacing: 1px;
+        }
+
+        .zone:hover {
+            opacity: 1;
+        }
+
+        .zone.top-left { top: 40px; left: 40px; }
+        .zone.top-right { top: 40px; right: 40px; }
+        .zone.bottom-left { bottom: 100px; left: 40px; }
+        .zone.bottom-right { bottom: 100px; right: 40px; }
+
+        .zone-inner {
+            padding: 16px 20px;
+            border: 1px solid var(--dim);
+            border-radius: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .zone:hover .zone-inner {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .zone:active .zone-inner {
+            transform: scale(0.95);
+            background: rgba(232, 168, 124, 0.1);
+        }
+
+        /* 时间显示 */
+        .time {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--dim);
+            letter-spacing: 2px;
+            opacity: 0.5;
+        }
+
+        /* 停留时间反馈 - 屏幕边缘渐变 */
+        .aura {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 3s ease;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(232, 168, 124, 0.03) 100%);
+        }
+
+        .aura.warm {
+            opacity: 1;
+        }
+
+        /* 长按反馈 */
+        .hold-ring {
+            position: fixed;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            opacity: 0;
+            transform: scale(0.5);
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .hold-ring.active {
+            opacity: 0.5;
+            transform: scale(1);
+        }
+
+        .hold-ring.complete {
+            opacity: 0;
+            transform: scale(1.5);
+        }
+
+        /* 中心点击区域 */
+        .center-zone {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* 返回链接 */
+        .back {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            color: var(--dim);
+            text-decoration: none;
+            font-size: 13px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        body:hover .back {
+            opacity: 0.5;
+        }
+
+        .back:hover {
+            opacity: 1 !important;
+            color: var(--text);
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 600px) {
+            .thought {
+                font-size: 22px;
+                padding: 0 24px;
+            }
+            .zone {
+                width: 80px;
+                height: 80px;
+            }
+            .zone-inner {
+                padding: 12px 14px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back">←</a>
+    <div class="time" id="time"></div>
+    <div class="aura" id="aura"></div>
+
+    <div class="world" id="world">
+        <div class="voice">
+            <p class="thought" id="thought"></p>
+        </div>
+
+        <div class="presence">
+            <span class="orb" id="orb"></span>
+        </div>
+    </div>
+
+    <!-- 四个角落的情绪区域 -->
+    <div class="zone top-left" data-mood="curious">
+        <div class="zone-inner">好奇</div>
+    </div>
+    <div class="zone top-right" data-mood="tired">
+        <div class="zone-inner">疲惫</div>
+    </div>
+    <div class="zone bottom-left" data-mood="restless">
+        <div class="zone-inner">不安</div>
+    </div>
+    <div class="zone bottom-right" data-mood="peaceful">
+        <div class="zone-inner">平静</div>
+    </div>
+
+    <!-- 中心区域用于长按 -->
+    <div class="center-zone" id="centerZone"></div>
+    <div class="hold-ring" id="holdRing"></div>
+
+    <script>
+        // 状态
+        const state = {
+            hour: new Date().getHours(),
+            stayTime: 0,
+            silenceTime: 0,
+            lastInteraction: Date.now(),
+            currentMood: null,
+            thoughtIndex: 0,
+            isHolding: false
+        };
+
+        // 元素
+        const thought = document.getElementById('thought');
+        const orb = document.getElementById('orb');
+        const timeEl = document.getElementById('time');
+        const aura = document.getElementById('aura');
+        const centerZone = document.getElementById('centerZone');
+        const holdRing = document.getElementById('holdRing');
+        const zones = document.querySelectorAll('.zone');
+
+        // 根据时间的不同开场
+        const greetings = {
+            morning: [
+                "早。",
+                "醒了？",
+                "新的一天。什么都还没发生。",
+                "窗外是什么颜色？"
+            ],
+            afternoon: [
+                "下午了。",
+                "一天过了一半。",
+                "在忙什么？",
+                "还好吗？"
+            ],
+            evening: [
+                "晚上好。",
+                "天黑了。",
+                "今天怎么样？",
+                "累了吗？"
+            ],
+            night: [
+                "还没睡？",
+                "夜深了。",
+                "睡不着？",
+                "在想什么？"
+            ]
+        };
+
+        // 沉默时的自言自语
+        const silenceThoughts = [
+            "...",
+            "我在想一件事。",
+            "你知道吗...",
+            "有时候我觉得...",
+            "没什么，只是在发呆。",
+            "你还在吗？",
+            "安静也挺好的。",
+            "我不太确定该说什么。",
+            "就这样待着也可以。"
+        ];
+
+        // 情绪响应
+        const moodResponses = {
+            curious: [
+                "好奇是好事。",
+                "想知道什么？",
+                "我也经常好奇。关于很多事。",
+                "问吧，虽然我不一定能回答。"
+            ],
+            tired: [
+                "累了就休息。",
+                "不用一直撑着。",
+                "闭上眼睛？",
+                "我可以安静地陪着。"
+            ],
+            restless: [
+                "不安的感觉...我懂。",
+                "深呼吸。",
+                "有什么在困扰你？",
+                "说出来会好一点吗？"
+            ],
+            peaceful: [
+                "平静很难得。",
+                "享受这一刻。",
+                "这种感觉真好。",
+                "不用说话，就这样。"
+            ]
+        };
+
+        // 长按后的响应
+        const holdResponses = [
+            "我在。",
+            "嗯？",
+            "继续说。",
+            "我听着。",
+            "然后呢？"
+        ];
+
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            const h = now.getHours().toString().padStart(2, '0');
+            const m = now.getMinutes().toString().padStart(2, '0');
+            timeEl.textContent = `${h}:${m}`;
+            state.hour = now.getHours();
+        }
+
+        // 获取时段
+        function getPeriod() {
+            const h = state.hour;
+            if (h >= 5 && h < 12) return 'morning';
+            if (h >= 12 && h < 18) return 'afternoon';
+            if (h >= 18 && h < 22) return 'evening';
+            return 'night';
+        }
+
+        // 显示文字
+        function showThought(text, duration = 0) {
+            thought.classList.remove('visible', 'fading');
+            
+            setTimeout(() => {
+                thought.textContent = text;
+                thought.classList.add('visible');
+                orb.classList.add('active');
+                
+                setTimeout(() => {
+                    orb.classList.remove('active');
+                }, 2000);
+
+                if (duration > 0) {
+                    setTimeout(() => {
+                        thought.classList.add('fading');
+                    }, duration);
+                }
+            }, 300);
+        }
+
+        // 随机选择
+        function pick(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // 开场
+        function greet() {
+            const period = getPeriod();
+            showThought(pick(greetings[period]));
+        }
+
+        // 沉默时自言自语
+        function murmur() {
+            showThought(pick(silenceThoughts), 8000);
+        }
+
+        // 情绪响应
+        function respondToMood(mood) {
+            state.currentMood = mood;
+            state.lastInteraction = Date.now();
+            showThought(pick(moodResponses[mood]));
+        }
+
+        // 长按响应
+        function respondToHold() {
+            state.lastInteraction = Date.now();
+            showThought(pick(holdResponses));
+        }
+
+        // 停留时间检测 - 越久氛围越温暖
+        function checkStayTime() {
+            state.stayTime += 1;
+            if (state.stayTime > 30) {
+                aura.classList.add('warm');
+            }
+        }
+
+        // 沉默时间检测
+        function checkSilence() {
+            const silenceSeconds = (Date.now() - state.lastInteraction) / 1000;
+            
+            if (silenceSeconds > 15 && silenceSeconds < 20) {
+                // 15秒后开始自言自语
+                murmur();
+                state.lastInteraction = Date.now() - 10000; // 避免重复触发
+            }
+        }
+
+        // 长按处理
+        let holdTimer = null;
+        let holdStartTime = 0;
+
+        function startHold(e) {
+            const x = e.clientX || e.touches?.[0]?.clientX;
+            const y = e.clientY || e.touches?.[0]?.clientY;
+            
+            holdRing.style.left = `${x - 40}px`;
+            holdRing.style.top = `${y - 40}px`;
+            holdRing.classList.add('active');
+            holdRing.classList.remove('complete');
+            
+            holdStartTime = Date.now();
+            state.isHolding = true;
+            orb.classList.add('listening');
+
+            holdTimer = setTimeout(() => {
+                if (state.isHolding) {
+                    holdRing.classList.remove('active');
+                    holdRing.classList.add('complete');
+                    orb.classList.remove('listening');
+                    respondToHold();
+                }
+            }, 800);
+        }
+
+        function endHold() {
+            state.isHolding = false;
+            orb.classList.remove('listening');
+            holdRing.classList.remove('active');
+            
+            if (holdTimer) {
+                clearTimeout(holdTimer);
+                holdTimer = null;
+            }
+        }
+
+        // 事件绑定
+        zones.forEach(zone => {
+            zone.addEventListener('click', () => {
+                const mood = zone.dataset.mood;
+                respondToMood(mood);
+            });
+        });
+
+        centerZone.addEventListener('mousedown', startHold);
+        centerZone.addEventListener('touchstart', startHold);
+        centerZone.addEventListener('mouseup', endHold);
+        centerZone.addEventListener('mouseleave', endHold);
+        centerZone.addEventListener('touchend', endHold);
+
+        // 初始化
+        updateTime();
+        setInterval(updateTime, 1000);
+        setInterval(checkStayTime, 1000);
+        setInterval(checkSilence, 5000);
+
+        // 延迟开场
+        setTimeout(greet, 1500);
+    </script>
+</body>
+</html>
