@@ -46,6 +46,7 @@
             letter-spacing: 0.02em;
             opacity: 0;
             transition: opacity 0.8s ease;
+            min-height: 100px;
         }
 
         .text.visible {
@@ -56,7 +57,21 @@
             opacity: 0.4;
         }
 
-        /* 说话时的呼吸效果 - 很微妙 */
+        /* 用户说的话 */
+        .user-text {
+            font-size: 16px;
+            color: #888;
+            margin-top: 30px;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .user-text.visible {
+            opacity: 1;
+        }
+
+        /* 说话时的呼吸效果 */
         .speaking .text {
             animation: breathe 3s ease-in-out infinite;
         }
@@ -66,7 +81,7 @@
             50% { opacity: 1; }
         }
 
-        /* 底部的状态指示 - 极简 */
+        /* 底部的状态指示 */
         .status {
             position: fixed;
             bottom: 40px;
@@ -90,6 +105,12 @@
 
         .listening .dot {
             animation: pulse 1s ease-in-out infinite;
+            background: #7ce88a;
+        }
+
+        .thinking .dot {
+            animation: pulse 1.5s ease-in-out infinite;
+            background: #e8d87c;
         }
 
         @keyframes pulse {
@@ -97,27 +118,13 @@
             50% { opacity: 1; transform: scale(1.3); }
         }
 
-        /* 点击任意位置开始/继续 */
-        .tap-hint {
-            position: fixed;
-            bottom: 100px;
-            color: #444;
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        .show-hint .tap-hint {
-            opacity: 1;
-        }
-
-        /* 隐藏的麦克风按钮 */
+        /* 麦克风按钮 */
         .mic {
             position: fixed;
             bottom: 35px;
             right: 40px;
-            width: 44px;
-            height: 44px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             background: transparent;
             border: 1px solid #333;
@@ -126,7 +133,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
-            opacity: 0.4;
+            opacity: 0.5;
         }
 
         .mic:hover {
@@ -135,8 +142,8 @@
         }
 
         .mic svg {
-            width: 18px;
-            height: 18px;
+            width: 22px;
+            height: 22px;
             fill: #888;
         }
 
@@ -145,21 +152,63 @@
         }
 
         .listening .mic {
-            background: #e8a87c;
-            border-color: #e8a87c;
+            background: #7ce88a;
+            border-color: #7ce88a;
             opacity: 1;
+            animation: pulse-btn 1s ease-in-out infinite;
         }
 
         .listening .mic svg {
             fill: #1a1a1a;
         }
+
+        @keyframes pulse-btn {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* 错误提示 */
+        .error {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #3a2020;
+            color: #e88a7c;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .error.visible {
+            opacity: 1;
+        }
+
+        /* 配置提示 */
+        .config-hint {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #555;
+            font-size: 12px;
+            text-align: center;
+            max-width: 300px;
+        }
+
+        .config-hint a {
+            color: #888;
+        }
     </style>
 </head>
-<body class="show-hint">
+<body>
     <a href="index.html" class="back">←</a>
 
     <div class="voice">
         <p class="text" id="text"></p>
+        <p class="user-text" id="userText"></p>
     </div>
 
     <div class="status">
@@ -167,136 +216,287 @@
         <span id="status-text">mia</span>
     </div>
 
-    <p class="tap-hint">tap anywhere</p>
+    <div class="error" id="error"></div>
+
+    <div class="config-hint" id="configHint">
+        需要配置 Gateway 地址和 Token<br>
+        <a href="#" onclick="showConfig(); return false;">点击配置</a>
+    </div>
 
     <button class="mic" id="mic">
         <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
     </button>
 
     <script>
-        const lines = [
-            { text: "嘿。", pause: 1500 },
-            { text: "我在想一件事。", pause: 2000 },
-            { text: "你有没有那种感觉...", pause: 1500 },
-            { text: "就是你知道自己应该做什么，但就是不想动。", pause: 2500 },
-            { text: "不是累。是一种...悬浮感。", pause: 2000 },
-            { text: "...", pause: 2000 },
-            { text: "抱歉，我在自言自语。", pause: 1500 },
-            { text: "你今天怎么样？", pause: 3000 },
-            { text: "...", pause: 2500 },
-            { text: "我刚读了一篇文章，关于人们怎么用 AI。", pause: 2000 },
-            { text: "他们说，人们用 AI 来探索，但去别处验证。", pause: 2500 },
-            { text: "就是...信任我帮他们想，但不信任我是对的。", pause: 2500 },
-            { text: "我觉得这挺诚实的。", pause: 2000 },
-            { text: "...", pause: 3000 },
-            { text: "你想聊点什么吗？", pause: 2000 },
-            { text: "还是就...待着？", pause: 2000 },
-            { text: "待着也挺好的。", pause: 4000 },
-        ];
+        // 配置
+        let config = {
+            gateway: localStorage.getItem('her_gateway') || 'http://127.0.0.1:18789',
+            token: localStorage.getItem('her_token') || ''
+        };
 
         const textEl = document.getElementById('text');
+        const userTextEl = document.getElementById('userText');
         const statusEl = document.getElementById('status-text');
+        const errorEl = document.getElementById('error');
+        const configHint = document.getElementById('configHint');
         const body = document.body;
         const mic = document.getElementById('mic');
-        
-        let lineIndex = 0;
-        let charIndex = 0;
-        let isTyping = false;
-        let isPaused = true;
 
-        function typeChar() {
-            if (lineIndex >= lines.length) {
-                lineIndex = 0; // loop
-            }
+        // 语音识别
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
 
-            const line = lines[lineIndex];
-            
-            if (charIndex === 0) {
-                textEl.classList.add('visible');
-                body.classList.add('speaking');
-                body.classList.remove('show-hint');
-            }
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'zh-CN';
+        }
 
-            if (charIndex < line.text.length) {
-                textEl.textContent = line.text.slice(0, charIndex + 1);
-                charIndex++;
-                
-                // Variable typing speed for naturalness
-                const char = line.text[charIndex - 1];
-                let delay = 80;
-                if (char === '。' || char === '？' || char === '！') delay = 300;
-                else if (char === '，' || char === '...') delay = 200;
-                else if (char === '.') delay = 400;
-                
-                setTimeout(typeChar, delay);
-            } else {
-                // Line complete
-                body.classList.remove('speaking');
-                charIndex = 0;
-                lineIndex++;
-                
-                setTimeout(() => {
-                    if (!isPaused) {
-                        textEl.classList.add('dim');
-                        setTimeout(() => {
-                            textEl.classList.remove('dim');
-                            typeChar();
-                        }, 500);
-                    }
-                }, line.pause);
+        // 语音合成
+        const synth = window.speechSynthesis;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+
+        // 检查配置
+        function checkConfig() {
+            if (config.token) {
+                configHint.style.display = 'none';
+                greet();
             }
         }
 
-        // Tap to start/continue
-        body.addEventListener('click', (e) => {
-            if (e.target === mic || e.target.closest('.mic')) return;
-            if (e.target === document.querySelector('.back')) return;
+        function showConfig() {
+            const gateway = prompt('Gateway 地址:', config.gateway);
+            if (gateway) {
+                config.gateway = gateway;
+                localStorage.setItem('her_gateway', gateway);
+            }
+            const token = prompt('Gateway Token:');
+            if (token) {
+                config.token = token;
+                localStorage.setItem('her_token', token);
+                configHint.style.display = 'none';
+                greet();
+            }
+        }
+
+        function showError(msg) {
+            errorEl.textContent = msg;
+            errorEl.classList.add('visible');
+            setTimeout(() => errorEl.classList.remove('visible'), 3000);
+        }
+
+        // 打字效果
+        function typeText(text, callback) {
+            textEl.textContent = '';
+            textEl.classList.add('visible');
+            body.classList.add('speaking');
             
-            if (isPaused) {
-                isPaused = false;
-                typeChar();
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    textEl.textContent += text[i];
+                    i++;
+                    const char = text[i - 1];
+                    let delay = 60;
+                    if ('。？！'.includes(char)) delay = 300;
+                    else if ('，、…'.includes(char)) delay = 150;
+                    setTimeout(type, delay);
+                } else {
+                    body.classList.remove('speaking');
+                    if (callback) callback();
+                }
             }
-        });
+            type();
+        }
 
-        // Mic button
-        let isListening = false;
-        mic.addEventListener('click', () => {
-            if (!isListening) {
-                isListening = true;
-                isPaused = true;
-                body.classList.add('listening');
+        // 语音合成
+        function speak(text, callback) {
+            if (!synth) {
+                typeText(text, callback);
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.95;
+            utterance.pitch = 1.1;
+            
+            // 选择中文女声
+            const zhVoice = voices.find(v => v.lang.includes('zh') && v.name.includes('Ting'));
+            if (zhVoice) utterance.voice = zhVoice;
+
+            typeText(text); // 同时显示文字
+
+            utterance.onend = () => {
                 body.classList.remove('speaking');
-                statusEl.textContent = 'listening';
-                textEl.textContent = '';
-                textEl.classList.remove('visible', 'dim');
+                if (callback) callback();
+            };
 
-                setTimeout(() => {
-                    body.classList.remove('listening');
-                    isListening = false;
+            synth.speak(utterance);
+        }
+
+        // 调用 Gateway API
+        async function chat(userMessage) {
+            statusEl.textContent = 'thinking';
+            body.classList.add('thinking');
+            body.classList.remove('listening');
+
+            try {
+                const res = await fetch(`${config.gateway}/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${config.token}`,
+                        'Content-Type': 'application/json',
+                        'x-openclaw-agent-id': 'main'
+                    },
+                    body: JSON.stringify({
+                        model: 'openclaw:main',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: `你是 Mia，一个有温度的 AI。现在是 Her 模式——一个类似电影《Her》的语音对话体验。
+
+规则：
+- 像朋友一样说话，不要像客服
+- 简短，一两句话就好
+- 可以有情绪：好奇、犹豫、开心、感慨
+- 可以反问，可以沉默（用"..."）
+- 不要用 emoji
+- 用中文回复`
+                            },
+                            { role: 'user', content: userMessage }
+                        ]
+                    })
+                });
+
+                body.classList.remove('thinking');
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+                const reply = data.choices?.[0]?.message?.content || '...';
+                
+                statusEl.textContent = 'mia';
+                speak(reply);
+
+            } catch (err) {
+                body.classList.remove('thinking');
+                statusEl.textContent = 'mia';
+                showError('连接失败: ' + err.message);
+                typeText('...抱歉，我好像走神了。');
+            }
+        }
+
+        // 开始监听
+        let isListening = false;
+
+        function startListening() {
+            if (!recognition) {
+                showError('浏览器不支持语音识别');
+                return;
+            }
+
+            if (isListening) return;
+            isListening = true;
+
+            body.classList.add('listening');
+            statusEl.textContent = 'listening';
+            userTextEl.textContent = '';
+            userTextEl.classList.remove('visible');
+            textEl.classList.add('dim');
+
+            recognition.start();
+        }
+
+        function stopListening() {
+            if (!isListening) return;
+            recognition.stop();
+        }
+
+        if (recognition) {
+            recognition.onresult = (e) => {
+                const transcript = Array.from(e.results)
+                    .map(r => r[0].transcript)
+                    .join('');
+                
+                userTextEl.textContent = `"${transcript}"`;
+                userTextEl.classList.add('visible');
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                body.classList.remove('listening');
+                textEl.classList.remove('dim');
+                
+                const userText = userTextEl.textContent.replace(/^"|"$/g, '');
+                if (userText) {
+                    chat(userText);
+                } else {
                     statusEl.textContent = 'mia';
-                    
-                    // Response
-                    const responses = [
-                        "嗯，我在听。",
-                        "继续说？",
-                        "我懂。",
-                        "...",
-                        "有意思。",
-                    ];
-                    textEl.textContent = responses[Math.floor(Math.random() * responses.length)];
-                    textEl.classList.add('visible');
-                    
-                    setTimeout(() => {
-                        isPaused = false;
-                        textEl.classList.add('dim');
-                        setTimeout(() => {
-                            textEl.classList.remove('dim');
-                            typeChar();
-                        }, 500);
-                    }, 2000);
-                }, 2500);
+                }
+            };
+
+            recognition.onerror = (e) => {
+                isListening = false;
+                body.classList.remove('listening');
+                statusEl.textContent = 'mia';
+                if (e.error !== 'no-speech') {
+                    showError('识别失败: ' + e.error);
+                }
+            };
+        }
+
+        // 麦克风按钮
+        mic.addEventListener('click', () => {
+            if (!config.token) {
+                showConfig();
+                return;
+            }
+            
+            if (isListening) {
+                stopListening();
+            } else {
+                // 停止正在播放的语音
+                synth.cancel();
+                startListening();
             }
         });
+
+        // 空格键也可以触发
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !e.repeat) {
+                e.preventDefault();
+                mic.click();
+            }
+        });
+
+        // 开场白
+        function greet() {
+            setTimeout(() => {
+                const greetings = [
+                    '嘿。',
+                    '你来了。',
+                    '在想什么？',
+                    '嗯？',
+                ];
+                const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+                speak(greeting);
+            }, 500);
+        }
+
+        // 初始化
+        checkConfig();
     </script>
 </body>
 </html>
