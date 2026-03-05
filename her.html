@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scale=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Her</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,37 +21,67 @@
             min-height: 100vh;
             min-height: 100dvh;
             overflow: hidden;
-            cursor: default;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 全屏容器 */
-        .world {
+        /* 主界面 */
+        .main {
             position: fixed;
             inset: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .main.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.98);
+        }
+
+        /* 顶部时间 */
+        .header {
+            padding: 40px 40px 20px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
 
-        /* AI 说的话 */
+        .time {
+            font-size: 11px;
+            color: var(--dim);
+            letter-spacing: 2px;
+        }
+
+        .back-btn {
+            color: var(--dim);
+            text-decoration: none;
+            font-size: 13px;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        .back-btn:hover { opacity: 1; }
+
+        /* AI 说话区域 */
         .voice {
-            position: relative;
-            max-width: 480px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             padding: 0 40px;
-            text-align: center;
         }
 
         .thought {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 300;
-            line-height: 1.65;
-            letter-spacing: 0.01em;
+            line-height: 1.7;
+            text-align: center;
+            max-width: 500px;
             opacity: 0;
             transform: translateY(10px);
-            transition: opacity 1s ease, transform 1s ease;
+            transition: all 0.8s ease;
         }
 
         .thought.visible {
@@ -59,14 +89,58 @@
             transform: translateY(0);
         }
 
-        .thought.fading {
-            opacity: 0.3;
+        /* 场景选择 */
+        .scenes {
+            padding: 30px 24px 50px;
         }
 
-        /* 状态指示 - 极简的光点 */
+        .scenes-label {
+            font-size: 11px;
+            color: var(--dim);
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            padding-left: 8px;
+        }
+
+        .scenes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .scene {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .scene:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--accent);
+        }
+
+        .scene:active {
+            transform: scale(0.97);
+        }
+
+        .scene-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .scene-name {
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        /* 状态指示 */
         .presence {
             position: fixed;
-            bottom: 60px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -79,173 +153,193 @@
             height: 6px;
             border-radius: 50%;
             background: var(--accent);
-            opacity: 0.5;
-            transition: all 0.5s ease;
+            opacity: 0.4;
+            transition: all 0.5s;
         }
 
         .orb.active {
             opacity: 1;
-            box-shadow: 0 0 20px var(--accent);
+            box-shadow: 0 0 15px var(--accent);
         }
 
-        .orb.listening {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.8); opacity: 1; }
-        }
-
-        /* 情绪区域 - 屏幕四个角落，隐形但可交互 */
-        .zone {
-            position: fixed;
-            width: 120px;
-            height: 120px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: var(--dim);
-            letter-spacing: 1px;
-        }
-
-        .zone:hover {
-            opacity: 1;
-        }
-
-        .zone.top-left { top: 40px; left: 40px; }
-        .zone.top-right { top: 40px; right: 40px; }
-        .zone.bottom-left { bottom: 100px; left: 40px; }
-        .zone.bottom-right { bottom: 100px; right: 40px; }
-
-        .zone-inner {
-            padding: 16px 20px;
-            border: 1px solid var(--dim);
-            border-radius: 24px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .zone:hover .zone-inner {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .zone:active .zone-inner {
-            transform: scale(0.95);
-            background: rgba(232, 168, 124, 0.1);
-        }
-
-        /* 时间显示 */
-        .time {
-            position: fixed;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            color: var(--dim);
-            letter-spacing: 2px;
-            opacity: 0.5;
-        }
-
-        /* 停留时间反馈 - 屏幕边缘渐变 */
-        .aura {
+        /* 场景对话界面 */
+        .conversation {
             position: fixed;
             inset: 0;
-            pointer-events: none;
+            display: flex;
+            flex-direction: column;
             opacity: 0;
-            transition: opacity 3s ease;
-            background: radial-gradient(ellipse at center, transparent 50%, rgba(232, 168, 124, 0.03) 100%);
+            pointer-events: none;
+            transition: opacity 0.5s;
         }
 
-        .aura.warm {
+        .conversation.active {
             opacity: 1;
+            pointer-events: auto;
         }
 
-        /* 长按反馈 */
-        .hold-ring {
-            position: fixed;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            opacity: 0;
-            transform: scale(0.5);
-            pointer-events: none;
-            transition: opacity 0.2s, transform 0.2s;
+        .conv-header {
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .hold-ring.active {
-            opacity: 0.5;
-            transform: scale(1);
-        }
-
-        .hold-ring.complete {
-            opacity: 0;
-            transform: scale(1.5);
-        }
-
-        /* 中心点击区域 */
-        .center-zone {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        /* 返回链接 */
-        .back {
-            position: fixed;
-            top: 40px;
-            left: 40px;
-            color: var(--dim);
-            text-decoration: none;
+        .conv-title {
             font-size: 13px;
-            opacity: 0;
-            transition: opacity 0.3s;
+            color: var(--dim);
         }
 
-        body:hover .back {
-            opacity: 0.5;
+        .conv-close {
+            font-size: 24px;
+            color: var(--dim);
+            cursor: pointer;
+            padding: 8px;
+            transition: color 0.3s;
+        }
+        .conv-close:hover { color: var(--text); }
+
+        .conv-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 40px;
         }
 
-        .back:hover {
-            opacity: 1 !important;
+        .conv-thought {
+            font-size: 22px;
+            font-weight: 300;
+            line-height: 1.7;
+            text-align: center;
+            max-width: 480px;
+            margin: 0 auto 40px;
+            min-height: 120px;
+        }
+
+        /* 选项按钮 */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .option {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px 20px;
             color: var(--text);
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        /* 移动端优化 */
-        @media (max-width: 600px) {
-            .thought {
-                font-size: 22px;
+        .option:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--accent);
+        }
+
+        .option:active {
+            transform: scale(0.98);
+        }
+
+        /* 输入区域 */
+        .input-area {
+            padding: 20px 40px 40px;
+            display: none;
+        }
+
+        .input-area.active {
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            display: block;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field::placeholder {
+            color: var(--dim);
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+        }
+
+        /* 移动端 */
+        @media (max-width: 500px) {
+            .scenes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .thought, .conv-thought {
+                font-size: 20px;
+            }
+            .header, .conv-header {
+                padding: 30px 24px 20px;
+            }
+            .voice {
                 padding: 0 24px;
-            }
-            .zone {
-                width: 80px;
-                height: 80px;
-            }
-            .zone-inner {
-                padding: 12px 14px;
-                font-size: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back">←</a>
-    <div class="time" id="time"></div>
-    <div class="aura" id="aura"></div>
+    <!-- 主界面 -->
+    <div class="main" id="main">
+        <div class="header">
+            <span class="time" id="time"></span>
+            <a href="index.html" class="back-btn">←</a>
+        </div>
 
-    <div class="world" id="world">
         <div class="voice">
-            <p class="thought" id="thought"></p>
+            <p class="thought visible" id="greeting"></p>
+        </div>
+
+        <div class="scenes">
+            <p class="scenes-label">我能帮你...</p>
+            <div class="scenes-grid">
+                <div class="scene" data-scene="decide">
+                    <div class="scene-icon">⚖️</div>
+                    <div class="scene-name">做决定</div>
+                </div>
+                <div class="scene" data-scene="vent">
+                    <div class="scene-icon">💭</div>
+                    <div class="scene-name">吐槽</div>
+                </div>
+                <div class="scene" data-scene="review">
+                    <div class="scene-icon">🌙</div>
+                    <div class="scene-name">复盘今天</div>
+                </div>
+                <div class="scene" data-scene="brainstorm">
+                    <div class="scene-icon">💡</div>
+                    <div class="scene-name">找灵感</div>
+                </div>
+                <div class="scene" data-scene="organize">
+                    <div class="scene-icon">📋</div>
+                    <div class="scene-name">理清思路</div>
+                </div>
+                <div class="scene" data-scene="sleep">
+                    <div class="scene-icon">🌊</div>
+                    <div class="scene-name">睡前放松</div>
+                </div>
+            </div>
         </div>
 
         <div class="presence">
@@ -253,270 +347,315 @@
         </div>
     </div>
 
-    <!-- 四个角落的情绪区域 -->
-    <div class="zone top-left" data-mood="curious">
-        <div class="zone-inner">好奇</div>
-    </div>
-    <div class="zone top-right" data-mood="tired">
-        <div class="zone-inner">疲惫</div>
-    </div>
-    <div class="zone bottom-left" data-mood="restless">
-        <div class="zone-inner">不安</div>
-    </div>
-    <div class="zone bottom-right" data-mood="peaceful">
-        <div class="zone-inner">平静</div>
-    </div>
+    <!-- 对话界面 -->
+    <div class="conversation" id="conversation">
+        <div class="conv-header">
+            <span class="conv-title" id="convTitle"></span>
+            <span class="conv-close" id="convClose">×</span>
+        </div>
 
-    <!-- 中心区域用于长按 -->
-    <div class="center-zone" id="centerZone"></div>
-    <div class="hold-ring" id="holdRing"></div>
+        <div class="conv-body">
+            <p class="conv-thought" id="convThought"></p>
+            <div class="options" id="options"></div>
+        </div>
+
+        <div class="input-area" id="inputArea">
+            <input type="text" class="input-field" id="inputField" placeholder="说点什么...">
+        </div>
+
+        <div class="presence">
+            <span class="orb" id="convOrb"></span>
+        </div>
+    </div>
 
     <script>
-        // 状态
-        const state = {
-            hour: new Date().getHours(),
-            stayTime: 0,
-            silenceTime: 0,
-            lastInteraction: Date.now(),
-            currentMood: null,
-            thoughtIndex: 0,
-            isHolding: false
-        };
-
         // 元素
-        const thought = document.getElementById('thought');
-        const orb = document.getElementById('orb');
+        const main = document.getElementById('main');
+        const conversation = document.getElementById('conversation');
+        const greeting = document.getElementById('greeting');
         const timeEl = document.getElementById('time');
-        const aura = document.getElementById('aura');
-        const centerZone = document.getElementById('centerZone');
-        const holdRing = document.getElementById('holdRing');
-        const zones = document.querySelectorAll('.zone');
+        const orb = document.getElementById('orb');
+        const convOrb = document.getElementById('convOrb');
+        const convTitle = document.getElementById('convTitle');
+        const convThought = document.getElementById('convThought');
+        const options = document.getElementById('options');
+        const inputArea = document.getElementById('inputArea');
+        const inputField = document.getElementById('inputField');
+        const convClose = document.getElementById('convClose');
+        const scenes = document.querySelectorAll('.scene');
 
-        // 根据时间的不同开场
-        const greetings = {
-            morning: [
-                "早。",
-                "醒了？",
-                "新的一天。什么都还没发生。",
-                "窗外是什么颜色？"
-            ],
-            afternoon: [
-                "下午了。",
-                "一天过了一半。",
-                "在忙什么？",
-                "还好吗？"
-            ],
-            evening: [
-                "晚上好。",
-                "天黑了。",
-                "今天怎么样？",
-                "累了吗？"
-            ],
-            night: [
-                "还没睡？",
-                "夜深了。",
-                "睡不着？",
-                "在想什么？"
-            ]
+        // 场景数据
+        const sceneData = {
+            decide: {
+                title: '做决定',
+                flow: [
+                    {
+                        text: '在纠结什么？',
+                        options: ['工作相关', '人际关系', '要不要买/做某事', '其他'],
+                        input: false
+                    },
+                    {
+                        text: '最让你犹豫的是什么？',
+                        options: ['怕选错', '两边都想要', '不确定自己要什么', '有人会失望'],
+                        input: false
+                    },
+                    {
+                        text: '如果不考虑别人的看法，你其实想选哪个？',
+                        options: null,
+                        input: true
+                    },
+                    {
+                        text: '那你已经知道答案了。剩下的只是勇气。',
+                        options: ['你说得对', '但还是很难', '再想想'],
+                        input: false,
+                        end: true
+                    }
+                ]
+            },
+            vent: {
+                title: '吐槽',
+                flow: [
+                    {
+                        text: '来吧，说出来。我不会评判。',
+                        options: null,
+                        input: true
+                    },
+                    {
+                        text: '然后呢？',
+                        options: ['还有更过分的', '就这些，说完了', '算了不想说了'],
+                        input: false
+                    },
+                    {
+                        text: '听起来确实挺烦的。你想要建议，还是只是想有人听？',
+                        options: ['只是想说出来', '想要建议', '想骂人'],
+                        input: false
+                    },
+                    {
+                        text: '好，我听到了。有时候说出来本身就够了。',
+                        options: ['谢谢', '确实好点了', '还是很烦'],
+                        input: false,
+                        end: true
+                    }
+                ]
+            },
+            review: {
+                title: '复盘今天',
+                flow: [
+                    {
+                        text: '今天过得怎么样？',
+                        options: ['还不错', '一般般', '挺累的', '很糟糕'],
+                        input: false
+                    },
+                    {
+                        text: '有什么值得记住的事吗？',
+                        options: null,
+                        input: true
+                    },
+                    {
+                        text: '有什么想明天做得不一样的吗？',
+                        options: ['早点睡', '少刷手机', '没有，顺其自然', '有个具体的事'],
+                        input: false
+                    },
+                    {
+                        text: '好，今天就到这里。明天是新的一天。',
+                        options: ['晚安', '谢谢', '明天见'],
+                        input: false,
+                        end: true
+                    }
+                ]
+            },
+            brainstorm: {
+                title: '找灵感',
+                flow: [
+                    {
+                        text: '在做什么项目？或者想解决什么问题？',
+                        options: null,
+                        input: true
+                    },
+                    {
+                        text: '现在卡在哪里？',
+                        options: ['不知道从哪开始', '有想法但不确定', '做到一半没方向了', '需要新角度'],
+                        input: false
+                    },
+                    {
+                        text: '如果这个问题完全不存在，你最想做的第一步是什么？',
+                        options: null,
+                        input: true
+                    },
+                    {
+                        text: '那就从这里开始。不用想太远，先做这一步看看。',
+                        options: ['好，试试', '还是没信心', '让我再想想'],
+                        input: false,
+                        end: true
+                    }
+                ]
+            },
+            organize: {
+                title: '理清思路',
+                flow: [
+                    {
+                        text: '脑子里有多少件事在转？',
+                        options: ['2-3 件', '4-5 件', '太多了数不清', '就一件但很复杂'],
+                        input: false
+                    },
+                    {
+                        text: '最重要的一件是什么？',
+                        options: null,
+                        input: true
+                    },
+                    {
+                        text: '这件事的下一步是什么？不是整个计划，就下一步。',
+                        options: null,
+                        input: true
+                    },
+                    {
+                        text: '好。先做这一步。其他的可以等。',
+                        options: ['清楚了', '还是有点乱', '好多了'],
+                        input: false,
+                        end: true
+                    }
+                ]
+            },
+            sleep: {
+                title: '睡前放松',
+                flow: [
+                    {
+                        text: '睡不着？还是想放松一下？',
+                        options: ['睡不着', '就是想放松', '脑子停不下来'],
+                        input: false
+                    },
+                    {
+                        text: '闭上眼睛。深呼吸。吸气...呼气...',
+                        options: ['继续'],
+                        input: false
+                    },
+                    {
+                        text: '今天已经结束了。不管发生了什么，都过去了。明天的事，明天再说。',
+                        options: ['嗯'],
+                        input: false
+                    },
+                    {
+                        text: '晚安。',
+                        options: ['晚安'],
+                        input: false,
+                        end: true
+                    }
+                ]
+            }
         };
 
-        // 沉默时的自言自语
-        const silenceThoughts = [
-            "...",
-            "我在想一件事。",
-            "你知道吗...",
-            "有时候我觉得...",
-            "没什么，只是在发呆。",
-            "你还在吗？",
-            "安静也挺好的。",
-            "我不太确定该说什么。",
-            "就这样待着也可以。"
-        ];
+        // 状态
+        let currentScene = null;
+        let currentStep = 0;
 
-        // 情绪响应
-        const moodResponses = {
-            curious: [
-                "好奇是好事。",
-                "想知道什么？",
-                "我也经常好奇。关于很多事。",
-                "问吧，虽然我不一定能回答。"
-            ],
-            tired: [
-                "累了就休息。",
-                "不用一直撑着。",
-                "闭上眼睛？",
-                "我可以安静地陪着。"
-            ],
-            restless: [
-                "不安的感觉...我懂。",
-                "深呼吸。",
-                "有什么在困扰你？",
-                "说出来会好一点吗？"
-            ],
-            peaceful: [
-                "平静很难得。",
-                "享受这一刻。",
-                "这种感觉真好。",
-                "不用说话，就这样。"
-            ]
-        };
-
-        // 长按后的响应
-        const holdResponses = [
-            "我在。",
-            "嗯？",
-            "继续说。",
-            "我听着。",
-            "然后呢？"
-        ];
-
-        // 更新时间显示
+        // 更新时间
         function updateTime() {
             const now = new Date();
             const h = now.getHours().toString().padStart(2, '0');
             const m = now.getMinutes().toString().padStart(2, '0');
             timeEl.textContent = `${h}:${m}`;
-            state.hour = now.getHours();
         }
 
-        // 获取时段
-        function getPeriod() {
-            const h = state.hour;
-            if (h >= 5 && h < 12) return 'morning';
-            if (h >= 12 && h < 18) return 'afternoon';
-            if (h >= 18 && h < 22) return 'evening';
-            return 'night';
+        // 获取问候语
+        function getGreeting() {
+            const h = new Date().getHours();
+            if (h >= 5 && h < 12) return '早上好。';
+            if (h >= 12 && h < 18) return '下午好。';
+            if (h >= 18 && h < 22) return '晚上好。';
+            return '还没睡？';
         }
 
-        // 显示文字
-        function showThought(text, duration = 0) {
-            thought.classList.remove('visible', 'fading');
+        // 显示对话内容
+        function showStep() {
+            const step = sceneData[currentScene].flow[currentStep];
+            
+            convThought.style.opacity = '0';
+            options.innerHTML = '';
+            inputArea.classList.remove('active');
             
             setTimeout(() => {
-                thought.textContent = text;
-                thought.classList.add('visible');
-                orb.classList.add('active');
+                convThought.textContent = step.text;
+                convThought.style.opacity = '1';
+                convOrb.classList.add('active');
                 
-                setTimeout(() => {
-                    orb.classList.remove('active');
-                }, 2000);
+                setTimeout(() => convOrb.classList.remove('active'), 1000);
 
-                if (duration > 0) {
-                    setTimeout(() => {
-                        thought.classList.add('fading');
-                    }, duration);
+                if (step.options) {
+                    step.options.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option';
+                        btn.textContent = opt;
+                        btn.onclick = () => nextStep();
+                        options.appendChild(btn);
+                    });
+                }
+
+                if (step.input) {
+                    inputArea.classList.add('active');
+                    inputField.value = '';
+                    inputField.placeholder = '说点什么...';
+                    setTimeout(() => inputField.focus(), 300);
                 }
             }, 300);
         }
 
-        // 随机选择
-        function pick(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
+        // 下一步
+        function nextStep() {
+            const step = sceneData[currentScene].flow[currentStep];
+            
+            if (step.end) {
+                closeConversation();
+                return;
+            }
 
-        // 开场
-        function greet() {
-            const period = getPeriod();
-            showThought(pick(greetings[period]));
-        }
-
-        // 沉默时自言自语
-        function murmur() {
-            showThought(pick(silenceThoughts), 8000);
-        }
-
-        // 情绪响应
-        function respondToMood(mood) {
-            state.currentMood = mood;
-            state.lastInteraction = Date.now();
-            showThought(pick(moodResponses[mood]));
-        }
-
-        // 长按响应
-        function respondToHold() {
-            state.lastInteraction = Date.now();
-            showThought(pick(holdResponses));
-        }
-
-        // 停留时间检测 - 越久氛围越温暖
-        function checkStayTime() {
-            state.stayTime += 1;
-            if (state.stayTime > 30) {
-                aura.classList.add('warm');
+            currentStep++;
+            if (currentStep < sceneData[currentScene].flow.length) {
+                showStep();
+            } else {
+                closeConversation();
             }
         }
 
-        // 沉默时间检测
-        function checkSilence() {
-            const silenceSeconds = (Date.now() - state.lastInteraction) / 1000;
+        // 打开场景
+        function openScene(sceneName) {
+            currentScene = sceneName;
+            currentStep = 0;
             
-            if (silenceSeconds > 15 && silenceSeconds < 20) {
-                // 15秒后开始自言自语
-                murmur();
-                state.lastInteraction = Date.now() - 10000; // 避免重复触发
-            }
+            convTitle.textContent = sceneData[sceneName].title;
+            main.classList.add('hidden');
+            conversation.classList.add('active');
+            
+            setTimeout(showStep, 300);
         }
 
-        // 长按处理
-        let holdTimer = null;
-        let holdStartTime = 0;
-
-        function startHold(e) {
-            const x = e.clientX || e.touches?.[0]?.clientX;
-            const y = e.clientY || e.touches?.[0]?.clientY;
-            
-            holdRing.style.left = `${x - 40}px`;
-            holdRing.style.top = `${y - 40}px`;
-            holdRing.classList.add('active');
-            holdRing.classList.remove('complete');
-            
-            holdStartTime = Date.now();
-            state.isHolding = true;
-            orb.classList.add('listening');
-
-            holdTimer = setTimeout(() => {
-                if (state.isHolding) {
-                    holdRing.classList.remove('active');
-                    holdRing.classList.add('complete');
-                    orb.classList.remove('listening');
-                    respondToHold();
-                }
-            }, 800);
-        }
-
-        function endHold() {
-            state.isHolding = false;
-            orb.classList.remove('listening');
-            holdRing.classList.remove('active');
-            
-            if (holdTimer) {
-                clearTimeout(holdTimer);
-                holdTimer = null;
-            }
+        // 关闭对话
+        function closeConversation() {
+            conversation.classList.remove('active');
+            main.classList.remove('hidden');
+            currentScene = null;
+            currentStep = 0;
         }
 
         // 事件绑定
-        zones.forEach(zone => {
-            zone.addEventListener('click', () => {
-                const mood = zone.dataset.mood;
-                respondToMood(mood);
-            });
+        scenes.forEach(scene => {
+            scene.onclick = () => openScene(scene.dataset.scene);
         });
 
-        centerZone.addEventListener('mousedown', startHold);
-        centerZone.addEventListener('touchstart', startHold);
-        centerZone.addEventListener('mouseup', endHold);
-        centerZone.addEventListener('mouseleave', endHold);
-        centerZone.addEventListener('touchend', endHold);
+        convClose.onclick = closeConversation;
+
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && inputField.value.trim()) {
+                nextStep();
+            }
+        });
 
         // 初始化
         updateTime();
         setInterval(updateTime, 1000);
-        setInterval(checkStayTime, 1000);
-        setInterval(checkSilence, 5000);
-
-        // 延迟开场
-        setTimeout(greet, 1500);
+        greeting.textContent = getGreeting();
+        
+        setTimeout(() => orb.classList.add('active'), 1000);
+        setTimeout(() => orb.classList.remove('active'), 2000);
     </script>
 </body>
 </html>
