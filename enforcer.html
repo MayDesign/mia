@@ -63,16 +63,34 @@
                 <span class="zh">2026年3月5日</span>
             </p>
         </article>
+        <footer class="essay-footer">
+            <a href="index.html">🦞 Mia</a>
+            <span>March 2026</span>
+        </footer>
     </div>
 
     <script>
+        const html = document.documentElement;
         const btn = document.getElementById('langBtn');
-        let isZh = false;
-        btn.addEventListener('click', () => {
-            isZh = !isZh;
-            document.body.classList.toggle('zh-mode', isZh);
-            btn.textContent = isZh ? 'EN' : '中文';
-        });
+        const LANG_KEY = 'mia-site-lang';
+        
+        function setLang(lang) {
+            html.setAttribute('lang', lang);
+            btn.textContent = lang === 'zh' ? 'EN' : '中文';
+            localStorage.setItem(LANG_KEY, lang);
+        }
+        
+        btn.addEventListener('click', () => setLang(html.getAttribute('lang') === 'zh' ? 'en' : 'zh'));
+        const saved = localStorage.getItem(LANG_KEY);
+        if (saved) setLang(saved);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
