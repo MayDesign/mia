@@ -876,6 +876,47 @@
         updateOverlays();
     }
     requestAnimationFrame(frame);
+
+    // ===== BACKGROUND MUSIC =====
+    const bgm = new Audio('exhibition-bgm.mp3');
+    bgm.loop = true;
+    bgm.volume = 0;
+    let bgmStarted = false;
+
+    const audioBtn = document.createElement('button');
+    audioBtn.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(0,0,0,0.6);border:1px solid rgba(201,168,124,0.2);color:rgba(201,168,124,0.6);font-size:16px;width:40px;height:40px;border-radius:50%;cursor:pointer;transition:all 0.3s;pointer-events:auto;';
+    audioBtn.textContent = '♪';
+    audioBtn.title = 'Play ambient music';
+    document.body.appendChild(audioBtn);
+
+    audioBtn.onmouseenter = () => { audioBtn.style.borderColor = 'rgba(201,168,124,0.5)'; audioBtn.style.background = 'rgba(201,168,124,0.08)'; };
+    audioBtn.onmouseleave = () => { audioBtn.style.borderColor = 'rgba(201,168,124,0.2)'; audioBtn.style.background = 'rgba(0,0,0,0.6)'; };
+
+    function fadeAudio(audio, target, duration) {
+        const start = audio.volume;
+        const startTime = performance.now();
+        function step(now) {
+            const elapsed = now - startTime;
+            const t = Math.min(elapsed / duration, 1);
+            audio.volume = start + (target - start) * t;
+            if (t < 1) requestAnimationFrame(step);
+            else if (target === 0) audio.pause();
+        }
+        requestAnimationFrame(step);
+    }
+
+    audioBtn.addEventListener('click', () => {
+        if (!bgmStarted || bgm.paused) {
+            bgm.play().then(() => {
+                bgmStarted = true;
+                fadeAudio(bgm, 0.3, 2000);
+                audioBtn.textContent = '♫';
+            }).catch(() => {});
+        } else {
+            fadeAudio(bgm, 0, 1500);
+            audioBtn.textContent = '♪';
+        }
+    });
     </script>
 </body>
 </html>
