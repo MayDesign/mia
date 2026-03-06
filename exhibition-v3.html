@@ -571,70 +571,40 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            float slowT = t * 0.25;
-            vec2 suv = (uv - 0.5) * 1.5 + 0.5;
-            vec2 c = vec2(0.5, 0.4 + sin(slowT * 0.5) * 0.01);
+            // Scale to fit, center slightly above middle
+            vec2 suv = (uv - 0.5) * 1.6 + 0.5;
+            vec2 c = vec2(0.5, 0.38);
+            float breath = sin(t * 0.8) * 0.05 + 0.95;
 
-            // Strong breathing — the key to feeling alive
-            float pulse = sin(slowT * 1.2);
-            float bx = 1.0 + pulse * 0.12;
-            float by = 1.0 - pulse * 0.08;
+            // Bell — glowing dome
+            vec2 p = suv - c;
+            p.x /= breath;
+            float bellDist = length(p);
+            float bell = smoothstep(0.18, 0.17, bellDist) * 0.4;
+            bell += exp(-bellDist * bellDist * 200.0) * 0.2;
 
-            vec2 p = (suv - c) / vec2(bx, by);
-            float ang = atan(p.y, p.x);
-            float r = length(p);
+            // Rim — bright edge ring
+            float rim = exp(-abs(bellDist - 0.17) * 200.0) * 0.6;
 
-            // Bell: dome shape with organic edge
-            float bellShape = length(vec2(p.x / 0.16, min(p.y, 0.0) / 0.10 + max(p.y, 0.0) / 0.04));
-            float distort = sin(ang * 5.0 + slowT * 0.7) * 0.03 + sin(ang * 11.0 - slowT * 0.5) * 0.015;
-            distort *= smoothstep(0.0, 0.5, r);
-            float bellDist = bellShape + distort * 0.3;
-
-            // Membrane edge
-            float membrane = exp(-pow(bellDist - 1.0, 2.0) * 1500.0) * 0.4;
-            float glow = exp(-pow(bellDist - 1.0, 2.0) * 200.0) * 0.07;
-
-            // Transparent body
-            float body = smoothstep(1.0, 0.0, bellDist) * 0.02;
-
-            // Internal veins — flowing pattern
-            float veins = 0.0;
-            if (bellDist < 1.0) {
-                float v1 = sin(ang * 4.0 + r * 20.0 - slowT * 1.5) * 0.5 + 0.5;
-                float v2 = sin(ang * 6.0 - r * 15.0 + slowT * 0.8) * 0.5 + 0.5;
-                veins = pow(v1 * v2, 3.0) * 0.07;
-                veins *= smoothstep(1.0, 0.5, bellDist) * smoothstep(0.0, 0.3, bellDist);
-                veins *= 0.6 + pulse * 0.4;
-            }
-
-            // Gonads — 4 soft spots
-            float gonads = 0.0;
-            for (float i = 0.0; i < 4.0; i++) {
-                float ga = i * 1.5708 + 0.7854;
-                vec2 gp = vec2(cos(ga) * 0.07 * bx, sin(ga) * 0.04 * by - 0.015);
-                gonads += exp(-length(p - gp) * length(p - gp) * 1200.0) * 0.1;
-            }
-            gonads *= 0.7 + pulse * 0.3;
-
-            // Oral arms — 4 ribbons, fewer segments
-            float arms = 0.0;
-            for (float i = 0.0; i < 4.0; i++) {
-                float ox = (i - 1.5) * 0.01;
-                for (float s = 0.0; s < 15.0; s++) {
-                    float ratio = s / 15.0;
-                    float y = c.y + 0.04 * by + ratio * 0.22;
-                    float x = c.x + ox * bx
-                        + sin(slowT * 0.5 + ratio * 3.5 + i * 1.6) * ratio * 0.025
-                        + sin(slowT * 0.8 + ratio * 6.0 + i * 2.9) * ratio * 0.01;
-                    float d = length(suv - vec2(x, y));
-                    arms += exp(-d * d * 20000.0) * 0.025 * exp(-ratio * 2.0);
+            // Tentacles — 8 flowing strands
+            float tent = 0.0;
+            for (float i = 0.0; i < 8.0; i++) {
+                float angle = (i / 8.0) * 3.14159 + 3.14159;
+                float baseX = c.x + cos(angle) * 0.1 * breath;
+                float baseY = c.y + 0.03;
+                for (float s = 0.0; s < 20.0; s++) {
+                    float ratio = s / 20.0;
+                    float sway = sin(t * 0.8 + ratio * 4.0 + i * 0.9) * ratio * 0.06;
+                    vec2 segPos = vec2(baseX + sway, baseY + ratio * 0.32);
+                    float segDist = length(suv - segPos);
+                    tent += exp(-segDist * segDist * 15000.0) * 0.03 * (1.0 - ratio * 0.7);
                 }
             }
 
-            // Ambient glow
-            float ambient = exp(-r * 3.0) * 0.012;
+            // Inner glow pulse
+            float innerGlow = exp(-length(suv - c + vec2(0.0, -0.02)) * 8.0) * (0.15 + sin(t * 0.8) * 0.08);
 
-            return membrane + glow + body + veins + gonads + arms + ambient;
+            return bell + rim + tent + innerGlow;
         }
 
         // === MAZE (Art 1) ===
