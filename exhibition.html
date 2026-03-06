@@ -24,9 +24,11 @@
             font-family: var(--serif);
             background: var(--bg);
             color: var(--text);
-            overflow: hidden;
+            overflow-y: hidden;
+            overflow-x: auto;
             -webkit-font-smoothing: antialiased;
             cursor: crosshair;
+            height: 100vh;
         }
 
         /* Grain */
@@ -85,8 +87,6 @@
             display: flex;
             width: max-content;
             height: 100vh;
-            overflow-x: auto;
-            overflow-y: hidden;
         }
 
         /* Room */
@@ -302,8 +302,11 @@
                 flex-direction: column;
                 width: 100%;
                 height: auto;
-                overflow-x: hidden;
+            }
+            body {
                 overflow-y: auto;
+                overflow-x: hidden;
+                height: auto;
             }
             .room {
                 width: 100%;
@@ -514,9 +517,9 @@
     const isMobile = window.innerWidth <= 768;
 
     if (!isMobile) {
-        window.addEventListener('wheel', e => {
+        document.addEventListener('wheel', e => {
             e.preventDefault();
-            gallery.scrollLeft += e.deltaY * 2;
+            window.scrollBy({ left: e.deltaY * 2, behavior: 'instant' });
         }, { passive: false });
     }
 
@@ -527,12 +530,12 @@
             const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
             pbar.style.width = (pct * 100) + '%';
         } else {
-            const pct = gallery.scrollLeft / (gallery.scrollWidth - window.innerWidth);
+            const maxScroll = document.body.scrollWidth - window.innerWidth;
+            const pct = maxScroll > 0 ? window.scrollX / maxScroll : 0;
             pbar.style.width = (pct * 100) + '%';
         }
     };
-    if (isMobile) window.addEventListener('scroll', updateProgress);
-    else gallery.addEventListener('scroll', updateProgress);
+    window.addEventListener('scroll', updateProgress);
 
     // Visibility observer for art activation
     const activeSet = new Set();
