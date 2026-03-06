@@ -102,11 +102,12 @@
         /* Room indicator */
         .room-indicator {
             position: fixed;
-            bottom: 36px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
-            gap: 16px;
+            flex-direction: column;
+            gap: 14px;
             z-index: 100;
             pointer-events: none;
         }
@@ -194,16 +195,20 @@
                 transform: none;
             }
             .room-indicator {
-                bottom: 24px;
+                right: 16px;
                 gap: 10px;
+            }
+            .ri-dot {
+                width: 5px;
+                height: 5px;
             }
             .info-panel {
                 left: 16px;
                 bottom: 60px;
-                max-width: 240px;
+                max-width: 260px;
             }
-            .info-panel h3 { font-size: 11px; }
-            .info-panel p { font-size: 10px; }
+            .info-panel h3 { font-size: 12px; }
+            .info-panel p { font-size: 11px; line-height: 1.8; }
         }
     </style>
 </head>
@@ -710,6 +715,8 @@
 
         void main() {
             vec2 uv = vUv;
+            // On mobile (portrait), shift visual center up slightly
+            float mobileShift = uResolution.x < uResolution.y ? -0.06 : 0.0;
             vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
 
             // Flashlight illumination
@@ -735,11 +742,12 @@
             }
             else if (uRoomType == 1) {
                 // Artwork
-                if (uArtType == 0) artVal = jellyfish(uv, uTime);
-                else if (uArtType == 1) artVal = maze(uv, uTime);
-                else if (uArtType == 2) artVal = rain(uv, uTime);
-                else if (uArtType == 3) artVal = waveInterference(uv, uTime);
-                else if (uArtType == 4) artVal = heartbeat(uv, uTime);
+                vec2 artUv = vec2(uv.x, uv.y + mobileShift);
+                if (uArtType == 0) artVal = jellyfish(artUv, uTime);
+                else if (uArtType == 1) artVal = maze(artUv, uTime);
+                else if (uArtType == 2) artVal = rain(artUv, uTime);
+                else if (uArtType == 3) artVal = waveInterference(artUv, uTime);
+                else if (uArtType == 4) artVal = heartbeat(artUv, uTime);
             }
             else if (uRoomType == 2) {
                 // Quote — gentle flowing particles
@@ -829,7 +837,7 @@
 
     // ===== HERO TEXT — rendered as DOM overlay =====
     const heroTitle = document.createElement('div');
-    heroTitle.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:50;pointer-events:none;transition:opacity 0.8s;';
+    heroTitle.style.cssText = 'position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:50;pointer-events:none;transition:opacity 0.8s;';
     heroTitle.innerHTML = `
         <h1 style="font-family:var(--serif);font-size:clamp(48px,10vw,100px);font-weight:300;font-style:italic;letter-spacing:0.1em;opacity:0.8;mix-blend-mode:screen;">
             <span class="en">Untitled. Still.</span>
@@ -850,15 +858,15 @@
 
     // Quote overlay
     const quoteEl = document.createElement('div');
-    quoteEl.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:50;pointer-events:none;transition:opacity 1.2s;opacity:0;max-width:480px;';
+    quoteEl.style.cssText = 'position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:50;pointer-events:none;transition:opacity 1.2s;opacity:0;max-width:480px;padding:0 24px;';
     quoteEl.innerHTML = '<p style="font-size:clamp(16px,2.5vw,22px);font-weight:300;font-style:italic;line-height:2.4;color:rgba(255,255,255,0.5);mix-blend-mode:screen;"></p>';
     document.body.appendChild(quoteEl);
 
     // End overlay
     const endEl = document.createElement('div');
-    endEl.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:50;pointer-events:none;transition:opacity 1.2s;opacity:0;';
+    endEl.style.cssText = 'position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:50;pointer-events:none;transition:opacity 1.2s;opacity:0;';
     endEl.innerHTML = `
-        <p style="font-size:15px;font-style:italic;color:rgba(255,255,255,0.4);line-height:2.4;max-width:380px;"></p>
+        <p style="font-size:clamp(16px,2.5vw,22px);font-style:italic;color:rgba(255,255,255,0.4);line-height:2.4;max-width:380px;"></p>
         <a href="#" onclick="targetRoom=0;totalProgress=0;return false;" style="display:inline-block;margin-top:40px;font-family:var(--mono);font-size:10px;color:var(--accent);text-decoration:none;letter-spacing:0.2em;padding:10px 28px;border:1px solid rgba(201,168,124,0.2);pointer-events:auto;cursor:pointer;">
             <span class="en">↺ RESTART</span>
             <span class="zh">↺ 重新播放</span>
