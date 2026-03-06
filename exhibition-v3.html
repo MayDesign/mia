@@ -571,38 +571,44 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            // Scale to fit, center slightly above middle
             vec2 suv = (uv - 0.5) * 1.6 + 0.5;
-            vec2 c = vec2(0.5, 0.38);
+            vec2 c = vec2(0.5, 0.42);
             float breath = sin(t * 0.8) * 0.05 + 0.95;
 
-            // Bell — glowing dome
+            // Bell — perfect circle, glowing
             vec2 p = suv - c;
-            p.x /= breath;
-            float bellDist = length(p);
-            float bell = smoothstep(0.18, 0.17, bellDist) * 0.4;
+            float bellDist = length(p / breath);
+            float bell = smoothstep(0.15, 0.14, bellDist) * 0.4;
             bell += exp(-bellDist * bellDist * 200.0) * 0.2;
 
-            // Rim — bright edge ring
-            float rim = exp(-abs(bellDist - 0.17) * 200.0) * 0.6;
+            // Rim — bright circle edge
+            float rim = exp(-abs(bellDist - 0.14) * 200.0) * 0.6;
 
-            // Tentacles — 8 flowing strands
+            // Tentacles — radiate outward from circle edge in all directions
             float tent = 0.0;
-            for (float i = 0.0; i < 8.0; i++) {
-                float angle = (i / 8.0) * 3.14159 + 3.14159;
-                float baseX = c.x + cos(angle) * 0.1 * breath;
-                float baseY = c.y + 0.03;
+            for (float i = 0.0; i < 16.0; i++) {
+                float angle = (i / 16.0) * 6.2832;
+                float baseX = c.x + cos(angle) * 0.14 * breath;
+                float baseY = c.y + sin(angle) * 0.14 * breath;
+                float dirX = cos(angle);
+                float dirY = sin(angle);
                 for (float s = 0.0; s < 20.0; s++) {
                     float ratio = s / 20.0;
-                    float sway = sin(t * 0.8 + ratio * 4.0 + i * 0.9) * ratio * 0.06;
-                    vec2 segPos = vec2(baseX + sway, baseY + ratio * 0.32);
+                    float sway = sin(t * 0.8 + ratio * 4.0 + i * 0.9) * ratio * 0.04;
+                    // Perpendicular sway
+                    float swayX = -dirY * sway;
+                    float swayY = dirX * sway;
+                    vec2 segPos = vec2(
+                        baseX + dirX * ratio * 0.25 + swayX,
+                        baseY + dirY * ratio * 0.25 + swayY
+                    );
                     float segDist = length(suv - segPos);
                     tent += exp(-segDist * segDist * 15000.0) * 0.03 * (1.0 - ratio * 0.7);
                 }
             }
 
             // Inner glow pulse
-            float innerGlow = exp(-length(suv - c + vec2(0.0, -0.02)) * 8.0) * (0.15 + sin(t * 0.8) * 0.08);
+            float innerGlow = exp(-length(suv - c) * 8.0) * (0.15 + sin(t * 0.8) * 0.08);
 
             return bell + rim + tent + innerGlow;
         }
