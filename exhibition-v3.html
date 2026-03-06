@@ -464,7 +464,7 @@
         // === DUST PARTICLES ===
         float dust(vec2 uv, float t) {
             float d = 0.0;
-            for (float i = 0.0; i < 30.0; i++) {
+            for (float i = 0.0; i < 15.0; i++) {
                 vec2 pos = vec2(
                     fract(sin(i * 127.1 + t * 0.02) * 43758.5453),
                     fract(sin(i * 269.5 + t * 0.015) * 43758.5453)
@@ -671,11 +671,11 @@
 
             // The key effect: artwork is only visible where the flashlight shines
             // But with a softer, wider reveal radius than the sharp beam
-            float revealRadius = exp(-length((uv - uMouse) * aspect) * 1.0) * 1.8;
+            float revealRadius = exp(-length((uv - uMouse) * aspect) * 0.6) * 2.0;
             float artReveal = clamp(revealRadius, 0.0, 1.0);
 
             // Combine: dark base + art revealed by light + dust
-            color += artColor * artVal * artReveal * 2.5;
+            color += artColor * artVal * artReveal * 3.5;
             color += vec3(1.0, 0.95, 0.85) * dustVal * 0.3;
 
             // Subtle warm light tint in beam
