@@ -390,15 +390,15 @@
     }
 
     let lastRoomChangeTime = 0;
-    const ROOM_COOLDOWN = 1200; // ms — full cooldown between room changes
+    const ROOM_COOLDOWN = 900;
 
     window.addEventListener('wheel', e => {
         e.preventDefault();
         const now = performance.now();
         // Ignore all wheel events during cooldown
         if (now - lastRoomChangeTime < ROOM_COOLDOWN) return;
-        // Only respond to significant delta (ignore tiny inertia ticks)
-        if (Math.abs(e.deltaY) < 10) return;
+        // Only respond to meaningful delta
+        if (Math.abs(e.deltaY) < 2) return;
         nextRoom(e.deltaY > 0 ? 1 : -1);
     }, { passive: false });
 
