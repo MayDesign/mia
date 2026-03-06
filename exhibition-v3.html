@@ -953,15 +953,15 @@
             audioBtn.textContent = '))) on';
             audioBtn.style.color = 'rgba(201,168,124,0.5)';
             // Remove listeners once started
-            ['click','wheel','keydown','touchstart'].forEach(ev =>
+            ['click','wheel','keydown','touchstart','mousemove'].forEach(ev =>
                 window.removeEventListener(ev, startBgm));
         }).catch(() => {});
     }
 
     // Try immediately on load
     startBgm();
-    // Fallback: browser blocks autoplay, so retry on first real interaction
-    ['click','wheel','keydown','touchstart'].forEach(ev =>
+    // Fallback: browser blocks autoplay, so retry on ANY interaction
+    ['click','wheel','keydown','touchstart','mousemove'].forEach(ev =>
         window.addEventListener(ev, startBgm));
 
     const audioBtn = document.createElement('button');
