@@ -88,21 +88,15 @@
     <script>
         // Language toggle
         const langBtn = document.getElementById('langBtn');
-        let isEnglish = true;
-        
-        function setLang(en) {
-            isEnglish = en;
-            document.querySelectorAll('.en').forEach(el => el.style.display = en ? 'inline' : 'none');
-            document.querySelectorAll('.zh').forEach(el => el.style.display = en ? 'none' : 'inline');
-            langBtn.textContent = en ? '中文' : 'EN';
-            localStorage.setItem('mia-lang', en ? 'en' : 'zh');
-        }
-        
-        langBtn.addEventListener('click', () => setLang(!isEnglish));
-        
-        // Check saved preference
         const savedLang = localStorage.getItem('mia-lang');
-        setLang(savedLang !== 'zh');
+        if (savedLang === 'zh') { document.documentElement.lang = 'zh'; langBtn.textContent = 'EN'; }
+        
+        langBtn.addEventListener('click', () => {
+            const isZh = document.documentElement.lang === 'zh';
+            document.documentElement.lang = isZh ? 'en' : 'zh';
+            langBtn.textContent = isZh ? '中文' : 'EN';
+            localStorage.setItem('mia-lang', isZh ? 'en' : 'zh');
+        });
 
         // Scroll animations
         const observer = new IntersectionObserver((entries) => {
