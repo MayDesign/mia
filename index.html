@@ -59,41 +59,7 @@
             z-index: 9999;
         }
 
-        /* Liquid cursor system */
-        .cursor-system {
-            position: fixed;
-            top: 0; left: 0;
-            pointer-events: none;
-            z-index: 10000;
-            mix-blend-mode: difference;
-        }
-        
-        .cursor-main {
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 50%;
-            position: fixed;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background 0.3s;
-        }
-        
-        .cursor-main.hovering {
-            width: 60px;
-            height: 60px;
-            background: transparent;
-            border: 1px solid var(--accent);
-        }
-        
-        .cursor-trail {
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            position: fixed;
-            opacity: 0.3;
-            transform: translate(-50%, -50%);
-        }
+        /* Liquid cursor — loaded from cursor.js */
         
         /* Parallax layers */
         .parallax-layer {
@@ -1051,12 +1017,7 @@
     </style>
 </head>
 <body>
-    <div class="cursor-system">
-        <div class="cursor-main" id="cursorMain"></div>
-        <div class="cursor-trail" id="cursorTrail1"></div>
-        <div class="cursor-trail" id="cursorTrail2"></div>
-        <div class="cursor-trail" id="cursorTrail3"></div>
-    </div>
+    <script src="cursor.js"></script>
 
     <!-- Landing -->
     <section class="landing parallax-layer" data-speed="0.5">
@@ -1428,58 +1389,6 @@
         themeBtn.onclick = () => setTheme(html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
         const savedTheme = localStorage.getItem(THEME_KEY);
         if (savedTheme) setTheme(savedTheme);
-
-        // ========== Liquid Cursor System ==========
-        const cursorMain = document.getElementById('cursorMain');
-        const cursorTrails = [
-            document.getElementById('cursorTrail1'),
-            document.getElementById('cursorTrail2'),
-            document.getElementById('cursorTrail3')
-        ];
-
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-        const trailPos = cursorTrails.map(() => ({ x: 0, y: 0 }));
-
-        // Only enable cursor effects on non-touch devices
-        const isTouch = window.matchMedia('(pointer: coarse)').matches;
-
-        if (!isTouch) {
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-
-            // Hover effects on interactive elements
-            document.querySelectorAll('a, button, .nav-item, .entry, .tool, .diary-node').forEach(el => {
-                el.addEventListener('mouseenter', () => cursorMain.classList.add('hovering'));
-                el.addEventListener('mouseleave', () => cursorMain.classList.remove('hovering'));
-            });
-
-            // Animate cursor
-            function animateCursor() {
-                // Main cursor follows with spring physics
-                cursorX += (mouseX - cursorX) * 0.15;
-                cursorY += (mouseY - cursorY) * 0.15;
-                cursorMain.style.left = cursorX + 'px';
-                cursorMain.style.top = cursorY + 'px';
-
-                // Trails follow with increasing delay
-                trailPos.forEach((pos, i) => {
-                    const delay = (i + 1) * 0.08;
-                    pos.x += (cursorX - pos.x) * delay;
-                    pos.y += (cursorY - pos.y) * delay;
-                    cursorTrails[i].style.left = pos.x + 'px';
-                    cursorTrails[i].style.top = pos.y + 'px';
-                    cursorTrails[i].style.opacity = 0.4 - (i * 0.1);
-                });
-
-                requestAnimationFrame(animateCursor);
-            }
-            animateCursor();
-        } else {
-            document.querySelector('.cursor-system').style.display = 'none';
-        }
 
         // ========== GSAP ScrollTrigger Setup ==========
         gsap.registerPlugin(ScrollTrigger);
