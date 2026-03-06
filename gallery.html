@@ -28,6 +28,7 @@
             height: 100vh;
             overflow-y: auto;
             scroll-snap-type: y mandatory;
+            scroll-snap-stop: always;
             scroll-behavior: smooth;
         }
         .page {
@@ -263,6 +264,22 @@
             cursor: pointer;
         }
 
+        /* Cursor light */
+        .cursor-light {
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 50;
+            background: radial-gradient(circle, rgba(255,248,230,0.06) 0%, rgba(255,248,230,0.02) 30%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            mix-blend-mode: screen;
+        }
+        body { cursor: none; }
+        .hud a, .hud button, .exit-link { cursor: none; }
+
         .page-counter {
             position: fixed;
             right: 36px;
@@ -301,6 +318,7 @@
     </style>
 </head>
 <body>
+    <div class="cursor-light" id="cursorLight"></div>
     <div class="hud hud-left"><a href="index.html">MIA</a></div>
     <div class="hud hud-right"><button id="langBtn">中文</button></div>
     <div class="page-counter" id="counter"></div>
@@ -404,6 +422,24 @@
     </div>
 
     <script>
+    // Cursor light
+    const cursorLight = document.getElementById('cursorLight');
+    document.addEventListener('mousemove', e => {
+        cursorLight.style.left = e.clientX + 'px';
+        cursorLight.style.top = e.clientY + 'px';
+    });
+    if ('ontouchstart' in window) cursorLight.style.display = 'none';
+
+    // Scroll lock — one page per scroll
+    const pagesEl = document.getElementById('pages');
+    let scrollLocked = false;
+    pagesEl.addEventListener('wheel', e => {
+        if (scrollLocked) { e.preventDefault(); return; }
+        scrollLocked = true;
+        setTimeout(() => { scrollLocked = false; }, 1200);
+    }, { passive: false });
+
+    // Lang
     const html = document.documentElement;
     const langBtn = document.getElementById('langBtn');
     if (localStorage.getItem('mia-lang') === 'zh') { html.lang = 'zh'; langBtn.textContent = 'EN'; }
