@@ -98,6 +98,14 @@
             document.getElementById('readingProgress').style.width = (prog * 100) + '%';
         });
 
+        // Fade-in observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
         // Theme
         if (localStorage.getItem('mia-theme') === 'light') {
             document.documentElement.setAttribute('data-theme', 'light');
