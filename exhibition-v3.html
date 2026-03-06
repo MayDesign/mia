@@ -336,34 +336,48 @@
     const riDots = riContainer.querySelectorAll('.ri-dot');
 
     // ===== SCROLL =====
-    // Accumulated scroll delta for discrete room changes
+    // Debounced room switching — one room per scroll gesture
+    let scrollLocked = false;
+    let scrollLockTimer = null;
+
+    function nextRoom(dir) {
+        if (scrollLocked) return;
+        const next = targetRoom + dir;
+        if (next < 0 || next > rooms.length - 1) return;
+        targetRoom = next;
+        scrollLocked = true;
+        // Lock for 600ms to prevent double-triggering
+        clearTimeout(scrollLockTimer);
+        scrollLockTimer = setTimeout(() => { scrollLocked = false; }, 600);
+    }
+
+    // Track accumulated delta for touchpad (small deltaY values)
     let scrollAccum = 0;
-    const SCROLL_THRESHOLD = 60; // pixels of scroll to trigger room change
+    let scrollAccumTimer = null;
+    const SCROLL_THRESHOLD = 50;
 
     window.addEventListener('wheel', e => {
         e.preventDefault();
+        if (scrollLocked) return;
+
         scrollAccum += e.deltaY;
+        clearTimeout(scrollAccumTimer);
+        scrollAccumTimer = setTimeout(() => { scrollAccum = 0; }, 150);
 
         if (Math.abs(scrollAccum) > SCROLL_THRESHOLD) {
-            const dir = scrollAccum > 0 ? 1 : -1;
-            targetRoom = Math.max(0, Math.min(rooms.length - 1, targetRoom + dir));
+            nextRoom(scrollAccum > 0 ? 1 : -1);
             scrollAccum = 0;
         }
     }, { passive: false });
 
     let touchY = 0;
-    let touchAccum = 0;
-    window.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchAccum = 0; });
+    window.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; });
     window.addEventListener('touchmove', e => {
         e.preventDefault();
         const dy = touchY - e.touches[0].clientY;
         touchY = e.touches[0].clientY;
-        touchAccum += dy;
-
-        if (Math.abs(touchAccum) > 40) {
-            const dir = touchAccum > 0 ? 1 : -1;
-            targetRoom = Math.max(0, Math.min(rooms.length - 1, targetRoom + dir));
-            touchAccum = 0;
+        if (Math.abs(dy) > 30) {
+            nextRoom(dy > 0 ? 1 : -1);
         }
     }, { passive: false });
 
@@ -371,10 +385,10 @@
     window.addEventListener('keydown', e => {
         if (e.key === 'ArrowDown' || e.key === ' ') {
             e.preventDefault();
-            targetRoom = Math.min(rooms.length - 1, targetRoom + 1);
+            nextRoom(1);
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            targetRoom = Math.max(0, targetRoom - 1);
+            nextRoom(-1);
         }
     });
 
@@ -836,8 +850,8 @@
 
         // Smooth snap to target room
         const diff = targetRoom - totalProgress;
-        totalProgress += diff * 0.06; // smooth ease
-        if (Math.abs(diff) < 0.001) totalProgress = targetRoom;
+        totalProgress += diff * 0.12; // snappy ease
+        if (Math.abs(diff) < 0.002) totalProgress = targetRoom;
 
         // Hide hint after first scroll
         if (totalProgress > 0.3) hint.style.opacity = '0';
