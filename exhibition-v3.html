@@ -572,78 +572,66 @@
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
             vec2 suv = (uv - 0.5) * 1.8 + 0.5;
-            vec2 c = vec2(0.5, 0.38);
+            vec2 c = vec2(0.5, 0.35);
             float slowT = t * 0.4;
-            float breath = sin(slowT * 1.5) * 0.06 + 0.94;
+            float pulse = sin(slowT * 1.5);
+            float breath = 1.0 + pulse * 0.05;
 
-            // --- Bell: layered SDF with organic distortion ---
             vec2 p = suv - c;
-            p.x /= breath;
             float ang = atan(p.y, p.x);
-            float r = length(p);
+            float r = length(vec2(p.x / breath, p.y));
 
-            // Organic wobble on the bell edge
-            float wobble = sin(ang * 3.0 + slowT * 2.0) * 0.008
-                         + sin(ang * 7.0 - slowT * 1.5) * 0.004
-                         + sin(ang * 13.0 + slowT * 3.0) * 0.002;
-            float bellR = 0.14 + wobble;
+            // Bell: smooth dome, gentle undulation
+            float bellR = 0.14 + sin(ang * 4.0 + slowT) * 0.003;
+            // Make it dome-shaped: wider at equator, narrower at top
+            float dome = bellR * (1.0 + smoothstep(0.0, 0.14, -p.y) * 0.25);
 
-            // Dome shape: top half is rounder
-            float dome = bellR * (1.0 + smoothstep(0.0, -0.15, p.y) * 0.3);
+            // Luminous outline
+            float outline = exp(-pow(r - dome, 2.0) * 18000.0) * 0.5;
+            // Second softer glow layer
+            float outerGlow = exp(-pow(r - dome, 2.0) * 2000.0) * 0.12;
 
-            // Luminous edge — the defining outline
-            float edge = exp(-pow(r - dome, 2.0) * 12000.0) * 0.55;
+            // Translucent interior
+            float interior = smoothstep(dome * 0.98, dome * 0.2, r) * 0.04;
+            // Subtle radial shimmer inside
+            float shimmer = sin(ang * 8.0 - slowT * 2.0) * sin(r * 50.0) * 0.02;
+            shimmer *= smoothstep(dome, dome * 0.4, r);
 
-            // Ghost fill — very subtle inner gradient
-            float fill = smoothstep(dome, dome * 0.3, r) * 0.06;
+            // Core glow
+            float core = exp(-r * r * 400.0) * (0.12 + pulse * 0.05);
 
-            // Internal flowing pattern — like organs visible through skin
-            float inner = 0.0;
-            for (float i = 0.0; i < 4.0; i++) {
-                float a = ang + i * 1.5708 + slowT * 0.5;
-                float wave = sin(a * 2.0 + r * 40.0 - slowT * 3.0);
-                inner += wave * exp(-r * 10.0) * 0.03;
-            }
-            inner *= smoothstep(dome, dome * 0.5, r);
-
-            // --- Tentacles: flowing curves using sine composition ---
+            // Tentacles: smooth continuous curves
             float tent = 0.0;
-            for (float i = 0.0; i < 5.0; i++) {
-                float offset = (i - 2.0) * 0.035 * breath;
-                float baseX = c.x + offset;
-                float baseY = c.y + dome + 0.02;
+            for (float i = 0.0; i < 7.0; i++) {
+                float spread = (i - 3.0) / 3.0 * 0.06 * breath;
+                float baseX = c.x + spread;
+                float baseY = c.y + dome + 0.01;
+                float tentLen = 0.35 + sin(i * 2.3) * 0.08;
 
-                for (float s = 0.0; s < 30.0; s++) {
-                    float ratio = s / 30.0;
-                    float len = 0.45;
-                    float y = baseY + ratio * len;
-
-                    // Layered sine waves for organic flow
-                    float sway = sin(slowT + ratio * 6.0 + i * 1.7) * ratio * 0.04;
-                    sway += sin(slowT * 0.7 + ratio * 3.5 + i * 3.1) * ratio * 0.025;
-                    sway += sin(slowT * 1.3 + ratio * 9.0 + i * 0.5) * ratio * 0.01;
-
+                for (float s = 0.0; s < 40.0; s++) {
+                    float ratio = s / 40.0;
+                    float y = baseY + ratio * tentLen;
+                    float sway = sin(slowT * 1.2 + ratio * 4.5 + i * 1.4) * ratio * 0.04
+                               + sin(slowT * 0.7 + ratio * 7.0 + i * 2.9) * ratio * 0.015;
                     float x = baseX + sway;
                     float d = length(suv - vec2(x, y));
-
-                    // Fade and thin toward tips
-                    float fade = (1.0 - ratio * 0.8);
-                    float width = 30000.0 + ratio * 40000.0;
-                    tent += exp(-d * d * width) * 0.035 * fade;
+                    float w = mix(40000.0, 90000.0, ratio); // thin toward tip
+                    float fade = 1.0 - ratio * 0.85;
+                    tent += exp(-d * d * w) * 0.025 * fade;
                 }
             }
 
-            // --- Ambient particles: tiny drifting specks ---
+            // Ambient particles
             float specks = 0.0;
-            for (float i = 0.0; i < 8.0; i++) {
-                vec2 sp = vec2(
-                    c.x + sin(slowT * 0.3 + i * 5.7) * 0.2,
-                    c.y + cos(slowT * 0.2 + i * 3.3) * 0.25 + 0.1
+            for (float i = 0.0; i < 6.0; i++) {
+                vec2 sp = c + vec2(
+                    sin(slowT * 0.2 + i * 4.7) * 0.22,
+                    cos(slowT * 0.15 + i * 3.1) * 0.28 + 0.08
                 );
-                specks += exp(-length(suv - sp) * 80.0) * 0.02;
+                specks += exp(-length(suv - sp) * 100.0) * 0.015;
             }
 
-            return edge + fill + max(inner, 0.0) + tent + specks;
+            return outline + outerGlow + interior + max(shimmer, 0.0) + core + tent + specks;
         }
 
         // === MAZE (Art 1) ===
