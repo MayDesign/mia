@@ -367,20 +367,20 @@
 
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
 
-    // Camera path — a gentle curve through space
+    // Camera path — structured corridor, alternating left-right with gentle curves
     const pathPoints = [
-        new THREE.Vector3(0, 0, 0),      // Hero
-        new THREE.Vector3(0, 0, -15),     // Approach 1
-        new THREE.Vector3(-3, 1, -30),    // Art 1
-        new THREE.Vector3(0, 0, -45),     // Quote 1
-        new THREE.Vector3(4, -1, -60),    // Art 2
-        new THREE.Vector3(0, 0, -75),     // Quote 2
-        new THREE.Vector3(-2, 2, -90),    // Art 3
-        new THREE.Vector3(0, 0, -105),    // Quote 3
-        new THREE.Vector3(3, -1, -120),   // Art 4
-        new THREE.Vector3(0, 0, -135),    // Quote 4
-        new THREE.Vector3(-1, 1, -150),   // Art 5
-        new THREE.Vector3(0, 0, -170),    // End
+        new THREE.Vector3(0, 0, 0),       // Hero
+        new THREE.Vector3(0, 0, -12),      // Approach
+        new THREE.Vector3(-3, 0, -25),     // Art 1 (left)
+        new THREE.Vector3(0, 0, -38),      // Transition
+        new THREE.Vector3(3, 0, -51),      // Art 2 (right)
+        new THREE.Vector3(0, 0, -64),      // Transition
+        new THREE.Vector3(-3, 0, -77),     // Art 3 (left)
+        new THREE.Vector3(0, 0, -90),      // Transition
+        new THREE.Vector3(3, 0, -103),     // Art 4 (right)
+        new THREE.Vector3(0, 0, -116),     // Transition
+        new THREE.Vector3(-3, 0, -129),    // Art 5 (left)
+        new THREE.Vector3(0, 0, -145),     // End
     ];
     const cameraPath = new THREE.CatmullRomCurve3(pathPoints);
 
@@ -428,6 +428,40 @@
     });
     scene.add(new THREE.Points(ambGeo, ambMat));
 
+    // ===== CORRIDOR GUIDE LINES =====
+    // Subtle lines along the path to give structure
+    const guideMat = new THREE.LineBasicMaterial({
+        color: 0xC9A87C,
+        transparent: true,
+        opacity: 0.04
+    });
+    [-8, 8].forEach(xOffset => {
+        const guideGeo = new THREE.BufferGeometry();
+        const guidePoints = [];
+        for (let i = 0; i <= 100; i++) {
+            const t = i / 100;
+            const p = cameraPath.getPoint(t);
+            guidePoints.push(p.x + xOffset, p.y - 3, p.z);
+        }
+        guideGeo.setAttribute('position', new THREE.Float32BufferAttribute(guidePoints, 3));
+        scene.add(new THREE.Line(guideGeo, guideMat));
+    });
+
+    // Floor reference lines
+    for (let i = 0; i < 50; i++) {
+        const z = -i * 3.6;
+        const lineGeo = new THREE.BufferGeometry();
+        lineGeo.setAttribute('position', new THREE.Float32BufferAttribute([
+            -8, -3, z, 8, -3, z
+        ], 3));
+        const lineMat = new THREE.LineBasicMaterial({
+            color: 0xC9A87C,
+            transparent: true,
+            opacity: 0.02
+        });
+        scene.add(new THREE.Line(lineGeo, lineMat));
+    }
+
     // ===== ARTWORK OBJECTS =====
     // Each artwork is a glowing orb/sculpture at specific positions along the path
     const artObjects = [];
@@ -437,8 +471,8 @@
         const pos = cameraPath.getPoint(t);
         const group = new THREE.Group();
         group.position.copy(pos);
-        // Offset to the side so camera passes by
-        group.position.x += (index % 2 === 0 ? -4 : 4);
+        // Alternate left-right, consistent offset
+        group.position.x += (index % 2 === 0 ? -5 : 5);
 
         const color = artworks[index].color;
 
