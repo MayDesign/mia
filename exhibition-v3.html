@@ -366,18 +366,33 @@
     }, { passive: false });
 
     let touchY = 0;
-    let touchStartRoom = 0;
+    let touchActive = false;
     window.addEventListener('touchstart', e => {
         touchY = e.touches[0].clientY;
-        touchStartRoom = targetRoom;
+        touchActive = true;
+        // Update flashlight position to finger
+        mx = e.touches[0].clientX;
+        my = e.touches[0].clientY;
     });
     window.addEventListener('touchmove', e => {
         e.preventDefault();
+        // Update flashlight position to finger
+        mx = e.touches[0].clientX;
+        my = e.touches[0].clientY;
+
+        if (!touchActive) return;
         const dy = touchY - e.touches[0].clientY;
-        if (Math.abs(dy) > 60 && targetRoom === touchStartRoom) {
-            nextRoom(dy > 0 ? 1 : -1);
+        if (Math.abs(dy) > 60) {
+            const now = performance.now();
+            if (now - lastRoomChangeTime >= ROOM_COOLDOWN) {
+                nextRoom(dy > 0 ? 1 : -1);
+            }
+            touchActive = false;
         }
     }, { passive: false });
+    window.addEventListener('touchend', () => {
+        touchActive = false;
+    });
 
     // Keyboard navigation
     window.addEventListener('keydown', e => {
