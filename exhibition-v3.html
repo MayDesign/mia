@@ -920,20 +920,24 @@
     bgm.volume = 0;
     let bgmStarted = false;
 
-    // Auto-play on first interaction
-    function autoStartBgm() {
+    function startBgm() {
         if (bgmStarted) return;
         bgm.play().then(() => {
             bgmStarted = true;
             fadeAudio(bgm, 0.3, 3000);
             audioBtn.textContent = '))) on';
             audioBtn.style.color = 'rgba(201,168,124,0.5)';
+            // Remove listeners once started
+            ['click','wheel','keydown','touchstart'].forEach(ev =>
+                window.removeEventListener(ev, startBgm));
         }).catch(() => {});
     }
-    window.addEventListener('wheel', autoStartBgm, { once: false });
-    window.addEventListener('mousemove', autoStartBgm, { once: false });
-    window.addEventListener('touchstart', autoStartBgm, { once: false });
-    window.addEventListener('keydown', autoStartBgm, { once: false });
+
+    // Try immediately on load
+    startBgm();
+    // Fallback: browser blocks autoplay, so retry on first real interaction
+    ['click','wheel','keydown','touchstart'].forEach(ev =>
+        window.addEventListener(ev, startBgm));
 
     const audioBtn = document.createElement('button');
     audioBtn.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:200;background:none;border:none;color:rgba(201,168,124,0.35);font-family:var(--mono);font-size:11px;letter-spacing:0.15em;cursor:pointer;transition:all 0.4s;pointer-events:auto;padding:8px;';
