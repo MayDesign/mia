@@ -285,6 +285,24 @@
             position: relative;
         }
 
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 200px;
+            background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        .section-header.visible::before {
+            opacity: 1;
+        }
+
         .section-num {
             font-size: 100px;
             font-family: var(--serif);
@@ -304,6 +322,46 @@
             font-weight: 300;
             font-style: italic;
             position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .section-header.visible .section-title::after {
+            width: 100%;
+        }
+
+        /* Section backgrounds — subtle depth variation */
+        .section:nth-child(odd) {
+            background: var(--bg);
+        }
+
+        .section:nth-child(even) {
+            background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 50%, var(--bg) 100%);
+        }
+
+        /* Ambient section divider */
+        .section + .section::before {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 1px;
+            background: var(--accent);
+            opacity: 0.15;
+            margin: 0 auto;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         /* Writing entries - staggered layout */
