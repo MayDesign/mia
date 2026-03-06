@@ -575,40 +575,53 @@
             vec2 c = vec2(0.5, 0.42);
             float breath = sin(t * 0.8) * 0.05 + 0.95;
 
-            // Bell — perfect circle, glowing
-            vec2 p = suv - c;
+            // Aspect ratio correction for perfect circle
+            float aspect = uResolution.x / uResolution.y;
+            vec2 p = (suv - c) * vec2(aspect, 1.0);
             float bellDist = length(p / breath);
-            float bell = smoothstep(0.15, 0.14, bellDist) * 0.4;
-            bell += exp(-bellDist * bellDist * 200.0) * 0.2;
 
-            // Rim — bright circle edge
-            float rim = exp(-abs(bellDist - 0.14) * 200.0) * 0.6;
+            // Bell — radial gradient: bright center, fading out
+            float core = exp(-bellDist * bellDist * 80.0) * 0.5;  // bright center
+            float mid = exp(-bellDist * bellDist * 20.0) * 0.15;  // soft mid
+            float bell = core + mid;
 
-            // Tentacles — radiate outward from circle edge in all directions
+            // Rim — subtle edge
+            float radius = 0.14;
+            float rim = exp(-pow(bellDist - radius, 2.0) * 3000.0) * 0.3;
+
+            // Tentacles — 16 radial, each with random length/phase
             float tent = 0.0;
             for (float i = 0.0; i < 16.0; i++) {
                 float angle = (i / 16.0) * 6.2832;
-                float baseX = c.x + cos(angle) * 0.14 * breath;
-                float baseY = c.y + sin(angle) * 0.14 * breath;
+                // Irregular spacing
+                angle += sin(i * 3.7) * 0.12;
                 float dirX = cos(angle);
-                float dirY = sin(angle);
+                float dirY = sin(angle) / aspect; // aspect correct direction
+                float baseX = c.x + dirX * radius * breath;
+                float baseY = c.y + dirY * radius * breath;
+
+                // Each tentacle has different length and speed
+                float tentLen = 0.18 + sin(i * 2.3 + 1.0) * 0.06;
+                float speed = 0.6 + sin(i * 1.7) * 0.3;
+
                 for (float s = 0.0; s < 20.0; s++) {
                     float ratio = s / 20.0;
-                    float sway = sin(t * 0.8 + ratio * 4.0 + i * 0.9) * ratio * 0.04;
-                    // Perpendicular sway
-                    float swayX = -dirY * sway;
-                    float swayY = dirX * sway;
+                    // Sway perpendicular to direction, irregular
+                    float sway = sin(t * speed + ratio * 4.0 + i * 0.9) * ratio * 0.03;
+                    sway += sin(t * speed * 0.6 + ratio * 7.0 + i * 2.3) * ratio * 0.012;
+                    float swayX = -sin(angle) * sway;
+                    float swayY = cos(angle) * sway / aspect;
                     vec2 segPos = vec2(
-                        baseX + dirX * ratio * 0.25 + swayX,
-                        baseY + dirY * ratio * 0.25 + swayY
+                        baseX + dirX * ratio * tentLen + swayX,
+                        baseY + dirY * ratio * tentLen + swayY
                     );
-                    float segDist = length(suv - segPos);
-                    tent += exp(-segDist * segDist * 15000.0) * 0.03 * (1.0 - ratio * 0.7);
+                    float segDist = length((suv - segPos) * vec2(aspect, 1.0));
+                    tent += exp(-segDist * segDist * 18000.0) * 0.025 * (1.0 - ratio * 0.7);
                 }
             }
 
             // Inner glow pulse
-            float innerGlow = exp(-length(suv - c) * 8.0) * (0.15 + sin(t * 0.8) * 0.08);
+            float innerGlow = exp(-bellDist * 12.0) * (0.1 + sin(t * 0.8) * 0.05);
 
             return bell + rim + tent + innerGlow;
         }
