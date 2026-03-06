@@ -344,20 +344,39 @@
         targetRoom = next;
         scrollLocked = true;
         clearTimeout(scrollLockTimer);
-        scrollLockTimer = setTimeout(() => { scrollLocked = false; }, 400);
+        // Lock for 800ms, then require 300ms of silence before accepting new scroll
+        scrollLockTimer = setTimeout(() => {
+            scrollSilenceStart = performance.now();
+            scrollLocked = false;
+        }, 800);
     }
 
     // Trackpad/mouse wheel — accumulate delta, debounce
     let scrollAccum = 0;
     let scrollAccumTimer = null;
+    let scrollSilenceStart = 0;
     const SCROLL_THRESHOLD = 40;
+    const SILENCE_REQUIRED = 250; // ms of no wheel events needed after unlock
+
+    let lastWheelTime = 0;
 
     window.addEventListener('wheel', e => {
         e.preventDefault();
+        const now = performance.now();
+
         if (scrollLocked) {
             scrollAccum = 0;
+            lastWheelTime = now;
             return;
         }
+
+        // After unlock, require a gap of silence (no wheel events for SILENCE_REQUIRED ms)
+        // This kills trackpad inertia carry-over
+        if (now - lastWheelTime > SILENCE_REQUIRED) {
+            // Fresh gesture — reset accumulator
+            scrollAccum = 0;
+        }
+        lastWheelTime = now;
 
         scrollAccum += e.deltaY;
         clearTimeout(scrollAccumTimer);
