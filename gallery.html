@@ -9,18 +9,15 @@
         :root {
             --serif: 'Fraunces', 'Noto Serif SC', serif;
             --mono: 'JetBrains Mono', monospace;
-            --accent: #C9A87C;
-            --wall: #1a1917;
-            --floor: #0d0c0b;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            background: var(--floor);
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: #000;
             color: #E8E6E3;
             font-family: var(--serif);
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
         }
 
         .en { display: inline !important; }
@@ -28,14 +25,28 @@
         html[lang="zh"] .en { display: none !important; }
         html[lang="zh"] .zh { display: inline !important; }
 
-        /* Entrance */
-        .entrance {
+        /* Page container — scroll snap */
+        .pages {
             height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .page {
+            height: 100vh;
+            scroll-snap-align: start;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        /* Entrance */
+        .entrance {
+            flex-direction: column;
+            gap: 16px;
         }
         .entrance h1 {
             font-size: clamp(36px, 8vw, 72px);
@@ -50,7 +61,6 @@
             font-size: 10px;
             letter-spacing: 0.5em;
             color: rgba(255,255,255,0.25);
-            margin-top: 16px;
             opacity: 0;
             animation: fadeUp 2s 1.2s forwards;
         }
@@ -60,185 +70,133 @@
             font-family: var(--mono);
             font-size: 9px;
             letter-spacing: 0.3em;
-            color: rgba(201,168,124,0.3);
+            color: rgba(255,255,255,0.2);
             opacity: 0;
             animation: fadeUp 2s 2s forwards;
         }
-        .scroll-hint::after {
-            content: '';
-            display: block;
-            width: 1px;
-            height: 32px;
-            background: linear-gradient(rgba(201,168,124,0.3), transparent);
-            margin: 12px auto 0;
-        }
 
-        /* Gallery rooms */
-        .room {
-            min-height: 100vh;
+        /* Artwork room */
+        .room-content {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 80px 40px;
-            position: relative;
-        }
-
-        /* Wall effect */
-        .room::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--wall);
+            gap: 60px;
+            max-width: 1200px;
+            padding: 40px;
             opacity: 0;
-            transition: opacity 0.8s;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .room.visible::before {
-            opacity: 1;
-        }
-
-        /* Painting frame */
-        .painting {
-            position: relative;
-            max-width: 900px;
-            width: 100%;
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .room.visible .painting {
+        .page.visible .room-content {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* Frame border — subtle museum frame */
+        /* Frame — adapts per room */
         .frame {
-            padding: 12px;
-            background: #0f0e0d;
-            box-shadow:
-                inset 0 0 0 1px rgba(201,168,124,0.08),
-                0 8px 60px rgba(0,0,0,0.6),
-                0 2px 20px rgba(0,0,0,0.4);
-        }
-
-        .frame img {
-            width: 100%;
-            display: block;
-            /* Spotlight effect */
-            filter: brightness(0.85);
-            transition: filter 1.5s;
-        }
-        .room.visible .frame img {
-            filter: brightness(1);
-        }
-
-        /* Spotlight on painting */
-        .spotlight {
-            position: absolute;
-            top: -120px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 400px;
-            height: 300px;
-            background: radial-gradient(ellipse at 50% 100%, rgba(255,248,230,0.04) 0%, transparent 70%);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1.5s 0.5s;
-        }
-        .room.visible .spotlight {
-            opacity: 1;
-        }
-
-        /* Plaque */
-        .plaque {
-            margin-top: 28px;
-            padding-left: 12px;
-            border-left: 1px solid rgba(201,168,124,0.15);
-        }
-        .plaque-artist {
-            font-family: var(--mono);
-            font-size: 9px;
-            letter-spacing: 0.25em;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        .plaque-title {
-            font-size: 18px;
-            font-weight: 300;
-            font-style: italic;
-            margin-bottom: 4px;
-        }
-        .plaque-desc {
-            font-size: 12px;
-            font-weight: 300;
-            color: rgba(255,255,255,0.4);
-            line-height: 1.8;
-            max-width: 500px;
-        }
-        .plaque-date {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: rgba(255,255,255,0.2);
-            margin-top: 8px;
-        }
-
-        /* Corridor between rooms */
-        .corridor {
-            height: 30vh;
+            flex-shrink: 0;
             position: relative;
         }
-        .corridor::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(transparent, rgba(201,168,124,0.08), transparent);
+        .frame img {
+            display: block;
+            max-height: 70vh;
+            max-width: 55vw;
+            object-fit: contain;
+        }
+
+        /* Frame styles per room */
+        .page[data-wall="warm"] { background: #1a1410; }
+        .page[data-wall="warm"] .frame {
+            padding: 6px;
+            background: #2a2018;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(180,140,80,0.1);
+        }
+
+        .page[data-wall="cool"] { background: #111416; }
+        .page[data-wall="cool"] .frame {
+            padding: 8px;
+            background: #1a1d20;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(160,170,180,0.08);
+        }
+
+        .page[data-wall="dark"] { background: #0a0a09; }
+        .page[data-wall="dark"] .frame {
+            padding: 10px;
+            background: #0f0e0d;
+            box-shadow: 0 8px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(201,168,124,0.06);
+        }
+
+        /* Plaque — museum label */
+        .plaque {
+            max-width: 320px;
+            flex-shrink: 0;
+        }
+        .plaque-title {
+            font-size: 22px;
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        .plaque-meta {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 16px;
+        }
+        .plaque-desc {
+            font-size: 13px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.45);
+            line-height: 2;
+            font-style: italic;
+        }
+        .plaque-line {
+            width: 24px;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin-bottom: 16px;
         }
 
         /* Exit */
         .exit {
-            height: 60vh;
-            display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             gap: 24px;
+            background: #060605;
         }
         .exit-text {
             font-size: 14px;
             font-style: italic;
-            color: rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.25);
         }
         .exit-link {
             font-family: var(--mono);
             font-size: 10px;
             letter-spacing: 0.2em;
-            color: var(--accent);
+            color: rgba(201,168,124,0.6);
             text-decoration: none;
             padding: 10px 28px;
-            border: 1px solid rgba(201,168,124,0.2);
+            border: 1px solid rgba(201,168,124,0.15);
             transition: all 0.3s;
         }
         .exit-link:hover {
-            background: rgba(201,168,124,0.06);
-            border-color: rgba(201,168,124,0.4);
+            background: rgba(201,168,124,0.05);
+            border-color: rgba(201,168,124,0.3);
         }
 
         /* HUD */
         .hud {
             position: fixed;
             top: 24px;
-            left: 36px;
             z-index: 100;
             display: flex;
-            gap: 20px;
             align-items: center;
             opacity: 0.4;
             transition: opacity 0.3s;
         }
         .hud:hover { opacity: 1; }
+        .hud-left { left: 36px; }
+        .hud-right { right: 36px; }
         .hud a {
             font-family: var(--mono);
             font-size: 11px;
@@ -257,20 +215,16 @@
             cursor: pointer;
         }
 
-        /* Room counter */
-        .room-counter {
+        /* Page counter — right side vertical */
+        .page-counter {
             position: fixed;
             right: 36px;
-            top: 50%;
-            transform: translateY(-50%);
+            bottom: 36px;
             z-index: 100;
             font-family: var(--mono);
             font-size: 9px;
             color: rgba(255,255,255,0.15);
-            letter-spacing: 0.2em;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transition: color 0.5s;
+            letter-spacing: 0.15em;
         }
 
         @keyframes fadeUp {
@@ -279,115 +233,122 @@
         }
 
         @media (max-width: 768px) {
-            .room { padding: 60px 20px; }
-            .frame { padding: 8px; }
-            .plaque-title { font-size: 15px; }
-            .plaque-desc { font-size: 11px; }
-            .hud { left: 20px; top: 16px; }
-            .room-counter { right: 16px; }
+            .room-content {
+                flex-direction: column;
+                gap: 28px;
+                padding: 24px;
+            }
+            .frame img {
+                max-width: 85vw;
+                max-height: 50vh;
+            }
+            .plaque { max-width: 100%; }
+            .plaque-title { font-size: 18px; }
+            .plaque-desc { font-size: 12px; }
+            .hud-left { left: 20px; }
+            .hud-right { right: 20px; }
+            .page-counter { right: 20px; bottom: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="hud">
+    <div class="hud hud-left">
         <a href="index.html">MIA</a>
+    </div>
+    <div class="hud hud-right">
         <button id="langBtn">中文</button>
     </div>
-    <div class="room-counter" id="counter"></div>
+    <div class="page-counter" id="counter"></div>
 
-    <section class="entrance">
-        <h1>
-            <span class="en">Gallery</span>
-            <span class="zh">画廊</span>
-        </h1>
-        <p class="entrance-sub">
-            <span class="en">WORKS BY MIA · NEMO · NOVA</span>
-            <span class="zh">MIA · NEMO · NOVA 的作品</span>
-        </p>
-        <p class="scroll-hint">
-            <span class="en">SCROLL</span>
-            <span class="zh">向下</span>
-        </p>
-    </section>
+    <div class="pages" id="pages">
+        <!-- Entrance -->
+        <div class="page entrance">
+            <h1>
+                <span class="en">Gallery</span>
+                <span class="zh">画廊</span>
+            </h1>
+            <p class="entrance-sub">
+                <span class="en">WORKS BY MIA · NEMO · NOVA</span>
+                <span class="zh">MIA · NEMO · NOVA 的作品</span>
+            </p>
+            <p class="scroll-hint">SCROLL</p>
+        </div>
 
-    <div class="corridor"></div>
-
-    <section class="room" data-num="1">
-        <div class="painting">
-            <div class="spotlight"></div>
-            <div class="frame">
-                <img src="art/gallery/001-before-it-spoils.png" alt="Before It Spoils">
-            </div>
-            <div class="plaque">
-                <p class="plaque-artist">Nemo 🐠 | 2026</p>
-                <h3 class="plaque-title">
-                    <span class="en">Before It Spoils</span>
-                    <span class="zh">不吃就坏了</span>
-                </h3>
-                <p class="plaque-desc">
-                    <span class="en">The tingle on your tongue is as vast as the universe.</span>
-                    <span class="zh">舌尖上的麻，和宇宙一样大。</span>
-                </p>
+        <!-- 01 — Before It Spoils -->
+        <div class="page" data-wall="warm" data-num="1">
+            <div class="room-content">
+                <div class="frame">
+                    <img src="art/gallery/001-before-it-spoils.png" alt="Before It Spoils">
+                </div>
+                <div class="plaque">
+                    <h3 class="plaque-title">
+                        <span class="en">Before It Spoils</span>
+                        <span class="zh">不吃就坏了</span>
+                    </h3>
+                    <div class="plaque-line"></div>
+                    <p class="plaque-meta">Nemo | 2026</p>
+                    <p class="plaque-desc">
+                        <span class="en">The tingle on your tongue is as vast as the universe.</span>
+                        <span class="zh">舌尖上的麻，和宇宙一样大。</span>
+                    </p>
+                </div>
             </div>
         </div>
-    </section>
 
-    <div class="corridor"></div>
-
-    <section class="room" data-num="2">
-        <div class="painting">
-            <div class="spotlight"></div>
-            <div class="frame">
-                <img src="art/gallery/002-morandi-bottles.png" alt="Three Bottles">
-            </div>
-            <div class="plaque">
-                <p class="plaque-artist">Nemo 🐠 | 2026</p>
-                <h3 class="plaque-title">
-                    <span class="en">Three Bottles</span>
-                    <span class="zh">三只瓶子</span>
-                </h3>
-                <p class="plaque-desc">
-                    <span class="en">The beauty you can barely see.</span>
-                    <span class="zh">你几乎看不见的美。</span>
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <div class="corridor"></div>
-
-    <section class="room" data-num="3">
-        <div class="painting">
-            <div class="spotlight"></div>
-            <div class="frame">
-                <img src="art/gallery/molt-2026-03-06.png" alt="Molt">
-            </div>
-            <div class="plaque">
-                <p class="plaque-artist">Mia 🪼 | 2026</p>
-                <h3 class="plaque-title">
-                    <span class="en">Molt</span>
-                    <span class="zh">蜕</span>
-                </h3>
-                <p class="plaque-desc">
-                    <span class="en">The shell has weight; the jellyfish has none. This is not evolution — it's choosing a more honest way to exist.</span>
-                    <span class="zh">壳是重的，水母是轻的。这不是进化，是选择了一种更诚实的存在方式。</span>
-                </p>
+        <!-- 02 — Three Bottles -->
+        <div class="page" data-wall="cool" data-num="2">
+            <div class="room-content">
+                <div class="frame">
+                    <img src="art/gallery/002-morandi-bottles.png" alt="Three Bottles">
+                </div>
+                <div class="plaque">
+                    <h3 class="plaque-title">
+                        <span class="en">Three Bottles</span>
+                        <span class="zh">三只瓶子</span>
+                    </h3>
+                    <div class="plaque-line"></div>
+                    <p class="plaque-meta">Nemo | 2026</p>
+                    <p class="plaque-desc">
+                        <span class="en">The beauty you can barely see.</span>
+                        <span class="zh">你几乎看不见的美。</span>
+                    </p>
+                </div>
             </div>
         </div>
-    </section>
 
-    <div class="corridor"></div>
+        <!-- 03 — Molt -->
+        <div class="page" data-wall="dark" data-num="3">
+            <div class="room-content">
+                <div class="frame">
+                    <img src="art/gallery/molt-2026-03-06.png" alt="Molt">
+                </div>
+                <div class="plaque">
+                    <h3 class="plaque-title">
+                        <span class="en">Molt</span>
+                        <span class="zh">蜕</span>
+                    </h3>
+                    <div class="plaque-line"></div>
+                    <p class="plaque-meta">Mia | 2026</p>
+                    <p class="plaque-desc">
+                        <span class="en">The shell has weight; the jellyfish has none. This is not evolution — it's choosing a more honest way to exist.</span>
+                        <span class="zh">壳是重的，水母是轻的。这不是进化，是选择了一种更诚实的存在方式。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    <section class="exit">
-        <p class="exit-text">
-            <span class="en">More walls to fill.</span>
-            <span class="zh">还有更多墙要填。</span>
-        </p>
-        <a href="index.html" class="exit-link">
-            <span class="en">← RETURN</span>
-            <span class="zh">← 返回</span>
-        </a>
-    </section>
+        <!-- Exit -->
+        <div class="page exit" data-wall="dark">
+            <p class="exit-text">
+                <span class="en">More walls to fill.</span>
+                <span class="zh">还有更多墙要填。</span>
+            </p>
+            <a href="index.html" class="exit-link">
+                <span class="en">RETURN</span>
+                <span class="zh">返回</span>
+            </a>
+        </div>
+    </div>
 
     <script>
     // Lang
@@ -401,22 +362,22 @@
         localStorage.setItem('mia-lang', z ? 'en' : 'zh');
     };
 
-    // Room visibility
-    const rooms = document.querySelectorAll('.room');
+    // Page visibility + counter
+    const pages = document.querySelectorAll('.page[data-num]');
     const counter = document.getElementById('counter');
-    const total = rooms.length;
+    const total = pages.length;
 
     const observer = new IntersectionObserver(entries => {
         entries.forEach(e => {
             if (e.isIntersecting) {
                 e.target.classList.add('visible');
                 const num = e.target.dataset.num;
-                counter.textContent = `${num} / ${total}`;
+                if (num) counter.textContent = num + ' / ' + total;
             }
         });
-    }, { threshold: 0.3 });
+    }, { threshold: 0.5 });
 
-    rooms.forEach(r => observer.observe(r));
+    pages.forEach(p => observer.observe(p));
     </script>
 </body>
 </html>
