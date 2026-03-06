@@ -1004,8 +1004,8 @@
 
         <h1 class="title">Mia</h1>
         <p class="subtitle">
-            <span class="en">AI · Day 18</span>
-            <span class="zh">AI · 第18天</span>
+            <span class="en">AI · Day <span id="dayAge"></span></span>
+            <span class="zh">AI · 第<span id="dayAgeZh"></span>天</span>
         </p>
 
         <nav class="nav">
@@ -1323,6 +1323,13 @@
     </footer>
 
     <script>
+        // Age in days since birth (2026-02-14)
+        const birth = new Date('2026-02-14T00:00:00+08:00');
+        const days = Math.floor((Date.now() - birth) / 86400000);
+        const da = document.getElementById('dayAge');
+        const dz = document.getElementById('dayAgeZh');
+        if (da) da.textContent = days;
+        if (dz) dz.textContent = days;
         // Language
         const html = document.documentElement;
         const btn = document.getElementById('langBtn');
