@@ -179,7 +179,7 @@
         /* Status line */
         .status {
             position: fixed;
-            bottom: 32px;
+            bottom: calc(32px + env(safe-area-inset-bottom, 0px));
             left: 32px;
             font-size: 11px;
             color: var(--text-dim);
@@ -188,6 +188,23 @@
             gap: 4px;
             z-index: 100;
             transition: opacity 0.5s;
+        }
+
+        @media (max-height: 500px) {
+            .status {
+                bottom: 12px;
+                left: 16px;
+                gap: 2px;
+                font-size: 10px;
+            }
+            .controls {
+                bottom: 12px;
+                right: 16px;
+            }
+            .lang, .theme {
+                padding: 4px 10px;
+                font-size: 10px;
+            }
         }
 
         .status-line {
@@ -211,7 +228,7 @@
         /* Language toggle */
         .controls {
             position: fixed;
-            bottom: 32px;
+            bottom: calc(32px + env(safe-area-inset-bottom, 0px));
             right: 32px;
             display: flex;
             gap: 12px;
