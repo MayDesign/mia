@@ -571,108 +571,104 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            vec2 suv = (uv - 0.5) * 1.8 + 0.5;
-            float slowT = t * 0.35;
+            vec2 suv = (uv - 0.5) * 1.6 + 0.5;
+            float slowT = t * 0.3;
 
-            // Jellyfish bobs gently up and down
-            float bob = sin(slowT * 0.8) * 0.015;
-            vec2 c = vec2(0.5, 0.33 + bob);
+            // Gentle drift
+            float bob = sin(slowT * 0.6) * 0.01;
+            vec2 c = vec2(0.5, 0.37 + bob);
 
-            // Contraction cycle — like real propulsion
-            float contractPhase = slowT * 1.2;
-            float contract = sin(contractPhase);
-            float breathX = 1.0 + contract * 0.06;  // wider when relaxed
-            float breathY = 1.0 - contract * 0.03;  // flatter when wide
+            // Slow pulsation — real jellyfish contract ~once per 2 seconds
+            float phase = slowT * 1.0;
+            float contract = sin(phase);
+            float breathX = 1.0 + contract * 0.07;
+            float breathY = 1.0 - contract * 0.04;
 
-            vec2 p = suv - c;
-            p.x /= breathX;
-            p.y /= breathY;
-            float ang = atan(p.y, p.x);
-            float r = length(p);
+            // --- BELL: flat dome (wider than tall) ---
+            vec2 p = (suv - c) / vec2(breathX, breathY);
 
-            // --- BELL: half-ellipse dome ---
-            // Only the top half is the bell; bottom is flat/concave
-            float bellW = 0.14;
-            float bellH = 0.11;
-            // Egg/mushroom shape: use ellipse but squash bottom
-            vec2 ep = vec2(p.x / bellW, min(p.y, 0.0) / bellH + max(p.y, 0.0) / (bellH * 0.4));
-            float ellipseR = length(ep);
+            // Flat dome SDF: ellipse, much wider than tall
+            float bellW = 0.18;
+            float bellH = 0.09;  // flat dome ratio ~2:1
+            vec2 ep = p / vec2(bellW, bellH);
+            // Only top hemisphere — bottom is open
+            float topMask = smoothstep(0.01, -0.01, p.y);
+            float bottomCurve = smoothstep(-0.005, 0.005, p.y);
+            // Combine: dome on top, flat/open on bottom
+            float eR = length(ep);
+            float domeR = length(vec2(ep.x, min(ep.y, 0.0)));
+            float openR = mix(eR, domeR, 0.7);
 
-            // Bell membrane — thin bright outline
-            float membrane = exp(-pow(ellipseR - 1.0, 2.0) * 5000.0) * 0.45;
-            // Softer outer glow
-            float glow = exp(-pow(max(ellipseR - 1.0, 0.0), 2.0) * 400.0) * 0.08;
+            // Almost invisible body — real jellyfish are 95% transparent
+            float body = smoothstep(1.0, 0.5, openR) * 0.02;
 
-            // Translucent fill — gradient from edge to center
-            float fill = smoothstep(1.0, 0.3, ellipseR) * 0.05;
-            // Slightly brighter near the top (thicker tissue)
-            fill *= 1.0 + smoothstep(0.0, -0.08, p.y) * 0.5;
+            // Bell edge — thin luminous membrane
+            float edge = exp(-pow(openR - 1.0, 2.0) * 8000.0) * 0.35;
+            // Soft glow around edge
+            float edgeGlow = exp(-pow(openR - 1.0, 2.0) * 800.0) * 0.06;
 
-            // Radial canals — like real jellyfish have
-            float canals = 0.0;
-            if (ellipseR < 1.0) {
-                float cAng = ang + 1.5708; // rotate so canals go from top
-                canals = pow(abs(sin(cAng * 4.0)), 20.0) * 0.12;
-                canals *= smoothstep(1.0, 0.4, ellipseR) * smoothstep(0.1, 0.3, ellipseR);
-                // Pulse along canals
-                canals *= 0.7 + sin(slowT * 2.0 - ellipseR * 8.0) * 0.3;
+            // --- MARGINAL TENTACLES: dense fringe around bell edge ---
+            float fringe = 0.0;
+            for (float i = 0.0; i < 24.0; i++) {
+                float fAng = (i / 24.0) * 3.14159; // half circle (bottom edge)
+                float ex = c.x + cos(fAng - 1.5708) * bellW * breathX * 0.95;
+                float ey = c.y + sin(fAng - 1.5708) * bellH * breathY * 0.3 + bellH * 0.2;
+                // Short dangling threads
+                float fLen = 0.04 + sin(i * 3.7) * 0.015;
+                for (float s = 0.0; s < 8.0; s++) {
+                    float r2 = s / 8.0;
+                    float fy = ey + r2 * fLen;
+                    float fx = ex + sin(slowT * 1.5 + r2 * 3.0 + i * 0.8) * r2 * 0.008;
+                    float fd = length(suv - vec2(fx, fy));
+                    fringe += exp(-fd * fd * 120000.0) * 0.015 * (1.0 - r2 * 0.6);
+                }
             }
 
-            // Gonads — 4 horseshoe shapes visible through bell
+            // --- FOUR HORSESHOE GONADS (iconic moon jelly feature) ---
             float gonads = 0.0;
             for (float i = 0.0; i < 4.0; i++) {
-                float ga = (i * 0.25 + 0.125) * 6.2832;
-                vec2 gc = c + vec2(cos(ga) * 0.06 * breathX, sin(ga) * 0.04 * breathY - 0.01);
-                float gd = length((suv - gc) * vec2(1.2, 2.0));
-                gonads += exp(-gd * gd * 3000.0) * 0.08;
+                float ga = i * 1.5708 + 0.7854; // 45° offset
+                // Horseshoe shape: arc segment
+                for (float j = -4.0; j <= 4.0; j++) {
+                    float ja = ga + j * 0.12;
+                    float gr = 0.055;
+                    vec2 gp = c + vec2(cos(ja) * gr * breathX, sin(ja) * gr * breathY * 0.6 - 0.01);
+                    float gd = length(suv - gp);
+                    gonads += exp(-gd * gd * 30000.0) * 0.018;
+                }
+            }
+            // Soft pulsing glow on gonads
+            gonads *= 0.8 + sin(slowT * 1.5) * 0.2;
+
+            // --- RADIAL CANALS: faint lines from center to edge ---
+            float canals = 0.0;
+            float pAng = atan(p.y, p.x);
+            if (openR < 1.0 && openR > 0.2) {
+                // 4 main canals + faint secondary ones
+                float canal4 = pow(abs(sin(pAng * 2.0 + 0.7854)), 40.0) * 0.06;
+                canals = canal4 * smoothstep(1.0, 0.6, openR) * smoothstep(0.2, 0.35, openR);
             }
 
-            // --- ORAL ARMS: 4 thick frilly appendages from center ---
+            // --- ORAL ARMS: 4 ribbon-like, flowing from center mouth ---
             float arms = 0.0;
-            float mouthY = c.y + 0.05 * breathY;
+            float mouthY = c.y + 0.02;
             for (float i = 0.0; i < 4.0; i++) {
-                float baseX = c.x + (i - 1.5) * 0.018 * breathX;
-                for (float s = 0.0; s < 20.0; s++) {
-                    float ratio = s / 20.0;
-                    float y = mouthY + ratio * 0.18;
-                    // Wavy, frilly motion
-                    float sway = sin(slowT * 0.8 + ratio * 5.0 + i * 1.8) * ratio * 0.025;
-                    sway += sin(slowT * 1.5 + ratio * 8.0 + i * 3.0) * 0.005;
-                    float x = baseX + sway;
+                float baseX = c.x + (i - 1.5) * 0.012 * breathX;
+                for (float s = 0.0; s < 30.0; s++) {
+                    float ratio = s / 30.0;
+                    float y = mouthY + ratio * 0.22;
+                    // Ribbon-like: wide gentle waves
+                    float wave = sin(slowT * 0.6 + ratio * 4.0 + i * 1.6) * ratio * 0.02;
+                    wave += sin(slowT * 0.9 + ratio * 7.0 + i * 2.8) * ratio * 0.008;
+                    float x = baseX + wave;
                     float d = length(suv - vec2(x, y));
-                    // Thicker than tentacles
-                    float w = 15000.0 + ratio * 10000.0;
-                    arms += exp(-d * d * w) * 0.04 * (1.0 - ratio * 0.5);
+                    // Wider than tentacles, like ribbons
+                    float w = 20000.0 + ratio * 15000.0;
+                    arms += exp(-d * d * w) * 0.025 * (1.0 - ratio * 0.6);
                 }
             }
 
-            // --- TENTACLES: thin, long, trailing from bell margin ---
-            float tent = 0.0;
-            for (float i = 0.0; i < 8.0; i++) {
-                // Spread along the bell's bottom edge
-                float frac = (i - 3.5) / 4.0;
-                float edgeX = c.x + frac * bellW * breathX * 0.9;
-                float edgeY = c.y + bellH * breathY * 0.35;
-                float tentLen = 0.30 + sin(i * 1.7 + 0.5) * 0.06;
-
-                for (float s = 0.0; s < 35.0; s++) {
-                    float ratio = s / 35.0;
-                    float y = edgeY + ratio * tentLen;
-                    // Gentle trailing motion, reacts to contraction
-                    float delay = ratio * 0.8;
-                    float sway = sin(slowT * 1.0 - delay + i * 1.1) * ratio * 0.03;
-                    sway += sin(slowT * 0.6 - delay * 1.5 + i * 2.5) * ratio * 0.015;
-                    // Contraction pushes tentacles outward slightly
-                    sway += contract * ratio * 0.008 * frac;
-                    float x = edgeX + sway;
-                    float d = length(suv - vec2(x, y));
-                    // Very thin
-                    float w = 60000.0 + ratio * 50000.0;
-                    tent += exp(-d * d * w) * 0.025 * (1.0 - ratio * 0.7);
-                }
-            }
-
-            return membrane + glow + fill + canals + gonads + arms + tent;
+            return body + edge + edgeGlow + fringe + gonads + canals + arms;
         }
 
         // === MAZE (Art 1) ===
