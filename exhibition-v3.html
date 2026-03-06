@@ -389,13 +389,13 @@
     }
 
     let lastRoomChangeTime = -9999;
-    const ROOM_COOLDOWN = 900;
+    const ROOM_COOLDOWN = 1200;
 
     // Wheel scroll — simple, direct
     window.addEventListener('wheel', function(e) {
         e.preventDefault();
         if (performance.now() - lastRoomChangeTime < ROOM_COOLDOWN) return;
-        if (Math.abs(e.deltaY) > 5) {
+        if (Math.abs(e.deltaY) > 20) {
             nextRoom(e.deltaY > 0 ? 1 : -1);
         }
     }, { passive: false });
@@ -571,9 +571,9 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            // Scale down and center: remap uv so jellyfish is ~60% size
-            vec2 suv = (uv - 0.5) * 1.6 + 0.5;
-            vec2 c = vec2(0.5, 0.38);
+            // Scale down and center
+            vec2 suv = (uv - 0.5) * 2.2 + 0.5;
+            vec2 c = vec2(0.5, 0.35);
             float breath = sin(t * 0.8) * 0.03 + 0.97;
 
             // Bell
