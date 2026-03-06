@@ -589,26 +589,22 @@
             float radius = 0.18;
             float rim = exp(-pow(bellDist - radius, 2.0) * 3000.0) * 0.3;
 
-            // Tentacles — 16 radial, each with random length/phase
+            // Tentacles — 10 radial, irregular
             float tent = 0.0;
-            for (float i = 0.0; i < 16.0; i++) {
-                float angle = (i / 16.0) * 6.2832;
-                // Irregular spacing
-                angle += sin(i * 3.7) * 0.12;
+            for (float i = 0.0; i < 10.0; i++) {
+                float angle = (i / 10.0) * 6.2832;
+                angle += sin(i * 3.7) * 0.15;
                 float dirX = cos(angle);
-                float dirY = sin(angle) / aspect; // aspect correct direction
+                float dirY = sin(angle) / aspect;
                 float baseX = c.x + dirX * radius * breath;
                 float baseY = c.y + dirY * radius * breath;
-
-                // Each tentacle has different length and speed
-                float tentLen = 0.18 + sin(i * 2.3 + 1.0) * 0.06;
+                float tentLen = 0.16 + sin(i * 2.3 + 1.0) * 0.05;
                 float speed = 0.6 + sin(i * 1.7) * 0.3;
 
-                for (float s = 0.0; s < 20.0; s++) {
-                    float ratio = s / 20.0;
-                    // Sway perpendicular to direction, irregular
-                    float sway = sin(t * speed + ratio * 4.0 + i * 0.9) * ratio * 0.03;
-                    sway += sin(t * speed * 0.6 + ratio * 7.0 + i * 2.3) * ratio * 0.012;
+                for (float s = 0.0; s < 12.0; s++) {
+                    float ratio = s / 12.0;
+                    float sway = sin(t * speed + ratio * 4.0 + i * 0.9) * ratio * 0.03
+                               + sin(t * speed * 0.6 + ratio * 7.0 + i * 2.3) * ratio * 0.012;
                     float swayX = -sin(angle) * sway;
                     float swayY = cos(angle) * sway / aspect;
                     vec2 segPos = vec2(
