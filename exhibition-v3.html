@@ -571,20 +571,20 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            // Scale down and center
-            vec2 suv = (uv - 0.5) * 2.2 + 0.5;
-            vec2 c = vec2(0.5, 0.35);
+            // Scale down to fit entirely in view
+            vec2 suv = (uv - 0.5) * 2.8 + 0.5;
+            vec2 c = vec2(0.5, 0.32);
             float breath = sin(t * 0.8) * 0.03 + 0.97;
 
-            // Bell
+            // Bell — translucent, not solid
             vec2 p = suv - c;
             p.x /= breath;
             float bellDist = length(p);
-            float bell = smoothstep(0.18, 0.17, bellDist) * 0.8;
-            bell += exp(-bellDist * bellDist * 200.0) * 0.5; // glow
+            float bell = smoothstep(0.18, 0.16, bellDist) * 0.25;
+            bell += exp(-bellDist * bellDist * 150.0) * 0.15;
 
-            // Rim
-            float rim = exp(-abs(bellDist - 0.17) * 200.0) * 1.0;
+            // Rim — subtle edge glow
+            float rim = exp(-abs(bellDist - 0.17) * 150.0) * 0.4;
 
             // Tentacles
             float tent = 0.0;
@@ -597,12 +597,12 @@
                     float sway = sin(t * 0.8 + ratio * 4.0 + i * 0.9) * ratio * 0.06;
                     vec2 segPos = vec2(baseX + sway, baseY + ratio * 0.35);
                     float segDist = length(suv - segPos);
-                    tent += exp(-segDist * segDist * 15000.0) * 0.08 * (1.0 - ratio * 0.7);
+                    tent += exp(-segDist * segDist * 15000.0) * 0.06 * (1.0 - ratio * 0.7);
                 }
             }
 
-            // Inner glow pulse
-            float innerGlow = exp(-length(suv - c + vec2(0.0, -0.02)) * 8.0) * (0.35 + sin(t * 0.8) * 0.15);
+            // Inner glow pulse — gentle
+            float innerGlow = exp(-length(suv - c + vec2(0.0, -0.02)) * 6.0) * (0.15 + sin(t * 0.8) * 0.08);
 
             return bell + rim + tent + innerGlow;
         }
@@ -770,7 +770,7 @@
             float artReveal = clamp(revealRadius, 0.0, 1.0);
 
             // Combine: dark base + art revealed by light + dust
-            color += artColor * artVal * artReveal * 3.5;
+            color += artColor * artVal * artReveal * 2.5;
             color += vec3(1.0, 0.95, 0.85) * dustVal * 0.3;
 
             // Subtle warm light tint in beam
@@ -937,7 +937,7 @@
 
         // Reveal scale — larger on mobile for finger-sized light
         const uRevealScaleLoc = gl.getUniformLocation(program, 'uRevealScale');
-        gl.uniform1f(uRevealScaleLoc, isMobile ? 0.4 : 0.6);
+        gl.uniform1f(uRevealScaleLoc, isMobile ? 0.25 : 0.35);
         gl.uniform1i(uRoomType, roomType);
         gl.uniform1i(uArtType, artType);
 
