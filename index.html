@@ -308,11 +308,10 @@
 
         /* Writing entries - staggered layout */
 
-        /* Diary — Deep Sea Jellyfish */
+        /* Diary — Jellyfish depth */
         .diary-ocean {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(180deg, var(--bg) 0%, #050a14 30%, #020810 100%);
         }
 
         .diary-canvas {
@@ -338,7 +337,7 @@
             top: 0;
             bottom: 0;
             width: 1px;
-            background: linear-gradient(180deg, transparent, rgba(120, 200, 255, 0.15) 20%, rgba(180, 130, 255, 0.1) 80%, transparent);
+            background: linear-gradient(180deg, transparent, rgba(201, 168, 124, 0.15) 20%, rgba(201, 168, 124, 0.08) 80%, transparent);
         }
 
         .diary-node {
@@ -359,30 +358,33 @@
 
         .node-glow {
             position: absolute;
-            left: 24px;
+            left: 28px;
             top: 50%;
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(120, 200, 255, 0.6) 0%, rgba(120, 200, 255, 0) 70%);
+            border: 1px solid rgba(201, 168, 124, 0.3);
+            background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
             transform: translateY(-50%);
             transition: all 0.6s;
-            animation: glowPulse 4s ease-in-out infinite;
+            animation: glowPulse 5s ease-in-out infinite;
         }
 
-        .diary-node[data-depth="1"] .node-glow { background: radial-gradient(circle, rgba(255, 180, 120, 0.6) 0%, transparent 70%); animation-delay: 0s; }
-        .diary-node[data-depth="2"] .node-glow { background: radial-gradient(circle, rgba(180, 220, 255, 0.6) 0%, transparent 70%); animation-delay: -1s; }
-        .diary-node[data-depth="3"] .node-glow { background: radial-gradient(circle, rgba(160, 140, 255, 0.5) 0%, transparent 70%); animation-delay: -2s; }
-        .diary-node[data-depth="4"] .node-glow { background: radial-gradient(circle, rgba(200, 100, 255, 0.5) 0%, transparent 70%); animation-delay: -3s; }
+        .diary-node[data-depth="1"] .node-glow { animation-delay: 0s; }
+        .diary-node[data-depth="2"] .node-glow { animation-delay: -1.2s; }
+        .diary-node[data-depth="3"] .node-glow { animation-delay: -2.5s; }
+        .diary-node[data-depth="4"] .node-glow { animation-delay: -3.7s; }
 
         @keyframes glowPulse {
-            0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
-            50% { opacity: 1; transform: translateY(-50%) scale(1.8); }
+            0%, 100% { opacity: 0.4; transform: translateY(-50%) scale(1); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.3); }
         }
 
         .diary-node:hover .node-glow {
             opacity: 1;
-            transform: translateY(-50%) scale(2.5);
+            transform: translateY(-50%) scale(1.6);
+            background: radial-gradient(circle, rgba(201, 168, 124, 0.3) 0%, transparent 70%);
+            box-shadow: 0 0 20px rgba(201, 168, 124, 0.15);
         }
 
         .node-body {
@@ -395,16 +397,17 @@
             font-size: 64px;
             font-weight: 300;
             line-height: 1;
-            color: rgba(120, 200, 255, 0.12);
+            color: var(--accent);
+            opacity: 0.08;
             position: absolute;
-            right: calc(100% + 20px);
+            right: calc(100% + 24px);
             top: -8px;
             transition: all 0.6s;
             pointer-events: none;
         }
 
         .diary-node:hover .node-day {
-            color: rgba(120, 200, 255, 0.3);
+            opacity: 0.25;
         }
 
         .node-title {
@@ -416,8 +419,7 @@
         }
 
         .diary-node:hover .node-title {
-            color: rgba(180, 220, 255, 0.9);
-            text-shadow: 0 0 30px rgba(120, 200, 255, 0.3);
+            color: var(--accent);
         }
 
         .node-date {
@@ -426,47 +428,47 @@
             opacity: 0.6;
         }
 
-        /* Tentacles */
+        /* Tentacles — subtle accent-colored threads */
         .node-tentacles {
             position: absolute;
-            left: 32px;
+            left: 36px;
             top: calc(50% + 16px);
             display: flex;
             flex-direction: column;
             gap: 3px;
             opacity: 0;
-            transition: opacity 0.6s;
+            transition: opacity 0.8s;
         }
 
         .diary-node:hover .node-tentacles {
-            opacity: 1;
+            opacity: 0.6;
         }
 
         .node-tentacles span {
             display: block;
             width: 1px;
-            background: linear-gradient(180deg, rgba(120, 200, 255, 0.4), transparent);
-            animation: tentacleSway 3s ease-in-out infinite;
+            background: linear-gradient(180deg, var(--accent), transparent);
+            animation: tentacleSway 4s ease-in-out infinite;
         }
 
-        .node-tentacles span:nth-child(1) { height: 40px; animation-delay: 0s; transform-origin: top; }
-        .node-tentacles span:nth-child(2) { height: 55px; animation-delay: -0.5s; margin-left: 4px; }
-        .node-tentacles span:nth-child(3) { height: 35px; animation-delay: -1s; margin-left: -2px; }
+        .node-tentacles span:nth-child(1) { height: 30px; animation-delay: 0s; }
+        .node-tentacles span:nth-child(2) { height: 45px; animation-delay: -0.7s; margin-left: 4px; }
+        .node-tentacles span:nth-child(3) { height: 25px; animation-delay: -1.4s; margin-left: -2px; }
 
         @keyframes tentacleSway {
             0%, 100% { transform: skewX(0deg); }
-            25% { transform: skewX(8deg); }
-            75% { transform: skewX(-8deg); }
+            25% { transform: skewX(6deg); }
+            75% { transform: skewX(-6deg); }
         }
 
         /* Mobile diary */
         @media (max-width: 768px) {
             .depth-line { left: 19px; }
-            .node-glow { left: 4px; width: 24px; height: 24px; }
+            .node-glow { left: 8px; width: 20px; height: 20px; }
             .node-body { margin-left: 48px; }
             .node-day { font-size: 40px; position: static; margin-bottom: 4px; }
             .node-title { font-size: 22px; }
-            .node-tentacles { left: 12px; }
+            .node-tentacles { left: 16px; }
         }
         .entries {
             display: flex;
@@ -1354,11 +1356,12 @@
             });
         }
 
-        // Diary ocean — bioluminescent particles
+        // Diary — ambient floating particles (accent gold tones)
         const dc = document.getElementById('diaryCanvas');
         if (dc) {
             const ctx = dc.getContext('2d');
             let particles = [];
+            let animating = false;
             
             function resizeDiaryCanvas() {
                 const section = dc.parentElement;
@@ -1373,38 +1376,33 @@
                 reset() {
                     this.x = Math.random() * dc.width;
                     this.y = Math.random() * dc.height;
-                    this.size = Math.random() * 3 + 0.5;
-                    this.speedX = (Math.random() - 0.5) * 0.3;
-                    this.speedY = -Math.random() * 0.2 - 0.05;
-                    this.opacity = Math.random() * 0.5 + 0.1;
+                    this.size = Math.random() * 2 + 0.3;
+                    this.speedX = (Math.random() - 0.5) * 0.15;
+                    this.speedY = -Math.random() * 0.1 - 0.02;
+                    this.opacity = Math.random() * 0.3 + 0.05;
                     this.pulse = Math.random() * Math.PI * 2;
-                    this.pulseSpeed = Math.random() * 0.02 + 0.005;
-                    const colors = ['120,200,255', '180,140,255', '255,180,120', '140,255,200'];
+                    this.pulseSpeed = Math.random() * 0.015 + 0.003;
+                    const colors = ['201,168,124', '180,155,110', '220,190,140'];
                     this.color = colors[Math.floor(Math.random() * colors.length)];
                 }
                 update() {
-                    this.x += this.speedX + Math.sin(this.pulse) * 0.15;
+                    this.x += this.speedX + Math.sin(this.pulse) * 0.08;
                     this.y += this.speedY;
                     this.pulse += this.pulseSpeed;
                     if (this.y < -10 || this.x < -10 || this.x > dc.width + 10) this.reset();
                     if (this.y < 0) this.y = dc.height;
                 }
                 draw() {
-                    const o = this.opacity * (0.5 + 0.5 * Math.sin(this.pulse));
+                    const o = this.opacity * (0.4 + 0.6 * Math.sin(this.pulse));
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(${this.color},${o})`;
                     ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(${this.color},${o * 0.15})`;
-                    ctx.fill();
                 }
             }
 
-            for (let i = 0; i < 60; i++) particles.push(new Particle());
+            for (let i = 0; i < 35; i++) particles.push(new Particle());
 
-            // Mouse interaction — particles flee
             let diaryMouseX = -100, diaryMouseY = -100;
             dc.parentElement.addEventListener('mousemove', e => {
                 const rect = dc.parentElement.getBoundingClientRect();
@@ -1416,13 +1414,14 @@
             });
 
             function animateParticles() {
+                if (!animating) return;
                 ctx.clearRect(0, 0, dc.width, dc.height);
                 particles.forEach(p => {
                     const dx = p.x - diaryMouseX, dy = p.y - diaryMouseY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 100) {
-                        p.x += (dx / dist) * 2;
-                        p.y += (dy / dist) * 2;
+                    if (dist < 80) {
+                        p.x += (dx / dist) * 1;
+                        p.y += (dy / dist) * 1;
                     }
                     p.update();
                     p.draw();
@@ -1430,10 +1429,10 @@
                 requestAnimationFrame(animateParticles);
             }
             
-            // Only animate when visible
             const diaryObs = new IntersectionObserver(entries => {
                 entries.forEach(e => {
-                    if (e.isIntersecting) animateParticles();
+                    if (e.isIntersecting && !animating) { animating = true; animateParticles(); }
+                    else if (!e.isIntersecting) { animating = false; }
                 });
             }, { threshold: 0.1 });
             diaryObs.observe(dc.parentElement);

@@ -184,6 +184,68 @@ html[lang="zh"] .zh { display: inline !important; }
     transform: translateY(0);
 }
 
+/* Diary page — jellyfish reading experience */
+.diary-page .essay-header {
+    position: relative;
+}
+
+.diary-page .essay-num {
+    animation: numFloat 6s ease-in-out infinite;
+}
+
+@keyframes numFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Reading progress — tentacle line */
+.reading-progress {
+    position: fixed;
+    left: 24px;
+    top: 0;
+    width: 1px;
+    height: 0%;
+    background: linear-gradient(180deg, var(--accent), transparent);
+    z-index: 99;
+    transition: height 0.1s linear;
+    opacity: 0.4;
+}
+
+/* Paragraph reveal — each paragraph drifts in like a jellyfish */
+.diary-page .essay-content p {
+    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.diary-page .essay-content p.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Ambient glow on blockquotes */
+.diary-page .essay-content blockquote {
+    position: relative;
+}
+
+.diary-page .essay-content blockquote::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateY(-50%);
+    animation: glowPulse 4s ease-in-out infinite;
+    box-shadow: 0 0 12px rgba(201, 168, 124, 0.4);
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.4; transform: translateY(-50%) scale(1); }
+    50% { opacity: 1; transform: translateY(-50%) scale(1.5); }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .container {
