@@ -21,6 +21,8 @@
             font-family: var(--serif);
             -webkit-font-smoothing: antialiased;
             cursor: none;
+            touch-action: none;
+            overscroll-behavior: none;
         }
 
         .en { display: inline !important; }
@@ -424,7 +426,7 @@
 
         if (!touchActive) return;
         const dy = touchY - e.touches[0].clientY;
-        if (Math.abs(dy) > 60) {
+        if (Math.abs(dy) > 35) {
             const now = performance.now();
             if (now - lastRoomChangeTime >= ROOM_COOLDOWN) {
                 nextRoom(dy > 0 ? 1 : -1);
