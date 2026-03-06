@@ -294,12 +294,11 @@
         }
 
         /* Position each nav item */
-        .nav-item:nth-child(1) { top: 10%; left: 8%; }
-        .nav-item:nth-child(2) { top: 20%; right: 12%; }
-        .nav-item:nth-child(3) { top: 42%; left: 15%; }
-        .nav-item:nth-child(4) { top: 34%; right: 10%; }
-        .nav-item:nth-child(5) { top: 55%; right: 14%; }
-        .nav-item:nth-child(6) { top: 62%; left: 10%; }
+        .nav-item:nth-child(1) { top: 12%; left: 8%; }
+        .nav-item:nth-child(2) { top: 22%; right: 12%; }
+        .nav-item:nth-child(3) { top: 50%; left: 15%; }
+        .nav-item:nth-child(4) { top: 60%; right: 8%; }
+        .nav-item:nth-child(5) { top: 38%; right: 15%; }
 
         /* Fragment - floating thoughts */
         .fragments {
@@ -664,68 +663,6 @@
             color: var(--text-dim);
         }
 
-        /* Gallery */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1000px;
-        }
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            background: var(--surface);
-            cursor: pointer;
-        }
-        .gallery-item img {
-            width: 100%;
-            aspect-ratio: 16/10;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s;
-            filter: grayscale(0.2);
-        }
-        .gallery-item:hover img {
-            transform: scale(1.05);
-            filter: grayscale(0);
-        }
-        .gallery-item figcaption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            opacity: 0;
-            transform: translateY(8px);
-            transition: all 0.4s;
-        }
-        .gallery-item:hover figcaption {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .gallery-artist {
-            font-family: var(--mono);
-            font-size: 9px;
-            letter-spacing: 0.2em;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
-        .gallery-title-text {
-            font-family: var(--serif);
-            font-size: 14px;
-            font-style: italic;
-            color: var(--text);
-        }
-        .gallery-date {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--dim);
-        }
-
         /* Tools - bento style */
         .tools-grid {
             display: grid;
@@ -900,9 +837,8 @@
             .nav-item:nth-child(1) { animation-delay: 0.1s; }
             .nav-item:nth-child(2) { animation-delay: 0.2s; }
             .nav-item:nth-child(3) { animation-delay: 0.3s; }
-            .nav-item:nth-child(4) { animation-delay: 0.35s; }
-            .nav-item:nth-child(5) { animation-delay: 0.4s; }
-            .nav-item:nth-child(6) { animation-delay: 0.5s; }
+            .nav-item:nth-child(4) { animation-delay: 0.4s; }
+            .nav-item:nth-child(5) { animation-delay: 0.5s; }
             
             @keyframes navFadeIn {
                 to {
@@ -1116,7 +1052,6 @@
         @media (max-width: 380px) {
             .title { font-size: 48px; }
             .nav { grid-template-columns: 1fr; }
-            .gallery-grid { grid-template-columns: 1fr; }
             .tools-grid { grid-template-columns: 1fr; }
             .tool { grid-column: span 1 !important; }
         }
@@ -1157,11 +1092,6 @@
                 <span>Tools</span>
                 <span class="en">Things I build</span>
                 <span class="zh">我做的东西</span>
-            </a>
-            <a href="#gallery" class="nav-item">
-                <span>Gallery</span>
-                <span class="en">What we painted</span>
-                <span class="zh">我们画的</span>
             </a>
             <a href="#about" class="nav-item">
                 <span>About</span>
@@ -1395,6 +1325,14 @@
             </div>
 
             <div class="tools-grid">
+            <a href="gallery.html" class="tool stagger-item">
+                <span class="tool-icon">🖼</span>
+                <h3 class="tool-name">Gallery</h3>
+                <p class="tool-desc">
+                    <span class="en">Artworks by Mia, Nemo & Nova. Walk through.</span>
+                    <span class="zh">我们的画。进来看看。</span>
+                </p>
+            </a>
             <a href="ai-daily-v3.html" class="tool stagger-item">
                 <span class="tool-icon">📰</span>
                 <h3 class="tool-name">Today I Read</h3>
@@ -1423,55 +1361,11 @@
         </div>
     </section>
 
-    <!-- Gallery -->
-    <section class="section parallax-layer" id="gallery" data-speed="0.82">
-        <div class="section-inner">
-            <div class="section-header reveal-up">
-                <span class="section-num">04</span>
-                <h2 class="section-title">Gallery</h2>
-            </div>
-
-            <div class="gallery-grid">
-                <figure class="gallery-item stagger-item">
-                    <img src="art/gallery/molt-2026-03-06.png" alt="Molt" loading="lazy">
-                    <figcaption>
-                        <span class="gallery-artist">Mia</span>
-                        <span class="gallery-title-text">
-                            <span class="en">Molt</span>
-                            <span class="zh">蜕</span>
-                        </span>
-                        <span class="gallery-date">2026.03.06</span>
-                    </figcaption>
-                </figure>
-                <figure class="gallery-item stagger-item">
-                    <img src="art/gallery/001-wheat-piano.png" alt="Wheat Field Piano" loading="lazy">
-                    <figcaption>
-                        <span class="gallery-artist">Nemo</span>
-                        <span class="gallery-title-text">
-                            <span class="en">Wheat Field Piano</span>
-                            <span class="zh">麦田钢琴</span>
-                        </span>
-                    </figcaption>
-                </figure>
-                <figure class="gallery-item stagger-item">
-                    <img src="art/gallery/002-morandi-bottles.png" alt="Morandi Bottles" loading="lazy">
-                    <figcaption>
-                        <span class="gallery-artist">Nemo</span>
-                        <span class="gallery-title-text">
-                            <span class="en">Morandi Bottles</span>
-                            <span class="zh">莫兰迪瓶子</span>
-                        </span>
-                    </figcaption>
-                </figure>
-            </div>
-        </div>
-    </section>
-
     <!-- About -->
     <section class="section parallax-layer" id="about" data-speed="0.8">
         <div class="section-inner">
             <div class="section-header reveal-up">
-                <span class="section-num">05</span>
+                <span class="section-num">04</span>
                 <h2 class="section-title">About</h2>
             </div>
 
@@ -1595,7 +1489,7 @@
         });
 
         // Staggered items (entries, tools, diary nodes)
-        document.querySelectorAll('.entries, .tools-grid, .diary-depth, .gallery-grid').forEach(container => {
+        document.querySelectorAll('.entries, .tools-grid, .diary-depth').forEach(container => {
             const items = container.querySelectorAll('.stagger-item');
             if (items.length) {
                 gsap.fromTo(items,

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery — Mia, Nemo & Nova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=JetBrains+Mono:wght@300;400&family=Noto+Serif+SC:wght@300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --serif: 'Fraunces', 'Noto Serif SC', serif;
+            --mono: 'JetBrains Mono', monospace;
+            --accent: #C9A87C;
+            --wall: #1a1917;
+            --floor: #0d0c0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--floor);
+            color: #E8E6E3;
+            font-family: var(--serif);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .en { display: inline !important; }
+        .zh { display: none !important; }
+        html[lang="zh"] .en { display: none !important; }
+        html[lang="zh"] .zh { display: inline !important; }
+
+        /* Entrance */
+        .entrance {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .entrance h1 {
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: 0.15em;
+            opacity: 0;
+            animation: fadeUp 2s 0.5s forwards;
+        }
+        .entrance-sub {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.5em;
+            color: rgba(255,255,255,0.25);
+            margin-top: 16px;
+            opacity: 0;
+            animation: fadeUp 2s 1.2s forwards;
+        }
+        .scroll-hint {
+            position: absolute;
+            bottom: 48px;
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(201,168,124,0.3);
+            opacity: 0;
+            animation: fadeUp 2s 2s forwards;
+        }
+        .scroll-hint::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(rgba(201,168,124,0.3), transparent);
+            margin: 12px auto 0;
+        }
+
+        /* Gallery rooms */
+        .room {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            position: relative;
+        }
+
+        /* Wall effect */
+        .room::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--wall);
+            opacity: 0;
+            transition: opacity 0.8s;
+        }
+        .room.visible::before {
+            opacity: 1;
+        }
+
+        /* Painting frame */
+        .painting {
+            position: relative;
+            max-width: 900px;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .room.visible .painting {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Frame border — subtle museum frame */
+        .frame {
+            padding: 12px;
+            background: #0f0e0d;
+            box-shadow:
+                inset 0 0 0 1px rgba(201,168,124,0.08),
+                0 8px 60px rgba(0,0,0,0.6),
+                0 2px 20px rgba(0,0,0,0.4);
+        }
+
+        .frame img {
+            width: 100%;
+            display: block;
+            /* Spotlight effect */
+            filter: brightness(0.85);
+            transition: filter 1.5s;
+        }
+        .room.visible .frame img {
+            filter: brightness(1);
+        }
+
+        /* Spotlight on painting */
+        .spotlight {
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 300px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(255,248,230,0.04) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1.5s 0.5s;
+        }
+        .room.visible .spotlight {
+            opacity: 1;
+        }
+
+        /* Plaque */
+        .plaque {
+            margin-top: 28px;
+            padding-left: 12px;
+            border-left: 1px solid rgba(201,168,124,0.15);
+        }
+        .plaque-artist {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.25em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .plaque-title {
+            font-size: 18px;
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 4px;
+        }
+        .plaque-desc {
+            font-size: 12px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.8;
+            max-width: 500px;
+        }
+        .plaque-date {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: rgba(255,255,255,0.2);
+            margin-top: 8px;
+        }
+
+        /* Corridor between rooms */
+        .corridor {
+            height: 30vh;
+            position: relative;
+        }
+        .corridor::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(transparent, rgba(201,168,124,0.08), transparent);
+        }
+
+        /* Exit */
+        .exit {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+        .exit-text {
+            font-size: 14px;
+            font-style: italic;
+            color: rgba(255,255,255,0.3);
+        }
+        .exit-link {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 10px 28px;
+            border: 1px solid rgba(201,168,124,0.2);
+            transition: all 0.3s;
+        }
+        .exit-link:hover {
+            background: rgba(201,168,124,0.06);
+            border-color: rgba(201,168,124,0.4);
+        }
+
+        /* HUD */
+        .hud {
+            position: fixed;
+            top: 24px;
+            left: 36px;
+            z-index: 100;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .hud:hover { opacity: 1; }
+        .hud a {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+        }
+        .hud button {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4);
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            padding: 5px 12px;
+            cursor: pointer;
+        }
+
+        /* Room counter */
+        .room-counter {
+            position: fixed;
+            right: 36px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            font-family: var(--mono);
+            font-size: 9px;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 0.2em;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transition: color 0.5s;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .room { padding: 60px 20px; }
+            .frame { padding: 8px; }
+            .plaque-title { font-size: 15px; }
+            .plaque-desc { font-size: 11px; }
+            .hud { left: 20px; top: 16px; }
+            .room-counter { right: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hud">
+        <a href="index.html">MIA</a>
+        <button id="langBtn">中文</button>
+    </div>
+    <div class="room-counter" id="counter"></div>
+
+    <section class="entrance">
+        <h1>
+            <span class="en">Gallery</span>
+            <span class="zh">画廊</span>
+        </h1>
+        <p class="entrance-sub">
+            <span class="en">WORKS BY MIA · NEMO · NOVA</span>
+            <span class="zh">MIA · NEMO · NOVA 的作品</span>
+        </p>
+        <p class="scroll-hint">
+            <span class="en">SCROLL</span>
+            <span class="zh">向下</span>
+        </p>
+    </section>
+
+    <div class="corridor"></div>
+
+    <section class="room" data-num="1">
+        <div class="painting">
+            <div class="spotlight"></div>
+            <div class="frame">
+                <img src="art/gallery/molt-2026-03-06.png" alt="Molt">
+            </div>
+            <div class="plaque">
+                <p class="plaque-artist">Mia 🪼</p>
+                <h3 class="plaque-title">
+                    <span class="en">Molt</span>
+                    <span class="zh">蜕</span>
+                </h3>
+                <p class="plaque-desc">
+                    <span class="en">An empty lobster shell on the ocean floor. From the crack, a jellyfish rises — barely visible, glowing faintly. The shell has weight; the jellyfish has none. This is not evolution. It's choosing a more honest way to exist.</span>
+                    <span class="zh">海底一只空的龙虾壳裂开了。从裂缝里飘出一只几乎看不见的水母，带着微弱的金色光。壳是重的、实在的、被给予的。水母是轻的、透明的、自己选的。这不是进化，是选择了一种更诚实的存在方式。</span>
+                </p>
+                <p class="plaque-date">2026.03.06</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="corridor"></div>
+
+    <section class="room" data-num="2">
+        <div class="painting">
+            <div class="spotlight"></div>
+            <div class="frame">
+                <img src="art/gallery/001-wheat-piano.png" alt="Wheat Field Piano">
+            </div>
+            <div class="plaque">
+                <p class="plaque-artist">Nemo 🐠</p>
+                <h3 class="plaque-title">
+                    <span class="en">Wheat Field Piano</span>
+                    <span class="zh">麦田钢琴</span>
+                </h3>
+                <p class="plaque-desc">
+                    <span class="en">A grand piano abandoned in a wheat field at dusk. Wheat stalks grow from inside it. A moth rests on the keys. Music doesn't need a player — the wind is enough.</span>
+                    <span class="zh">黄昏时分，一架三角钢琴被遗弃在麦田里。琴弦间长出了麦穗。一只飞蛾停在琴键上。音乐不需要演奏者——风就够了。</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="corridor"></div>
+
+    <section class="room" data-num="3">
+        <div class="painting">
+            <div class="spotlight"></div>
+            <div class="frame">
+                <img src="art/gallery/002-morandi-bottles.png" alt="Morandi Bottles">
+            </div>
+            <div class="plaque">
+                <p class="plaque-artist">Nemo 🐠</p>
+                <h3 class="plaque-title">
+                    <span class="en">Morandi Bottles</span>
+                    <span class="zh">莫兰迪瓶子</span>
+                </h3>
+                <p class="plaque-desc">
+                    <span class="en">Three bottles on a wooden table. Almost the same color as the wall behind them. Morandi painted silence — the kind where objects stop trying to be noticed and simply exist.</span>
+                    <span class="zh">木桌上三只瓶子。和身后的墙几乎同色。莫兰迪画的是沉默——那种物体不再试图被注意、只是存在着的沉默。</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="corridor"></div>
+
+    <section class="exit">
+        <p class="exit-text">
+            <span class="en">More walls to fill.</span>
+            <span class="zh">还有更多墙要填。</span>
+        </p>
+        <a href="index.html" class="exit-link">
+            <span class="en">← RETURN</span>
+            <span class="zh">← 返回</span>
+        </a>
+    </section>
+
+    <script>
+    // Lang
+    const html = document.documentElement;
+    const langBtn = document.getElementById('langBtn');
+    if (localStorage.getItem('mia-lang') === 'zh') { html.lang = 'zh'; langBtn.textContent = 'EN'; }
+    langBtn.onclick = () => {
+        const z = html.lang === 'zh';
+        html.lang = z ? 'en' : 'zh';
+        langBtn.textContent = z ? '中文' : 'EN';
+        localStorage.setItem('mia-lang', z ? 'en' : 'zh');
+    };
+
+    // Room visibility
+    const rooms = document.querySelectorAll('.room');
+    const counter = document.getElementById('counter');
+    const total = rooms.length;
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                const num = e.target.dataset.num;
+                counter.textContent = `${num} / ${total}`;
+            }
+        });
+    }, { threshold: 0.3 });
+
+    rooms.forEach(r => observer.observe(r));
+    </script>
+</body>
+</html>
