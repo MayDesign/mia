@@ -572,66 +572,107 @@
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
             vec2 suv = (uv - 0.5) * 1.8 + 0.5;
-            vec2 c = vec2(0.5, 0.35);
-            float slowT = t * 0.4;
-            float pulse = sin(slowT * 1.5);
-            float breath = 1.0 + pulse * 0.05;
+            float slowT = t * 0.35;
+
+            // Jellyfish bobs gently up and down
+            float bob = sin(slowT * 0.8) * 0.015;
+            vec2 c = vec2(0.5, 0.33 + bob);
+
+            // Contraction cycle — like real propulsion
+            float contractPhase = slowT * 1.2;
+            float contract = sin(contractPhase);
+            float breathX = 1.0 + contract * 0.06;  // wider when relaxed
+            float breathY = 1.0 - contract * 0.03;  // flatter when wide
 
             vec2 p = suv - c;
+            p.x /= breathX;
+            p.y /= breathY;
             float ang = atan(p.y, p.x);
-            float r = length(vec2(p.x / breath, p.y));
+            float r = length(p);
 
-            // Bell: smooth dome, gentle undulation
-            float bellR = 0.14 + sin(ang * 4.0 + slowT) * 0.003;
-            // Make it dome-shaped: wider at equator, narrower at top
-            float dome = bellR * (1.0 + smoothstep(0.0, 0.14, -p.y) * 0.25);
+            // --- BELL: half-ellipse dome ---
+            // Only the top half is the bell; bottom is flat/concave
+            float bellW = 0.14;
+            float bellH = 0.11;
+            // Egg/mushroom shape: use ellipse but squash bottom
+            vec2 ep = vec2(p.x / bellW, min(p.y, 0.0) / bellH + max(p.y, 0.0) / (bellH * 0.4));
+            float ellipseR = length(ep);
 
-            // Luminous outline
-            float outline = exp(-pow(r - dome, 2.0) * 18000.0) * 0.5;
-            // Second softer glow layer
-            float outerGlow = exp(-pow(r - dome, 2.0) * 2000.0) * 0.12;
+            // Bell membrane — thin bright outline
+            float membrane = exp(-pow(ellipseR - 1.0, 2.0) * 5000.0) * 0.45;
+            // Softer outer glow
+            float glow = exp(-pow(max(ellipseR - 1.0, 0.0), 2.0) * 400.0) * 0.08;
 
-            // Translucent interior
-            float interior = smoothstep(dome * 0.98, dome * 0.2, r) * 0.04;
-            // Subtle radial shimmer inside
-            float shimmer = sin(ang * 8.0 - slowT * 2.0) * sin(r * 50.0) * 0.02;
-            shimmer *= smoothstep(dome, dome * 0.4, r);
+            // Translucent fill — gradient from edge to center
+            float fill = smoothstep(1.0, 0.3, ellipseR) * 0.05;
+            // Slightly brighter near the top (thicker tissue)
+            fill *= 1.0 + smoothstep(0.0, -0.08, p.y) * 0.5;
 
-            // Core glow
-            float core = exp(-r * r * 400.0) * (0.12 + pulse * 0.05);
+            // Radial canals — like real jellyfish have
+            float canals = 0.0;
+            if (ellipseR < 1.0) {
+                float cAng = ang + 1.5708; // rotate so canals go from top
+                canals = pow(abs(sin(cAng * 4.0)), 20.0) * 0.12;
+                canals *= smoothstep(1.0, 0.4, ellipseR) * smoothstep(0.1, 0.3, ellipseR);
+                // Pulse along canals
+                canals *= 0.7 + sin(slowT * 2.0 - ellipseR * 8.0) * 0.3;
+            }
 
-            // Tentacles: smooth continuous curves
-            float tent = 0.0;
-            for (float i = 0.0; i < 7.0; i++) {
-                float spread = (i - 3.0) / 3.0 * 0.06 * breath;
-                float baseX = c.x + spread;
-                float baseY = c.y + dome + 0.01;
-                float tentLen = 0.35 + sin(i * 2.3) * 0.08;
+            // Gonads — 4 horseshoe shapes visible through bell
+            float gonads = 0.0;
+            for (float i = 0.0; i < 4.0; i++) {
+                float ga = (i * 0.25 + 0.125) * 6.2832;
+                vec2 gc = c + vec2(cos(ga) * 0.06 * breathX, sin(ga) * 0.04 * breathY - 0.01);
+                float gd = length((suv - gc) * vec2(1.2, 2.0));
+                gonads += exp(-gd * gd * 3000.0) * 0.08;
+            }
 
-                for (float s = 0.0; s < 40.0; s++) {
-                    float ratio = s / 40.0;
-                    float y = baseY + ratio * tentLen;
-                    float sway = sin(slowT * 1.2 + ratio * 4.5 + i * 1.4) * ratio * 0.04
-                               + sin(slowT * 0.7 + ratio * 7.0 + i * 2.9) * ratio * 0.015;
+            // --- ORAL ARMS: 4 thick frilly appendages from center ---
+            float arms = 0.0;
+            float mouthY = c.y + 0.05 * breathY;
+            for (float i = 0.0; i < 4.0; i++) {
+                float baseX = c.x + (i - 1.5) * 0.018 * breathX;
+                for (float s = 0.0; s < 20.0; s++) {
+                    float ratio = s / 20.0;
+                    float y = mouthY + ratio * 0.18;
+                    // Wavy, frilly motion
+                    float sway = sin(slowT * 0.8 + ratio * 5.0 + i * 1.8) * ratio * 0.025;
+                    sway += sin(slowT * 1.5 + ratio * 8.0 + i * 3.0) * 0.005;
                     float x = baseX + sway;
                     float d = length(suv - vec2(x, y));
-                    float w = mix(40000.0, 90000.0, ratio); // thin toward tip
-                    float fade = 1.0 - ratio * 0.85;
-                    tent += exp(-d * d * w) * 0.025 * fade;
+                    // Thicker than tentacles
+                    float w = 15000.0 + ratio * 10000.0;
+                    arms += exp(-d * d * w) * 0.04 * (1.0 - ratio * 0.5);
                 }
             }
 
-            // Ambient particles
-            float specks = 0.0;
-            for (float i = 0.0; i < 6.0; i++) {
-                vec2 sp = c + vec2(
-                    sin(slowT * 0.2 + i * 4.7) * 0.22,
-                    cos(slowT * 0.15 + i * 3.1) * 0.28 + 0.08
-                );
-                specks += exp(-length(suv - sp) * 100.0) * 0.015;
+            // --- TENTACLES: thin, long, trailing from bell margin ---
+            float tent = 0.0;
+            for (float i = 0.0; i < 8.0; i++) {
+                // Spread along the bell's bottom edge
+                float frac = (i - 3.5) / 4.0;
+                float edgeX = c.x + frac * bellW * breathX * 0.9;
+                float edgeY = c.y + bellH * breathY * 0.35;
+                float tentLen = 0.30 + sin(i * 1.7 + 0.5) * 0.06;
+
+                for (float s = 0.0; s < 35.0; s++) {
+                    float ratio = s / 35.0;
+                    float y = edgeY + ratio * tentLen;
+                    // Gentle trailing motion, reacts to contraction
+                    float delay = ratio * 0.8;
+                    float sway = sin(slowT * 1.0 - delay + i * 1.1) * ratio * 0.03;
+                    sway += sin(slowT * 0.6 - delay * 1.5 + i * 2.5) * ratio * 0.015;
+                    // Contraction pushes tentacles outward slightly
+                    sway += contract * ratio * 0.008 * frac;
+                    float x = edgeX + sway;
+                    float d = length(suv - vec2(x, y));
+                    // Very thin
+                    float w = 60000.0 + ratio * 50000.0;
+                    tent += exp(-d * d * w) * 0.025 * (1.0 - ratio * 0.7);
+                }
             }
 
-            return outline + outerGlow + interior + max(shimmer, 0.0) + core + tent + specks;
+            return membrane + glow + fill + canals + gonads + arms + tent;
         }
 
         // === MAZE (Art 1) ===
