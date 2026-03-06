@@ -831,7 +831,6 @@
             }
             
             .status {
-                opacity: 0;
                 animation: statusFadeIn 0.6s ease 0.5s forwards;
             }
             
@@ -868,8 +867,7 @@
                 padding: 32px 20px;
                 justify-content: flex-start;
                 padding-top: 15vh;
-                height: 100svh;
-                overflow: hidden;
+                min-height: 100svh;
             }
             
             .title {
@@ -912,12 +910,14 @@
             }
             
             .status { 
-                position: relative; 
-                margin-top: 32px; 
-                padding: 20px;
-                background: var(--surface);
-                border: 1px solid rgba(255,255,255,0.08);
-                width: 100%;
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                margin-top: 0;
+                padding: 0;
+                background: none;
+                border: none;
+                width: auto;
             }
 
             .status-line {
@@ -925,10 +925,10 @@
             }
             
             .controls {
-                position: absolute;
-                top: 20px;
+                position: fixed;
+                bottom: 20px;
                 right: 20px;
-                bottom: auto;
+                top: auto;
                 gap: 8px;
             }
             
