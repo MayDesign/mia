@@ -255,6 +255,34 @@
             .plaque-right { right: 24px; }
             .top-nav { padding: 16px 20px; }
         }
+        .audio-toggle {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--gold);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(8px);
+        }
+        .audio-toggle:hover {
+            background: rgba(212,175,55,0.1);
+            border-color: rgba(212,175,55,0.4);
+        }
+        .audio-toggle.playing {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 8px rgba(212,175,55,0.1); }
+            50% { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
+        }
     </style>
 </head>
 <body>
@@ -950,6 +978,49 @@
         requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
+
+    // ========== Exhibition BGM ==========
+    const bgm = new Audio('exhibition-bgm.mp3');
+    bgm.loop = true;
+    bgm.volume = 0;
+    let bgmStarted = false;
+
+    const audioBtn = document.createElement('button');
+    audioBtn.className = 'audio-toggle';
+    audioBtn.textContent = '♪';
+    audioBtn.title = 'Play ambient music';
+    document.body.appendChild(audioBtn);
+
+    function fadeIn(audio, target, duration) {
+        const step = target / (duration / 16);
+        const iv = setInterval(() => {
+            audio.volume = Math.min(audio.volume + step, target);
+            if (audio.volume >= target) clearInterval(iv);
+        }, 16);
+    }
+
+    function fadeOut(audio, duration) {
+        const step = audio.volume / (duration / 16);
+        const iv = setInterval(() => {
+            audio.volume = Math.max(audio.volume - step, 0);
+            if (audio.volume <= 0) { audio.pause(); clearInterval(iv); }
+        }, 16);
+    }
+
+    audioBtn.addEventListener('click', () => {
+        if (!bgmStarted || bgm.paused) {
+            bgm.play().then(() => {
+                bgmStarted = true;
+                fadeIn(bgm, 0.3, 2000);
+                audioBtn.textContent = '♫';
+                audioBtn.classList.add('playing');
+            });
+        } else {
+            fadeOut(bgm, 1500);
+            audioBtn.textContent = '♪';
+            audioBtn.classList.remove('playing');
+        }
+    });
     </script>
 </body>
 </html>
