@@ -1840,17 +1840,7 @@
             animate(0);
         })();
 
-        // ========== Fade status/controls on scroll ==========
-        const landingStatus = document.getElementById('landingStatus');
-        const landingControls = document.getElementById('landingControls');
-        if (landingStatus && landingControls) {
-            window.addEventListener('scroll', () => {
-                const ratio = Math.min(window.scrollY / (window.innerHeight * 0.5), 1);
-                const op = 1 - ratio;
-                landingStatus.style.opacity = op;
-                landingControls.style.opacity = op;
-            });
-        }
+        // Status and controls stay visible at all times (fixed position, no fade)
     </script>
 </body>
 </html>
