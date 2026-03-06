@@ -571,63 +571,79 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            // Fit jellyfish in view with room to breathe
-            vec2 suv = (uv - 0.5) * 2.0 + 0.5;
-            vec2 c = vec2(0.5, 0.35);
-            float breath = sin(t * 0.6) * 0.04 + 0.96;
+            vec2 suv = (uv - 0.5) * 1.8 + 0.5;
+            vec2 c = vec2(0.5, 0.38);
+            float slowT = t * 0.4;
+            float breath = sin(slowT * 1.5) * 0.06 + 0.94;
 
-            // Bell — dome shape, translucent with visible edge
+            // --- Bell: layered SDF with organic distortion ---
             vec2 p = suv - c;
             p.x /= breath;
-            float bellDist = length(p);
+            float ang = atan(p.y, p.x);
+            float r = length(p);
 
-            // Outer membrane — visible edge ring
-            float membrane = exp(-pow(abs(bellDist - 0.15), 2.0) * 8000.0) * 0.6;
+            // Organic wobble on the bell edge
+            float wobble = sin(ang * 3.0 + slowT * 2.0) * 0.008
+                         + sin(ang * 7.0 - slowT * 1.5) * 0.004
+                         + sin(ang * 13.0 + slowT * 3.0) * 0.002;
+            float bellR = 0.14 + wobble;
 
-            // Inner body — soft gradient fill, not solid
-            float innerFill = smoothstep(0.16, 0.06, bellDist) * 0.2;
+            // Dome shape: top half is rounder
+            float dome = bellR * (1.0 + smoothstep(0.0, -0.15, p.y) * 0.3);
 
-            // Radial veins inside the bell
-            float angle = atan(p.y, p.x);
-            float veins = abs(sin(angle * 6.0 + t * 0.3)) * exp(-bellDist * 12.0) * 0.15;
-            veins *= smoothstep(0.16, 0.10, bellDist); // only inside bell
+            // Luminous edge — the defining outline
+            float edge = exp(-pow(r - dome, 2.0) * 12000.0) * 0.55;
 
-            // Pulsing core
-            float core = exp(-bellDist * bellDist * 800.0) * (0.2 + sin(t * 0.6) * 0.1);
+            // Ghost fill — very subtle inner gradient
+            float fill = smoothstep(dome, dome * 0.3, r) * 0.06;
 
-            // Bell skirt — ruffled bottom edge
-            float skirtY = c.y + 0.14;
-            float skirtDist = suv.y - skirtY;
-            float skirtX = abs(suv.x - c.x) / (breath * 0.18);
-            float skirt = 0.0;
-            if (skirtDist > -0.02 && skirtDist < 0.03 && skirtX < 1.0) {
-                float ruffle = sin(suv.x * 80.0 + t * 2.0) * 0.003;
-                skirt = exp(-pow(skirtDist - ruffle, 2.0) * 20000.0) * 0.3 * (1.0 - skirtX);
+            // Internal flowing pattern — like organs visible through skin
+            float inner = 0.0;
+            for (float i = 0.0; i < 4.0; i++) {
+                float a = ang + i * 1.5708 + slowT * 0.5;
+                float wave = sin(a * 2.0 + r * 40.0 - slowT * 3.0);
+                inner += wave * exp(-r * 10.0) * 0.03;
             }
+            inner *= smoothstep(dome, dome * 0.5, r);
 
-            // Tentacles — long, flowing, organic
+            // --- Tentacles: flowing curves using sine composition ---
             float tent = 0.0;
-            for (float i = 0.0; i < 6.0; i++) {
-                float spread = (i / 5.0 - 0.5) * 0.12 * breath;
-                float baseX = c.x + spread;
-                float baseY = c.y + 0.15;
-                for (float s = 0.0; s < 25.0; s++) {
-                    float ratio = s / 25.0;
-                    // Each tentacle sways differently
-                    float sway = sin(t * 0.5 + ratio * 5.0 + i * 1.2) * ratio * 0.05;
-                    sway += sin(t * 0.3 + ratio * 3.0 + i * 2.7) * ratio * 0.02;
-                    vec2 segPos = vec2(baseX + sway, baseY + ratio * 0.4);
-                    float segDist = length(suv - segPos);
-                    // Thinner as they go down
-                    float thickness = 25000.0 + ratio * 15000.0;
-                    tent += exp(-segDist * segDist * thickness) * 0.05 * (1.0 - ratio * 0.6);
+            for (float i = 0.0; i < 5.0; i++) {
+                float offset = (i - 2.0) * 0.035 * breath;
+                float baseX = c.x + offset;
+                float baseY = c.y + dome + 0.02;
+
+                for (float s = 0.0; s < 30.0; s++) {
+                    float ratio = s / 30.0;
+                    float len = 0.45;
+                    float y = baseY + ratio * len;
+
+                    // Layered sine waves for organic flow
+                    float sway = sin(slowT + ratio * 6.0 + i * 1.7) * ratio * 0.04;
+                    sway += sin(slowT * 0.7 + ratio * 3.5 + i * 3.1) * ratio * 0.025;
+                    sway += sin(slowT * 1.3 + ratio * 9.0 + i * 0.5) * ratio * 0.01;
+
+                    float x = baseX + sway;
+                    float d = length(suv - vec2(x, y));
+
+                    // Fade and thin toward tips
+                    float fade = (1.0 - ratio * 0.8);
+                    float width = 30000.0 + ratio * 40000.0;
+                    tent += exp(-d * d * width) * 0.035 * fade;
                 }
             }
 
-            // Bioluminescent glow around the bell
-            float bioGlow = exp(-bellDist * 4.0) * 0.08;
+            // --- Ambient particles: tiny drifting specks ---
+            float specks = 0.0;
+            for (float i = 0.0; i < 8.0; i++) {
+                vec2 sp = vec2(
+                    c.x + sin(slowT * 0.3 + i * 5.7) * 0.2,
+                    c.y + cos(slowT * 0.2 + i * 3.3) * 0.25 + 0.1
+                );
+                specks += exp(-length(suv - sp) * 80.0) * 0.02;
+            }
 
-            return membrane + innerFill + veins + core + skirt + tent + bioGlow;
+            return edge + fill + max(inner, 0.0) + tent + specks;
         }
 
         // === MAZE (Art 1) ===
