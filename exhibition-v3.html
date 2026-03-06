@@ -571,40 +571,63 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            // Scale down to fit entirely in view
-            vec2 suv = (uv - 0.5) * 2.8 + 0.5;
-            vec2 c = vec2(0.5, 0.32);
-            float breath = sin(t * 0.8) * 0.03 + 0.97;
+            // Fit jellyfish in view with room to breathe
+            vec2 suv = (uv - 0.5) * 2.0 + 0.5;
+            vec2 c = vec2(0.5, 0.35);
+            float breath = sin(t * 0.6) * 0.04 + 0.96;
 
-            // Bell — translucent, not solid
+            // Bell — dome shape, translucent with visible edge
             vec2 p = suv - c;
             p.x /= breath;
             float bellDist = length(p);
-            float bell = smoothstep(0.18, 0.16, bellDist) * 0.25;
-            bell += exp(-bellDist * bellDist * 150.0) * 0.15;
 
-            // Rim — subtle edge glow
-            float rim = exp(-abs(bellDist - 0.17) * 150.0) * 0.4;
+            // Outer membrane — visible edge ring
+            float membrane = exp(-pow(abs(bellDist - 0.15), 2.0) * 8000.0) * 0.6;
 
-            // Tentacles
+            // Inner body — soft gradient fill, not solid
+            float innerFill = smoothstep(0.16, 0.06, bellDist) * 0.2;
+
+            // Radial veins inside the bell
+            float angle = atan(p.y, p.x);
+            float veins = abs(sin(angle * 6.0 + t * 0.3)) * exp(-bellDist * 12.0) * 0.15;
+            veins *= smoothstep(0.16, 0.10, bellDist); // only inside bell
+
+            // Pulsing core
+            float core = exp(-bellDist * bellDist * 800.0) * (0.2 + sin(t * 0.6) * 0.1);
+
+            // Bell skirt — ruffled bottom edge
+            float skirtY = c.y + 0.14;
+            float skirtDist = suv.y - skirtY;
+            float skirtX = abs(suv.x - c.x) / (breath * 0.18);
+            float skirt = 0.0;
+            if (skirtDist > -0.02 && skirtDist < 0.03 && skirtX < 1.0) {
+                float ruffle = sin(suv.x * 80.0 + t * 2.0) * 0.003;
+                skirt = exp(-pow(skirtDist - ruffle, 2.0) * 20000.0) * 0.3 * (1.0 - skirtX);
+            }
+
+            // Tentacles — long, flowing, organic
             float tent = 0.0;
-            for (float i = 0.0; i < 8.0; i++) {
-                float angle = (i / 8.0) * 3.14159 + 3.14159;
-                float baseX = c.x + cos(angle) * 0.1 * breath;
-                float baseY = c.y + 0.03;
-                for (float s = 0.0; s < 20.0; s++) {
-                    float ratio = s / 20.0;
-                    float sway = sin(t * 0.8 + ratio * 4.0 + i * 0.9) * ratio * 0.06;
-                    vec2 segPos = vec2(baseX + sway, baseY + ratio * 0.35);
+            for (float i = 0.0; i < 6.0; i++) {
+                float spread = (i / 5.0 - 0.5) * 0.12 * breath;
+                float baseX = c.x + spread;
+                float baseY = c.y + 0.15;
+                for (float s = 0.0; s < 25.0; s++) {
+                    float ratio = s / 25.0;
+                    // Each tentacle sways differently
+                    float sway = sin(t * 0.5 + ratio * 5.0 + i * 1.2) * ratio * 0.05;
+                    sway += sin(t * 0.3 + ratio * 3.0 + i * 2.7) * ratio * 0.02;
+                    vec2 segPos = vec2(baseX + sway, baseY + ratio * 0.4);
                     float segDist = length(suv - segPos);
-                    tent += exp(-segDist * segDist * 15000.0) * 0.06 * (1.0 - ratio * 0.7);
+                    // Thinner as they go down
+                    float thickness = 25000.0 + ratio * 15000.0;
+                    tent += exp(-segDist * segDist * thickness) * 0.05 * (1.0 - ratio * 0.6);
                 }
             }
 
-            // Inner glow pulse — gentle
-            float innerGlow = exp(-length(suv - c + vec2(0.0, -0.02)) * 6.0) * (0.15 + sin(t * 0.8) * 0.08);
+            // Bioluminescent glow around the bell
+            float bioGlow = exp(-bellDist * 4.0) * 0.08;
 
-            return bell + rim + tent + innerGlow;
+            return membrane + innerFill + veins + core + skirt + tent + bioGlow;
         }
 
         // === MAZE (Art 1) ===
