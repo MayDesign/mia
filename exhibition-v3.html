@@ -334,59 +334,25 @@
 
     // ===== SCROLL =====
     // Debounced room switching — one room per scroll gesture
-    let scrollLocked = false;
-    let scrollLockTimer = null;
 
     function nextRoom(dir) {
-        if (scrollLocked) return;
         const next = targetRoom + dir;
         if (next < 0 || next > rooms.length - 1) return;
         targetRoom = next;
-        scrollLocked = true;
-        clearTimeout(scrollLockTimer);
-        // Lock for 800ms, then require 300ms of silence before accepting new scroll
-        scrollLockTimer = setTimeout(() => {
-            scrollSilenceStart = performance.now();
-            scrollLocked = false;
-        }, 800);
+        lastRoomChangeTime = performance.now();
     }
 
-    // Trackpad/mouse wheel — accumulate delta, debounce
-    let scrollAccum = 0;
-    let scrollAccumTimer = null;
-    let scrollSilenceStart = 0;
-    const SCROLL_THRESHOLD = 40;
-    const SILENCE_REQUIRED = 250; // ms of no wheel events needed after unlock
-
-    let lastWheelTime = 0;
+    let lastRoomChangeTime = 0;
+    const ROOM_COOLDOWN = 1200; // ms — full cooldown between room changes
 
     window.addEventListener('wheel', e => {
         e.preventDefault();
         const now = performance.now();
-
-        if (scrollLocked) {
-            scrollAccum = 0;
-            lastWheelTime = now;
-            return;
-        }
-
-        // After unlock, require a gap of silence (no wheel events for SILENCE_REQUIRED ms)
-        // This kills trackpad inertia carry-over
-        if (now - lastWheelTime > SILENCE_REQUIRED) {
-            // Fresh gesture — reset accumulator
-            scrollAccum = 0;
-        }
-        lastWheelTime = now;
-
-        scrollAccum += e.deltaY;
-        clearTimeout(scrollAccumTimer);
-        scrollAccumTimer = setTimeout(() => { scrollAccum = 0; }, 200);
-
-        if (Math.abs(scrollAccum) > SCROLL_THRESHOLD) {
-            nextRoom(scrollAccum > 0 ? 1 : -1);
-            scrollAccum = 0;
-            clearTimeout(scrollAccumTimer);
-        }
+        // Ignore all wheel events during cooldown
+        if (now - lastRoomChangeTime < ROOM_COOLDOWN) return;
+        // Only respond to significant delta (ignore tiny inertia ticks)
+        if (Math.abs(e.deltaY) < 10) return;
+        nextRoom(e.deltaY > 0 ? 1 : -1);
     }, { passive: false });
 
     let touchY = 0;
@@ -398,7 +364,6 @@
     window.addEventListener('touchmove', e => {
         e.preventDefault();
         const dy = touchY - e.touches[0].clientY;
-        // Require significant swipe (60px) for room change
         if (Math.abs(dy) > 60 && targetRoom === touchStartRoom) {
             nextRoom(dy > 0 ? 1 : -1);
         }
@@ -789,10 +754,7 @@
             document.getElementById('infoNum').textContent = room.num;
             document.getElementById('infoTitle').textContent = room.title[lang];
             document.getElementById('infoDesc').textContent = room.desc[lang];
-
-            // Show panel only when mouse is near center-bottom area (exploring the art)
-            const mouseNear = my > H * 0.3;
-            infoPanel.classList.toggle('visible', mouseNear);
+            infoPanel.classList.add('visible');
         } else {
             infoPanel.classList.remove('visible');
         }
