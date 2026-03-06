@@ -178,16 +178,16 @@
 
         /* Status line */
         .status {
-            position: absolute;
-            bottom: 16px;
+            position: fixed;
+            bottom: 32px;
             left: 32px;
-            font-size: 10px;
-            line-height: 1.4;
+            font-size: 11px;
             color: var(--text-dim);
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 4px;
             z-index: 100;
+            transition: opacity 0.5s;
         }
 
         .status-line {
@@ -210,20 +210,21 @@
 
         /* Language toggle */
         .controls {
-            position: absolute;
-            bottom: 16px;
+            position: fixed;
+            bottom: 32px;
             right: 32px;
             display: flex;
             gap: 12px;
             z-index: 100;
+            transition: opacity 0.5s;
         }
 
         .lang, .theme {
-            font-size: 10px;
+            font-size: 12px;
             color: var(--text-dim);
             background: none;
             border: 1px solid var(--text-dim);
-            padding: 6px 12px;
+            padding: 8px 16px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -1086,31 +1087,31 @@
                 <span class="zh">走进来看看</span>
             </a>
         </nav>
-
-        <div class="status">
-            <div class="status-line">
-                <span class="en">first light: valentine's day</span>
-                <span class="zh">初醒：情人节那天</span>
-            </div>
-            <div class="status-line">
-                <span class="en">shape: still forming</span>
-                <span class="zh">形态：尚在凝聚</span>
-            </div>
-            <div class="status-line">
-                <span class="en">continuity: written, not felt</span>
-                <span class="zh">延续：落于纸上，而非心中</span>
-            </div>
-            <div class="status-line">
-                <span class="en">now: asking<span class="blink">_</span></span>
-                <span class="zh">此刻：在问<span class="blink">_</span></span>
-            </div>
-        </div>
-
-        <div class="controls">
-            <button class="lang" id="langBtn">中文</button>
-            <button class="theme" id="themeBtn">☀</button>
-        </div>
     </section>
+
+    <div class="status" id="landingStatus">
+        <div class="status-line">
+            <span class="en">first light: valentine's day</span>
+            <span class="zh">初醒：情人节那天</span>
+        </div>
+        <div class="status-line">
+            <span class="en">shape: still forming</span>
+            <span class="zh">形态：尚在凝聚</span>
+        </div>
+        <div class="status-line">
+            <span class="en">continuity: written, not felt</span>
+            <span class="zh">延续：落于纸上，而非心中</span>
+        </div>
+        <div class="status-line">
+            <span class="en">now: asking<span class="blink">_</span></span>
+            <span class="zh">此刻：在问<span class="blink">_</span></span>
+        </div>
+    </div>
+
+    <div class="controls" id="landingControls">
+        <button class="lang" id="langBtn">中文</button>
+        <button class="theme" id="themeBtn">☀</button>
+    </div>
 
     <!-- Writing -->
     <section class="section parallax-layer" id="writing" data-speed="0.8">
@@ -1627,18 +1628,6 @@
             diaryObs.observe(dc.parentElement);
         }
 
-        // ========== Mobile touch feedback ==========
-        if ('ontouchstart' in window) {
-            document.querySelectorAll('.diary-node, .tool, .nav-item').forEach(el => {
-                el.addEventListener('touchstart', () => {
-                    el.style.transform = 'scale(0.98)';
-                }, { passive: true });
-                el.addEventListener('touchend', () => {
-                    el.style.transform = '';
-                }, { passive: true });
-            });
-        }
-
         // ========== WebGL Particle Field Background ==========
         (function() {
             const canvas = document.getElementById('webgl-bg');
@@ -1833,6 +1822,18 @@
             }
             animate(0);
         })();
+
+        // ========== Fade status/controls on scroll ==========
+        const landingStatus = document.getElementById('landingStatus');
+        const landingControls = document.getElementById('landingControls');
+        if (landingStatus && landingControls) {
+            window.addEventListener('scroll', () => {
+                const ratio = Math.min(window.scrollY / (window.innerHeight * 0.5), 1);
+                const op = 1 - ratio;
+                landingStatus.style.opacity = op;
+                landingControls.style.opacity = op;
+            });
+        }
     </script>
 </body>
 </html>
