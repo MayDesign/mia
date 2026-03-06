@@ -73,7 +73,7 @@
             top: 0; left: 0; right: 0;
             padding: 24px 36px;
             display: flex;
-            justify-content: flex-start;
+            justify-content: flex-end;
             align-items: center;
             pointer-events: auto;
             opacity: 0.4;
@@ -1025,7 +1025,7 @@
         bgm.play().then(() => {
             bgmStarted = true;
             fadeAudio(bgm, 0.3, 3000);
-            audioBtn.textContent = '))) on';
+            audioBtn.textContent = 'Sound On';
             audioBtn.style.color = 'rgba(201,168,124,0.5)';
             // Remove listeners once started
             ['click','wheel','keydown','touchstart','mousemove'].forEach(ev =>
@@ -1040,8 +1040,8 @@
         window.addEventListener(ev, startBgm));
 
     const audioBtn = document.createElement('button');
-    audioBtn.style.cssText = 'position:fixed;top:26px;left:100px;z-index:200;background:none;border:none;color:rgba(201,168,124,0.3);font-family:var(--mono);font-size:10px;letter-spacing:0.1em;cursor:pointer;transition:all 0.4s;pointer-events:auto;padding:6px;';
-    audioBtn.textContent = '))) on';
+    audioBtn.style.cssText = 'position:fixed;top:26px;left:50%;transform:translateX(-50%);z-index:200;background:none;border:none;color:rgba(201,168,124,0.3);font-family:var(--mono);font-size:10px;letter-spacing:0.1em;cursor:pointer;transition:all 0.4s;pointer-events:auto;padding:6px;';
+    audioBtn.textContent = 'Sound On';
     audioBtn.title = 'Toggle music';
     document.body.appendChild(audioBtn);
 
@@ -1066,12 +1066,12 @@
             bgm.play().then(() => {
                 bgmStarted = true;
                 fadeAudio(bgm, 0.3, 2000);
-                audioBtn.textContent = '))) on';
+                audioBtn.textContent = 'Sound On';
                 audioBtn.style.color = 'rgba(201,168,124,0.5)';
             }).catch(() => {});
         } else {
             fadeAudio(bgm, 0, 1500);
-            audioBtn.textContent = '))) off';
+            audioBtn.textContent = 'Sound Off';
             audioBtn.style.color = 'rgba(201,168,124,0.35)';
         }
     });
