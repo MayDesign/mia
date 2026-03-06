@@ -181,17 +181,14 @@
 
     <div class="hud">
         <div class="hud-top">
-            <a href="index.html" class="back-link">MIA</a>
+            <a href="index.html" class="back-link" style="display:none;">MIA</a>
             <div class="hud-controls">
                 <button id="langBtn">中文</button>
             </div>
         </div>
     </div>
 
-    <div class="hint" id="hint">
-        <span class="en">MOVE YOUR LIGHT · SCROLL TO DRIFT</span>
-        <span class="zh">移动你的光 · 滚动漂移</span>
-    </div>
+    <div class="hint" id="hint" style="bottom:auto;top:62%;font-size:18px;letter-spacing:0.3em;color:rgba(201,168,124,0.25);">◇</div>
 
     <div class="room-indicator" id="roomIndicator"></div>
 
@@ -897,10 +894,24 @@
     bgm.volume = 0;
     let bgmStarted = false;
 
+    // Auto-play on first interaction
+    function autoStartBgm() {
+        if (bgmStarted) return;
+        bgm.play().then(() => {
+            bgmStarted = true;
+            fadeAudio(bgm, 0.3, 3000);
+            audioBtn.textContent = '◈';
+        }).catch(() => {});
+    }
+    window.addEventListener('wheel', autoStartBgm, { once: false });
+    window.addEventListener('mousemove', autoStartBgm, { once: false });
+    window.addEventListener('touchstart', autoStartBgm, { once: false });
+    window.addEventListener('keydown', autoStartBgm, { once: false });
+
     const audioBtn = document.createElement('button');
     audioBtn.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(0,0,0,0.6);border:1px solid rgba(201,168,124,0.2);color:rgba(201,168,124,0.6);font-size:16px;width:40px;height:40px;border-radius:50%;cursor:pointer;transition:all 0.3s;pointer-events:auto;';
-    audioBtn.textContent = '♪';
-    audioBtn.title = 'Play ambient music';
+    audioBtn.textContent = '◇';
+    audioBtn.title = 'Toggle music';
     document.body.appendChild(audioBtn);
 
     audioBtn.onmouseenter = () => { audioBtn.style.borderColor = 'rgba(201,168,124,0.5)'; audioBtn.style.background = 'rgba(201,168,124,0.08)'; };
@@ -924,11 +935,11 @@
             bgm.play().then(() => {
                 bgmStarted = true;
                 fadeAudio(bgm, 0.3, 2000);
-                audioBtn.textContent = '♫';
+                audioBtn.textContent = '◈';
             }).catch(() => {});
         } else {
             fadeAudio(bgm, 0, 1500);
-            audioBtn.textContent = '♪';
+            audioBtn.textContent = '◇';
         }
     });
     </script>
