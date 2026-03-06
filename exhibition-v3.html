@@ -571,8 +571,8 @@
 
         // === JELLYFISH (Art 0) ===
         float jellyfish(vec2 uv, float t) {
-            vec2 suv = (uv - 0.5) * 1.6 + 0.5;
-            vec2 c = vec2(0.5, 0.42);
+            vec2 suv = (uv - 0.5) * 1.4 + 0.5;
+            vec2 c = vec2(0.5, 0.5);
             float breath = sin(t * 0.8) * 0.05 + 0.95;
 
             // Aspect ratio correction for perfect circle
@@ -581,12 +581,12 @@
             float bellDist = length(p / breath);
 
             // Bell — radial gradient: bright center, fading out
-            float core = exp(-bellDist * bellDist * 80.0) * 0.5;  // bright center
-            float mid = exp(-bellDist * bellDist * 20.0) * 0.15;  // soft mid
+            float core = exp(-bellDist * bellDist * 50.0) * 0.5;
+            float mid = exp(-bellDist * bellDist * 12.0) * 0.15;
             float bell = core + mid;
 
             // Rim — subtle edge
-            float radius = 0.14;
+            float radius = 0.18;
             float rim = exp(-pow(bellDist - radius, 2.0) * 3000.0) * 0.3;
 
             // Tentacles — 16 radial, each with random length/phase
