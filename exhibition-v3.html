@@ -391,9 +391,10 @@
     let lastRoomChangeTime = -9999;
     const ROOM_COOLDOWN = 1200;
 
-    // Wheel scroll — simple, direct
+    // Wheel scroll — simple, direct (blocked on hero page)
     window.addEventListener('wheel', function(e) {
         e.preventDefault();
+        if (targetRoom === 0 && totalProgress < 0.5) return; // hero: only ENTER button advances
         if (performance.now() - lastRoomChangeTime < ROOM_COOLDOWN) return;
         if (Math.abs(e.deltaY) > 20) {
             nextRoom(e.deltaY > 0 ? 1 : -1);
@@ -416,6 +417,7 @@
         if (!touchActive) return;
         var dy = touchY - e.touches[0].clientY;
         if (Math.abs(dy) > 35) {
+            if (targetRoom === 0 && totalProgress < 0.5) { touchActive = false; return; }
             if (performance.now() - lastRoomChangeTime >= ROOM_COOLDOWN) {
                 nextRoom(dy > 0 ? 1 : -1);
             }
@@ -852,7 +854,7 @@
 
     // ===== HERO TEXT — rendered as DOM overlay =====
     const heroTitle = document.createElement('div');
-    heroTitle.style.cssText = 'position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:50;pointer-events:none;transition:opacity 0.8s;';
+    heroTitle.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;pointer-events:none;background:#060605;transition:opacity 0.8s;';
     heroTitle.innerHTML = `
         <h1 style="font-family:var(--serif);font-size:clamp(48px,10vw,100px);font-weight:300;font-style:italic;letter-spacing:0.1em;opacity:0.8;mix-blend-mode:screen;">
             <span class="en">Untitled. Still.</span>
