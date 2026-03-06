@@ -24,7 +24,7 @@
             font-family: var(--serif);
             background: var(--bg);
             color: var(--text);
-            overflow-x: hidden;
+            overflow: hidden;
             -webkit-font-smoothing: antialiased;
             cursor: crosshair;
         }
@@ -85,6 +85,8 @@
             display: flex;
             width: max-content;
             height: 100vh;
+            overflow-x: auto;
+            overflow-y: hidden;
         }
 
         /* Room */
@@ -300,6 +302,8 @@
                 flex-direction: column;
                 width: 100%;
                 height: auto;
+                overflow-x: hidden;
+                overflow-y: auto;
             }
             .room {
                 width: 100%;
