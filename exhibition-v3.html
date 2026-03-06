@@ -391,10 +391,9 @@
     let lastRoomChangeTime = -9999;
     const ROOM_COOLDOWN = 1200;
 
-    // Wheel scroll — simple, direct (blocked on hero page)
+    // Wheel scroll — simple, direct
     window.addEventListener('wheel', function(e) {
         e.preventDefault();
-        if (targetRoom === 0 && totalProgress < 0.5) return; // hero: only ENTER button advances
         if (performance.now() - lastRoomChangeTime < ROOM_COOLDOWN) return;
         if (Math.abs(e.deltaY) > 20) {
             nextRoom(e.deltaY > 0 ? 1 : -1);
@@ -417,7 +416,6 @@
         if (!touchActive) return;
         var dy = touchY - e.touches[0].clientY;
         if (Math.abs(dy) > 35) {
-            if (targetRoom === 0 && totalProgress < 0.5) { touchActive = false; return; }
             if (performance.now() - lastRoomChangeTime >= ROOM_COOLDOWN) {
                 nextRoom(dy > 0 ? 1 : -1);
             }
