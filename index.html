@@ -36,11 +36,16 @@
 
         body {
             font-family: var(--mono);
-            background: var(--bg);
+            background: transparent;
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
             cursor: crosshair;
+        }
+        
+        /* Background color on html so WebGL canvas shows through */
+        html {
+            background: var(--bg);
         }
 
         html[lang="zh"] body { font-family: 'Noto Serif SC', serif; }
