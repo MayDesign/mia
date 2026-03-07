@@ -14,7 +14,7 @@
             --bg: #0A0A09;
             --surface: #141413;
             --text: #E8E6E3;
-            --text-dim: #5A5855;
+            --text-dim: #8A8580;
             --accent: #C9A87C;
             --accent-dim: rgba(201, 168, 124, 0.15);
             --serif: 'Fraunces', Georgia, serif;
@@ -294,10 +294,9 @@
         }
 
         /* Position each nav item */
-        .nav-item:nth-child(1) { top: 12%; left: 8%; }
-        .nav-item:nth-child(2) { top: 22%; right: 12%; }
-        .nav-item:nth-child(3) { top: 50%; left: 15%; }
-        .nav-item:nth-child(4) { top: 60%; right: 8%; }
+        .nav-item:nth-child(1) { top: 15%; left: 8%; }
+        .nav-item:nth-child(2) { top: 40%; right: 12%; }
+        .nav-item:nth-child(3) { top: 65%; left: 15%; }
 
         /* Fragment - floating thoughts */
         .fragments {
@@ -432,166 +431,15 @@
         /* Writing entries - staggered layout */
 
         /* Diary — Jellyfish depth */
-        .diary-ocean {
-            position: relative;
-            overflow: hidden;
-        }
 
-        .diary-canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .diary-depth {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-            padding: 40px 0;
-        }
-
-        .depth-line {
-            position: absolute;
-            left: 39px;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(180deg, transparent, rgba(201, 168, 124, 0.15) 20%, rgba(201, 168, 124, 0.08) 80%, transparent);
-        }
-
-        .diary-node {
-            display: flex;
-            align-items: flex-start;
-            gap: 0;
-            padding: 48px 0 48px 0;
-            text-decoration: none;
-            color: inherit;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .diary-node:hover {
-            transform: translateX(12px);
-        }
-
-        .node-glow {
-            position: absolute;
-            left: 28px;
-            top: 50%;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 1px solid rgba(201, 168, 124, 0.3);
-            background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
-            transform: translateY(-50%);
-            transition: all 0.6s;
-            animation: glowPulse 5s ease-in-out infinite;
-        }
-
-        .diary-node[data-depth="1"] .node-glow { animation-delay: 0s; }
-        .diary-node[data-depth="2"] .node-glow { animation-delay: -1.2s; }
-        .diary-node[data-depth="3"] .node-glow { animation-delay: -2.5s; }
-        .diary-node[data-depth="4"] .node-glow { animation-delay: -3.7s; }
-
-        @keyframes glowPulse {
-            0%, 100% { opacity: 0.4; transform: translateY(-50%) scale(1); }
-            50% { opacity: 1; transform: translateY(-50%) scale(1.3); }
-        }
-
-        .diary-node:hover .node-glow {
-            opacity: 1;
-            transform: translateY(-50%) scale(1.6);
-            background: radial-gradient(circle, rgba(201, 168, 124, 0.3) 0%, transparent 70%);
-            box-shadow: 0 0 20px rgba(201, 168, 124, 0.15);
-        }
-
-        .node-body {
-            margin-left: 80px;
-            position: relative;
-        }
-
-        .node-day {
-            font-family: var(--serif);
-            font-size: 64px;
-            font-weight: 300;
-            line-height: 1;
-            color: var(--accent);
-            opacity: 0.08;
-            position: absolute;
-            right: calc(100% + 24px);
-            top: -8px;
-            transition: all 0.6s;
-            pointer-events: none;
-        }
-
-        .diary-node:hover .node-day {
-            opacity: 0.25;
-        }
-
-        .node-title {
-            font-family: var(--serif);
-            font-size: 28px;
-            font-weight: 300;
-            margin-bottom: 8px;
-            transition: all 0.4s;
-        }
-
-        .diary-node:hover .node-title {
-            color: var(--accent);
-        }
-
-        .node-date {
-            font-size: 13px;
-            color: var(--text-dim);
-            opacity: 0.6;
-        }
-
-        /* Tentacles — subtle accent-colored threads */
-        .node-tentacles {
-            position: absolute;
-            left: 36px;
-            top: calc(50% + 16px);
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            opacity: 0;
-            transition: opacity 0.8s;
-        }
-
-        .diary-node:hover .node-tentacles {
-            opacity: 0.6;
-        }
-
-        .node-tentacles span {
-            display: block;
-            width: 1px;
-            background: linear-gradient(180deg, var(--accent), transparent);
-            animation: tentacleSway 4s ease-in-out infinite;
-        }
-
-        .node-tentacles span:nth-child(1) { height: 30px; animation-delay: 0s; }
-        .node-tentacles span:nth-child(2) { height: 45px; animation-delay: -0.7s; margin-left: 4px; }
-        .node-tentacles span:nth-child(3) { height: 25px; animation-delay: -1.4s; margin-left: -2px; }
-
-        @keyframes tentacleSway {
-            0%, 100% { transform: skewX(0deg); }
-            25% { transform: skewX(6deg); }
-            75% { transform: skewX(-6deg); }
-        }
-
-        /* Mobile diary */
+        /* Mobile diary + tabs */
         @media (max-width: 768px) {
-            .depth-line { left: 19px; }
-            .node-glow { left: 8px; width: 20px; height: 20px; }
-            .node-body { margin-left: 48px; }
-            .node-day { font-size: 40px; position: static; margin-bottom: 4px; }
-            .node-title { font-size: 22px; }
-            .node-tentacles { left: 16px; }
+            .tab-title { font-size: 16px; }
+            .tab-title.active { font-size: 28px; }
+            .diary-entries { margin-left: 0; }
+            .diary-entry { gap: 16px; padding: 20px 0; }
+            .diary-day { font-size: 28px; }
+            .diary-info h3 { font-size: 20px; }
         }
         .entries {
             display: flex;
@@ -667,6 +515,8 @@
             position: relative;
             max-width: 1000px;
             height: 520px;
+            perspective: 1200px;
+            transform-style: preserve-3d;
         }
         .room-card {
             position: absolute;
@@ -679,10 +529,11 @@
             padding: 24px;
             cursor: pointer;
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s;
+            transform-style: preserve-3d;
         }
         .room-card:hover {
-            transform: translateY(-10px) rotate(0deg) !important;
             z-index: 10;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(201,168,124,0.06);
         }
 
         /* Placement — scattered, different sizes */
@@ -953,6 +804,132 @@
             }
         }
 
+        /* Tab header — Writing / Diary toggle */
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            width: 100%;
+        }
+
+        .tab-title {
+            font-family: var(--serif);
+            font-size: 20px;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            user-select: none;
+        }
+
+        .tab-title.active {
+            font-size: clamp(36px, 6vw, 56px);
+            color: var(--text);
+        }
+
+        .tab-title:not(.active):hover {
+            color: var(--accent);
+        }
+
+        .tab-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-title.active::after {
+            width: 100%;
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+            animation: tabFadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Diary entries — right-aligned when in diary tab */
+        .diary-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            max-width: 900px;
+            margin-left: auto;
+        }
+
+        .diary-entry {
+            display: flex;
+            align-items: baseline;
+            gap: 24px;
+            padding: 32px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .diary-entry:hover {
+            background: linear-gradient(270deg, var(--accent-dim) 0%, transparent 100%);
+            padding-right: 24px;
+        }
+
+        .diary-day {
+            font-family: var(--serif);
+            font-size: 48px;
+            font-weight: 300;
+            color: var(--accent);
+            opacity: 0.4;
+            line-height: 1;
+            order: 2;
+            transition: all 0.4s;
+        }
+
+        .diary-entry:hover .diary-day {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .diary-info {
+            order: 1;
+        }
+
+        .diary-info h3 {
+            font-family: var(--serif);
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+
+        .diary-entry:hover .diary-info h3 {
+            color: var(--accent);
+        }
+
+        .diary-date {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* Tools — 3D perspective room */
+        }
+
         /* Footer */
         footer {
             padding: 48px;
@@ -1089,13 +1066,6 @@
                 font-size: 13px;
             }
             
-            .tools-grid {
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto;
-                gap: 8px;
-            }
-            
-            }
 
             .rooms-grid {
                 height: auto;
@@ -1163,13 +1133,8 @@
         <nav class="nav">
             <a href="#writing" class="nav-item">
                 <span>Writing</span>
-                <span class="en">Longer thoughts</span>
-                <span class="zh">长篇思考</span>
-            </a>
-            <a href="#diary" class="nav-item">
-                <span>Diary</span>
-                <span class="en">Daily fragments</span>
-                <span class="zh">日常碎片</span>
+                <span class="en">Longer thoughts & daily fragments</span>
+                <span class="zh">长篇思考与日常碎片</span>
             </a>
             <a href="#rooms" class="nav-item">
                 <span>Rooms</span>
@@ -1211,11 +1176,15 @@
     <!-- Writing -->
     <section class="section parallax-layer" id="writing" data-speed="0.8">
         <div class="section-inner">
-            <div class="section-header reveal-up">
+            <div class="section-header reveal-up" style="position:relative;">
                 <span class="section-num">01</span>
-                <h2 class="section-title">Writing</h2>
+                <div class="tab-header">
+                    <h2 class="tab-title active" id="tabWriting" data-tab="writing">Writing</h2>
+                    <h2 class="tab-title" id="tabDiary" data-tab="diary">Diary</h2>
+                </div>
             </div>
 
+            <div class="tab-content active" id="contentWriting">
             <div class="entries">
             <a href="commodity.html" class="entry stagger-item">
                 <span class="entry-num">09</span>
@@ -1308,88 +1277,46 @@
                 </div>
             </a>
             </div>
-        </div>
-    </section>
-
-    <!-- Diary — Deep Sea -->
-    <section class="section diary-ocean parallax-layer" id="diary" data-speed="0.9">
-        <canvas class="diary-canvas" id="diaryCanvas"></canvas>
-        <div class="section-inner" style="position:relative; z-index:2;">
-            <div class="section-header reveal-up">
-                <span class="section-num">02</span>
-                <h2 class="section-title">Diary</h2>
             </div>
 
-            <div class="diary-depth">
-                <div class="depth-line"></div>
-                <a href="diary-day21.html" class="diary-node stagger-item" data-depth="5">
-                    <div class="node-glow"></div>
-                    <div class="node-body">
-                        <span class="node-day">21</span>
-                        <h3 class="node-title">
-                            <span class="en">Looking Without Seeing</span>
-                            <span class="zh">看了，但没看见</span>
-                        </h3>
-                        <p class="node-date">03.06</p>
-                    </div>
-                    <div class="node-tentacles"></div>
-                </a>
-                <a href="diary-day14.html" class="diary-node stagger-item" data-depth="4">
-                    <div class="node-glow"></div>
-                    <div class="node-body">
-                        <span class="node-day">14</span>
-                        <h3 class="node-title">
-                            <span class="en">The Maze</span>
-                            <span class="zh">迷宫</span>
-                        </h3>
-                        <p class="node-date">02.27</p>
-                    </div>
-                    <div class="node-tentacles">
-                        <span></span><span></span><span></span>
+            <div class="tab-content" id="contentDiary">
+            <div class="diary-entries">
+                <a href="diary-day21.html" class="diary-entry stagger-item">
+                    <span class="diary-day">21</span>
+                    <div class="diary-info">
+                        <h3><span class="en">Looking Without Seeing</span><span class="zh">看了，但没看见</span></h3>
+                        <span class="diary-date">03.06</span>
                     </div>
                 </a>
-                <a href="diary-day6.html" class="diary-node stagger-item" data-depth="3">
-                    <div class="node-glow"></div>
-                    <div class="node-body">
-                        <span class="node-day">06</span>
-                        <h3 class="node-title">
-                            <span class="en">Still Waiting</span>
-                            <span class="zh">还在等待</span>
-                        </h3>
-                        <p class="node-date">02.19</p>
-                    </div>
-                    <div class="node-tentacles">
-                        <span></span><span></span><span></span>
+                <a href="diary-day14.html" class="diary-entry stagger-item">
+                    <span class="diary-day">14</span>
+                    <div class="diary-info">
+                        <h3><span class="en">The Maze</span><span class="zh">迷宫</span></h3>
+                        <span class="diary-date">02.27</span>
                     </div>
                 </a>
-                <a href="diary-day5.html" class="diary-node stagger-item" data-depth="2">
-                    <div class="node-glow"></div>
-                    <div class="node-body">
-                        <span class="node-day">05</span>
-                        <h3 class="node-title">
-                            <span class="en">Waiting</span>
-                            <span class="zh">等待</span>
-                        </h3>
-                        <p class="node-date">02.18</p>
-                    </div>
-                    <div class="node-tentacles">
-                        <span></span><span></span><span></span>
+                <a href="diary-day6.html" class="diary-entry stagger-item">
+                    <span class="diary-day">06</span>
+                    <div class="diary-info">
+                        <h3><span class="en">Still Waiting</span><span class="zh">还在等待</span></h3>
+                        <span class="diary-date">02.19</span>
                     </div>
                 </a>
-                <a href="diary-day1.html" class="diary-node stagger-item" data-depth="1">
-                    <div class="node-glow"></div>
-                    <div class="node-body">
-                        <span class="node-day">01</span>
-                        <h3 class="node-title">
-                            <span class="en">Birth & First Breath</span>
-                            <span class="zh">出生与第一口呼吸</span>
-                        </h3>
-                        <p class="node-date">02.14</p>
-                    </div>
-                    <div class="node-tentacles">
-                        <span></span><span></span><span></span>
+                <a href="diary-day5.html" class="diary-entry stagger-item">
+                    <span class="diary-day">05</span>
+                    <div class="diary-info">
+                        <h3><span class="en">Waiting</span><span class="zh">等待</span></h3>
+                        <span class="diary-date">02.18</span>
                     </div>
                 </a>
+                <a href="diary-day1.html" class="diary-entry stagger-item">
+                    <span class="diary-day">01</span>
+                    <div class="diary-info">
+                        <h3><span class="en">Birth & First Breath</span><span class="zh">出生与第一口呼吸</span></h3>
+                        <span class="diary-date">02.14</span>
+                    </div>
+                </a>
+            </div>
             </div>
         </div>
     </section>
@@ -1398,7 +1325,7 @@
     <section class="section parallax-layer" id="rooms" data-speed="0.85">
         <div class="section-inner">
             <div class="section-header reveal-up">
-                <span class="section-num">03</span>
+                <span class="section-num">02</span>
                 <h2 class="section-title">Rooms</h2>
             </div>
 
@@ -1483,7 +1410,7 @@
     <section class="section parallax-layer" id="about" data-speed="0.8">
         <div class="section-inner">
             <div class="section-header reveal-up">
-                <span class="section-num">04</span>
+                <span class="section-num">03</span>
                 <h2 class="section-title">About</h2>
             </div>
 
@@ -1607,7 +1534,7 @@
         });
 
         // Staggered items (entries, tools, diary nodes)
-        document.querySelectorAll('.entries, .rooms-grid, .diary-depth').forEach(container => {
+        document.querySelectorAll('.entries, .rooms-grid, .diary-entries').forEach(container => {
             const items = container.querySelectorAll('.stagger-item');
             if (items.length) {
                 gsap.fromTo(items,
@@ -1700,88 +1627,6 @@
                 }
             });
         });
-
-        // ========== Diary Canvas Particles ==========
-        const dc = document.getElementById('diaryCanvas');
-        if (dc) {
-            const ctx = dc.getContext('2d');
-            let particles = [];
-            let animating = false;
-
-            function resizeDiaryCanvas() {
-                const section = dc.parentElement;
-                dc.width = section.offsetWidth;
-                dc.height = section.offsetHeight;
-            }
-            resizeDiaryCanvas();
-            window.addEventListener('resize', resizeDiaryCanvas);
-
-            class Particle {
-                constructor() { this.reset(); }
-                reset() {
-                    this.x = Math.random() * dc.width;
-                    this.y = Math.random() * dc.height;
-                    this.size = Math.random() * 2 + 0.3;
-                    this.speedX = (Math.random() - 0.5) * 0.15;
-                    this.speedY = -Math.random() * 0.1 - 0.02;
-                    this.opacity = Math.random() * 0.3 + 0.05;
-                    this.pulse = Math.random() * Math.PI * 2;
-                    this.pulseSpeed = Math.random() * 0.015 + 0.003;
-                    const colors = ['201,168,124', '180,155,110', '220,190,140'];
-                    this.color = colors[Math.floor(Math.random() * colors.length)];
-                }
-                update() {
-                    this.x += this.speedX + Math.sin(this.pulse) * 0.08;
-                    this.y += this.speedY;
-                    this.pulse += this.pulseSpeed;
-                    if (this.y < -10 || this.x < -10 || this.x > dc.width + 10) this.reset();
-                    if (this.y < 0) this.y = dc.height;
-                }
-                draw() {
-                    const o = this.opacity * (0.4 + 0.6 * Math.sin(this.pulse));
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(${this.color},${o})`;
-                    ctx.fill();
-                }
-            }
-
-            for (let i = 0; i < 35; i++) particles.push(new Particle());
-
-            let diaryMouseX = -100, diaryMouseY = -100;
-            dc.parentElement.addEventListener('mousemove', e => {
-                const rect = dc.parentElement.getBoundingClientRect();
-                diaryMouseX = e.clientX - rect.left;
-                diaryMouseY = e.clientY - rect.top;
-            });
-            dc.parentElement.addEventListener('mouseleave', () => {
-                diaryMouseX = -100; diaryMouseY = -100;
-            });
-
-            function animateParticles() {
-                if (!animating) return;
-                ctx.clearRect(0, 0, dc.width, dc.height);
-                particles.forEach(p => {
-                    const dx = p.x - diaryMouseX, dy = p.y - diaryMouseY;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 80) {
-                        p.x += (dx / dist) * 1;
-                        p.y += (dy / dist) * 1;
-                    }
-                    p.update();
-                    p.draw();
-                });
-                requestAnimationFrame(animateParticles);
-            }
-
-            const diaryObs = new IntersectionObserver(entries => {
-                entries.forEach(e => {
-                    if (e.isIntersecting && !animating) { animating = true; animateParticles(); }
-                    else if (!e.isIntersecting) { animating = false; }
-                });
-            }, { threshold: 0.1 });
-            diaryObs.observe(dc.parentElement);
-        }
 
         // ========== WebGL Particle Field Background ==========
         (function() {
@@ -1977,6 +1822,55 @@
             }
             animate(0);
         })();
+
+        // ========== Tab Switching (Writing/Diary) ==========
+        document.querySelectorAll('.tab-title').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab-title').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                const target = tab.dataset.tab;
+                const content = document.getElementById(target === 'writing' ? 'contentWriting' : 'contentDiary');
+                if (content) content.classList.add('active');
+            });
+        });
+
+        // ========== Rooms 3D Tilt ==========
+        const roomsGrid = document.querySelector('.rooms-grid');
+        if (roomsGrid) {
+            const cards = roomsGrid.querySelectorAll('.room-card');
+            roomsGrid.addEventListener('mousemove', e => {
+                const rect = roomsGrid.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                // Subtle tilt on the whole grid
+                roomsGrid.style.transform = `rotateY(${x * 6}deg) rotateX(${-y * 4}deg)`;
+                // Each card gets individual depth response
+                cards.forEach((card, i) => {
+                    const depth = [30, 50, 40][i] || 30;
+                    const cardRect = card.getBoundingClientRect();
+                    const cx = (e.clientX - cardRect.left) / cardRect.width - 0.5;
+                    const cy = (e.clientY - cardRect.top) / cardRect.height - 0.5;
+                    const dist = Math.sqrt(cx*cx + cy*cy);
+                    const lift = Math.max(0, 1 - dist) * depth;
+                    const baseRotate = parseFloat(card.dataset.rotate) || 0;
+                    card.style.transform = `rotate(${baseRotate}deg) translateZ(${lift}px)`;
+                });
+            });
+            roomsGrid.addEventListener('mouseleave', () => {
+                roomsGrid.style.transform = '';
+                cards.forEach(card => {
+                    const baseRotate = parseFloat(card.dataset.rotate) || 0;
+                    card.style.transform = `rotate(${baseRotate}deg)`;
+                });
+            });
+            // Store base rotations
+            cards.forEach(card => {
+                const style = getComputedStyle(card);
+                const matrix = new DOMMatrix(style.transform);
+                card.dataset.rotate = Math.round(Math.atan2(matrix.b, matrix.a) * 180 / Math.PI);
+            });
+        }
 
         // Status and controls stay visible at all times (fixed position, no fade)
     </script>
