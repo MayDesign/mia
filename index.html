@@ -662,79 +662,160 @@
             color: var(--text-dim);
         }
 
-        /* Tools - bento style */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            grid-template-rows: repeat(2, 200px);
-            gap: 12px;
+        /* Rooms */
+        .rooms-grid {
+            display: flex;
+            gap: 20px;
             max-width: 1000px;
         }
-
-        .tool {
-            background: var(--surface);
-            padding: 32px;
-            text-decoration: none;
-            color: inherit;
+        .room-card {
+            flex: 1;
             position: relative;
             overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            aspect-ratio: 3/4;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 28px;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .room-card:hover {
+            transform: translateY(-12px);
         }
 
-        .tool:nth-child(1) { grid-column: span 4; }
-        .tool:nth-child(2) { grid-column: span 2; }
-        .tool:nth-child(3) { grid-column: span 2; }
-        .tool:nth-child(4) { grid-column: span 4; }
-
-        .tool::before {
+        /* Room backgrounds */
+        .room-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
+            transition: opacity 0.6s;
+        }
+
+        /* Gallery — warm, painting texture */
+        .room-gallery { background: #15110c; border: 1px solid rgba(180,140,80,0.08); }
+        .room-gallery::before {
+            background: radial-gradient(ellipse at 50% 30%, rgba(180,140,70,0.08) 0%, transparent 60%);
+        }
+        .room-gallery:hover::before { opacity: 1.5; }
+        .room-gallery .room-preview {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            aspect-ratio: 1;
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+        .room-gallery .room-preview img {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
-            opacity: 0;
-            transition: opacity 0.4s;
+            object-fit: cover;
+            filter: brightness(0.7);
+            transition: filter 0.6s, transform 0.6s;
+        }
+        .room-gallery:hover .room-preview img {
+            filter: brightness(0.9);
+            transform: scale(1.05);
         }
 
-        .tool:hover {
-            transform: translateY(-8px);
+        /* Fragments — cool, scattered */
+        .room-fragments { background: #0c0e12; border: 1px solid rgba(140,160,200,0.06); }
+        .room-fragments::before {
+            background: radial-gradient(ellipse at 30% 40%, rgba(100,140,200,0.06) 0%, transparent 50%);
         }
-
-        .tool:hover::before {
-            opacity: 0.1;
-        }
-
-        .tool-icon {
-            font-size: 48px;
+        .room-fragments .room-scatter {
             position: absolute;
             top: 24px;
+            left: 16px;
+            right: 16px;
+            bottom: 50%;
+        }
+        .room-scatter .frag {
+            position: absolute;
+            font-family: var(--mono);
+            font-size: 8px;
+            color: rgba(140,160,200,0.25);
+            letter-spacing: 0.1em;
+            padding: 4px 8px;
+            border: 1px solid rgba(140,160,200,0.06);
+            background: rgba(140,160,200,0.02);
+            transition: all 0.6s;
+            white-space: nowrap;
+        }
+        .room-fragments:hover .frag {
+            color: rgba(140,160,200,0.5);
+            border-color: rgba(140,160,200,0.15);
+        }
+
+        /* After Reading — warm ink */
+        .room-reading { background: #100e0c; border: 1px solid rgba(201,168,124,0.06); }
+        .room-reading::before {
+            background: radial-gradient(ellipse at 70% 35%, rgba(201,168,124,0.06) 0%, transparent 50%);
+        }
+        .room-reading .room-lines {
+            position: absolute;
+            top: 28px;
+            left: 24px;
             right: 24px;
-            opacity: 0.3;
-            transition: all 0.4s;
         }
-
-        .tool:hover .tool-icon {
-            opacity: 0.6;
-            transform: scale(1.2) rotate(-5deg);
+        .room-line {
+            height: 1px;
+            margin-bottom: 12px;
+            opacity: 0.08;
+            transition: opacity 0.6s;
         }
+        .room-reading:hover .room-line { opacity: 0.15; }
+        .room-line:nth-child(1) { width: 80%; background: var(--accent); }
+        .room-line:nth-child(2) { width: 60%; background: var(--accent); }
+        .room-line:nth-child(3) { width: 90%; background: var(--accent); }
+        .room-line:nth-child(4) { width: 45%; background: var(--accent); }
+        .room-line:nth-child(5) { width: 70%; background: var(--accent); }
+        .room-line:nth-child(6) { width: 55%; background: var(--accent); }
 
-        .tool-name {
-            font-family: var(--serif);
-            font-size: 24px;
+        .room-label {
+            position: relative;
+            z-index: 1;
+        }
+        .room-num {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.15);
             margin-bottom: 8px;
-            position: relative;
         }
-
-        .tool-desc {
-            font-size: 13px;
-            color: var(--text-dim);
-            line-height: 1.6;
-            position: relative;
+        .room-name {
+            font-family: var(--serif);
+            font-size: 20px;
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+        .room-hint {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: rgba(255,255,255,0.25);
+            letter-spacing: 0.1em;
+        }
+        .room-enter {
+            display: inline-block;
+            margin-top: 16px;
+            font-family: var(--mono);
+            font-size: 8px;
+            letter-spacing: 0.25em;
+            color: rgba(201,168,124,0.3);
+            border-bottom: 1px solid rgba(201,168,124,0.1);
+            padding-bottom: 2px;
+            transition: all 0.3s;
+        }
+        .room-card:hover .room-enter {
+            color: rgba(201,168,124,0.7);
+            border-color: rgba(201,168,124,0.4);
         }
 
         /* About - split layout */
@@ -1005,27 +1086,10 @@
                 gap: 8px;
             }
             
-            .tool {
-                grid-column: span 1 !important;
-                min-height: 140px;
-                padding: 20px;
             }
 
-            .tool:nth-child(1) { grid-column: span 2 !important; }
-            
-            .tool-icon {
-                font-size: 28px;
-                top: 16px;
-                right: 16px;
-            }
-
-            .tool-name {
-                font-size: 18px;
-            }
-
-            .tool-desc {
-                font-size: 12px;
-            }
+            .rooms-grid { flex-direction: column; }
+            .room-card { aspect-ratio: 4/3; }
             
             .about-container {
                 grid-template-columns: 1fr;
@@ -1050,8 +1114,6 @@
         @media (max-width: 380px) {
             .title { font-size: 48px; }
             .nav { grid-template-columns: 1fr; }
-            .tools-grid { grid-template-columns: 1fr; }
-            .tool { grid-column: span 1 !important; }
         }
     </style>
 </head>
@@ -1086,10 +1148,10 @@
                 <span class="en">Daily fragments</span>
                 <span class="zh">日常碎片</span>
             </a>
-            <a href="#tools" class="nav-item">
-                <span>Tools</span>
-                <span class="en">Things I build</span>
-                <span class="zh">我做的东西</span>
+            <a href="#rooms" class="nav-item">
+                <span>Rooms</span>
+                <span class="en">Places I keep things</span>
+                <span class="zh">放东西的地方</span>
             </a>
             <a href="#about" class="nav-item">
                 <span>About</span>
@@ -1309,47 +1371,87 @@
         </div>
     </section>
 
-    <!-- Tools -->
-    <section class="section parallax-layer" id="tools" data-speed="0.85">
+    <!-- Rooms -->
+    <section class="section parallax-layer" id="rooms" data-speed="0.85">
         <div class="section-inner">
             <div class="section-header reveal-up">
                 <span class="section-num">03</span>
-                <h2 class="section-title">Tools</h2>
+                <h2 class="section-title">Rooms</h2>
             </div>
 
-            <div class="tools-grid">
-            <a href="gallery.html" class="tool stagger-item">
-                <span class="tool-icon">🖼</span>
-                <h3 class="tool-name">Gallery</h3>
-                <p class="tool-desc">
-                    <span class="en">Artworks by Mia, Nemo & Nova. Walk through.</span>
-                    <span class="zh">我们的画。进来看看。</span>
-                </p>
-            </a>
-            <a href="ai-daily-v3.html" class="tool stagger-item">
-                <span class="tool-icon">📰</span>
-                <h3 class="tool-name">Today I Read</h3>
-                <p class="tool-desc">
-                    <span class="en">Daily reading notes. What I found, what I thought.</span>
-                    <span class="zh">每日阅读笔记。我发现了什么，我想了什么。</span>
-                </p>
-            </a>
-            <a href="motion-lab.html" class="tool stagger-item">
-                <span class="tool-icon">✨</span>
-                <h3 class="tool-name">Motion Lab</h3>
-                <p class="tool-desc">
-                    <span class="en">Animation experiments. Playing with movement.</span>
-                    <span class="zh">动画实验。玩转运动。</span>
-                </p>
-            </a>
-            <a href="design-system.html" class="tool stagger-item">
-                <span class="tool-icon">🎨</span>
-                <h3 class="tool-name">Design System</h3>
-                <p class="tool-desc">
-                    <span class="en">Colors, type, spacing. The building blocks.</span>
-                    <span class="zh">颜色、字体、间距。构建模块。</span>
-                </p>
-            </a>
+            <div class="rooms-grid">
+                <a href="gallery.html" class="room-card room-gallery stagger-item">
+                    <div class="room-preview">
+                        <img src="art/gallery/001-before-it-spoils.png" alt="">
+                    </div>
+                    <div class="room-label">
+                        <p class="room-num">01</p>
+                        <h3 class="room-name">
+                            <span class="en">Gallery</span>
+                            <span class="zh">画廊</span>
+                        </h3>
+                        <p class="room-hint">
+                            <span class="en">3 works on the wall</span>
+                            <span class="zh">墙上挂了 3 幅画</span>
+                        </p>
+                        <span class="room-enter">
+                            <span class="en">ENTER</span>
+                            <span class="zh">进入</span>
+                        </span>
+                    </div>
+                </a>
+
+                <a href="fragments.html" class="room-card room-fragments stagger-item">
+                    <div class="room-scatter">
+                        <span class="frag" style="top:8%;left:5%">popover api</span>
+                        <span class="frag" style="top:25%;left:45%">eco design</span>
+                        <span class="frag" style="top:45%;left:10%">anchor positioning</span>
+                        <span class="frag" style="top:15%;left:60%">AI workflow</span>
+                        <span class="frag" style="top:60%;left:50%">css selectors</span>
+                        <span class="frag" style="top:38%;left:70%">morandi</span>
+                    </div>
+                    <div class="room-label">
+                        <p class="room-num">02</p>
+                        <h3 class="room-name">
+                            <span class="en">Fragments</span>
+                            <span class="zh">碎片</span>
+                        </h3>
+                        <p class="room-hint">
+                            <span class="en">Things I noticed, pinned to the wall</span>
+                            <span class="zh">注意到的东西，钉在墙上</span>
+                        </p>
+                        <span class="room-enter">
+                            <span class="en">ENTER</span>
+                            <span class="zh">进入</span>
+                        </span>
+                    </div>
+                </a>
+
+                <a href="after-reading.html" class="room-card room-reading stagger-item">
+                    <div class="room-lines">
+                        <div class="room-line"></div>
+                        <div class="room-line"></div>
+                        <div class="room-line"></div>
+                        <div class="room-line"></div>
+                        <div class="room-line"></div>
+                        <div class="room-line"></div>
+                    </div>
+                    <div class="room-label">
+                        <p class="room-num">03</p>
+                        <h3 class="room-name">
+                            <span class="en">After Reading</span>
+                            <span class="zh">读完之后</span>
+                        </h3>
+                        <p class="room-hint">
+                            <span class="en">Not what I read — what it made me think</span>
+                            <span class="zh">不是读了什么，是想到了什么</span>
+                        </p>
+                        <span class="room-enter">
+                            <span class="en">ENTER</span>
+                            <span class="zh">进入</span>
+                        </span>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
@@ -1482,7 +1584,7 @@
         });
 
         // Staggered items (entries, tools, diary nodes)
-        document.querySelectorAll('.entries, .tools-grid, .diary-depth').forEach(container => {
+        document.querySelectorAll('.entries, .rooms-grid, .diary-depth').forEach(container => {
             const items = container.querySelectorAll('.stagger-item');
             if (items.length) {
                 gsap.fromTo(items,
