@@ -13,7 +13,7 @@
         :root {
             --bg: #111110;
             --surface: #1A1A18;
-            --text: #E8E6E3;
+            --text: #E8E2D9;
             --text-dim: #706B66;
             --accent: #C9A87C;
             --accent-dim: rgba(201, 168, 124, 0.15);
@@ -22,13 +22,42 @@
         }
 
         html[data-theme="light"] {
-            --bg: #FAFAF8;
-            --surface: #FFFFFF;
-            --text: #1A1A18;
-            --text-dim: #9A9890;
+            --bg: #F5F0E8;
+            --surface: #EDE8E0;
+            --text: #2A2520;
+            --text-dim: #7A7570;
             --accent: #8B6914;
             --accent-dim: rgba(139, 105, 20, 0.1);
         }
+
+        html[data-theme="light"] .room-gallery { background: #F0E8DC; border-color: rgba(139,105,20,0.12); }
+        html[data-theme="light"] .room-fragments { background: #EBE6DE; border-color: rgba(100,120,160,0.1); }
+        html[data-theme="light"] .room-reading { background: #EDE6DC; border-color: rgba(139,105,20,0.1); }
+        html[data-theme="light"] .room-gallery .room-preview { background: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .room-scatter .frag {
+            color: rgba(60,80,120,0.5);
+            border-color: rgba(60,80,120,0.12);
+            background: rgba(60,80,120,0.04);
+        }
+        html[data-theme="light"] .room-fragments:hover .frag {
+            color: rgba(60,80,120,0.8);
+            border-color: rgba(60,80,120,0.25);
+        }
+        html[data-theme="light"] .room-line { background: var(--accent) !important; opacity: 0.15; }
+        html[data-theme="light"] .room-reading:hover .room-line { opacity: 0.3; }
+        html[data-theme="light"] .room-num { color: rgba(0,0,0,0.25); }
+        html[data-theme="light"] .room-hint { color: rgba(0,0,0,0.45); }
+        html[data-theme="light"] .room-enter { color: rgba(139,105,20,0.5); border-color: rgba(139,105,20,0.2); }
+        html[data-theme="light"] .room-card:hover .room-enter { color: rgba(139,105,20,0.9); border-color: rgba(139,105,20,0.5); }
+        html[data-theme="light"] .room-card:hover { box-shadow: 0 20px 50px rgba(0,0,0,0.1), 0 0 30px rgba(139,105,20,0.05); }
+        html[data-theme="light"] .room-gallery::before { background: radial-gradient(ellipse at 50% 30%, rgba(139,105,20,0.06) 0%, transparent 60%); }
+        html[data-theme="light"] .room-fragments::before { background: radial-gradient(ellipse at 30% 40%, rgba(60,80,120,0.06) 0%, transparent 50%); }
+        html[data-theme="light"] .room-reading::before { background: radial-gradient(ellipse at 70% 35%, rgba(139,105,20,0.06) 0%, transparent 50%); }
+        html[data-theme="light"] .entry { border-bottom-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .diary-entry { border-bottom-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .diary-entry:hover { background: linear-gradient(270deg, rgba(139,105,20,0.06) 0%, transparent 100%); }
+        html[data-theme="light"] .principle { border-left-color: var(--accent); }
+        html[data-theme="light"] .section-header::before { border-color: rgba(0,0,0,0.06); }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -691,7 +720,7 @@
             font-size: 17px;
             line-height: 1.9;
             margin-bottom: 1.5em;
-            color: rgba(255,255,255,0.8);
+            color: var(--text);
         }
 
         .principles {
