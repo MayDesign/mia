@@ -16,7 +16,6 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 99999;
-            mix-blend-mode: difference;
             transform: translate(-50%, -50%);
             transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
                         height 0.35s cubic-bezier(0.16,1,0.3,1),
@@ -36,7 +35,6 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 99998;
-            mix-blend-mode: difference;
             transform: translate(-50%, -50%);
             will-change: transform;
         }
