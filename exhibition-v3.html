@@ -785,7 +785,7 @@
             float artReveal = clamp(revealRadius, 0.0, 1.0);
 
             // Combine: dark base + art revealed by light + dust
-            color += artColor * artVal * artReveal * 2.5;
+            color += artColor * artVal * artReveal * 3.5;
             color += vec3(1.0, 0.95, 0.85) * dustVal * 0.3;
 
             // Subtle warm light tint in beam
@@ -952,7 +952,7 @@
 
         // Reveal scale — larger on mobile for finger-sized light
         const uRevealScaleLoc = gl.getUniformLocation(program, 'uRevealScale');
-        gl.uniform1f(uRevealScaleLoc, isMobile ? 0.25 : 0.35);
+        gl.uniform1f(uRevealScaleLoc, isMobile ? 0.20 : 0.28);
         gl.uniform1i(uRoomType, roomType);
         gl.uniform1i(uArtType, artType);
 

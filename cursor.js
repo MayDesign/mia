@@ -40,6 +40,16 @@
             transform: translate(-50%, -50%);
             will-change: transform;
         }
+        .cursor-glow {
+            position: fixed; top: 0; left: 0;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(201,168,124,0.06) 0%, rgba(201,168,124,0.02) 40%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99990;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+        }
     `;
     document.head.appendChild(style);
 
@@ -94,12 +104,19 @@
         main.classList.remove('hovering');
     });
 
+    // Ambient glow — soft light following cursor
+    const glow = document.createElement('div');
+    glow.className = 'cursor-glow';
+    document.body.appendChild(glow);
+
     // Animation
     function tick() {
         cx += (mx - cx) * 0.18;
         cy += (my - cy) * 0.18;
         main.style.left = cx + 'px';
         main.style.top = cy + 'px';
+        glow.style.left = cx + 'px';
+        glow.style.top = cy + 'px';
 
         trails.forEach((t, i) => {
             const speed = 0.08 - i * 0.015;
