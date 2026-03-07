@@ -15,14 +15,6 @@
             --serif: 'Fraunces', 'Noto Serif SC', serif;
             --mono: 'JetBrains Mono', monospace;
         }
-        html[data-theme="light"] {
-            --bg: #F5F0E8;
-            --surface: #EDE8E0;
-            --text: #2A2520;
-            --text-dim: #B0A89E;
-            --accent: #8B6914;
-            --accent-dim: rgba(139, 105, 20, 0.1);
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
         body {
@@ -292,7 +284,6 @@
             50% { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
         }
     </style>
-<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
 </head>
 <body>
     <canvas id="ambient"></canvas>
@@ -1030,21 +1021,6 @@
             audioBtn.classList.remove('playing');
         }
     });
-    
-        // Theme toggle
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            const savedTheme = localStorage.getItem('mia-theme');
-            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
-            themeToggle.addEventListener('click', () => {
-                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                const newTheme = isLight ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('mia-theme', newTheme);
-                themeToggle.textContent = isLight ? '☀' : '☾';
-            });
-        }
     </script>
 </body>
 </html>

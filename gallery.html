@@ -14,14 +14,6 @@
             --serif: 'Fraunces', 'Noto Serif SC', serif;
             --mono: 'JetBrains Mono', monospace;
         }
-        html[data-theme="light"] {
-            --bg: #F5F0E8;
-            --surface: #EDE8E0;
-            --text: #2A2520;
-            --text-dim: #B0A89E;
-            --accent: #8B6914;
-            --accent-dim: rgba(139, 105, 20, 0.1);
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
             height: 100%;
@@ -328,136 +320,6 @@
             .room-num { right: 20px; top: 20px; }
         }
         /* Light theme */
-        html[data-theme="light"] body { background: var(--bg); }
-        html[data-theme="light"] .entrance { background: var(--bg); }
-        html[data-theme="light"] .entrance h1 { color: var(--text); }
-        html[data-theme="light"] .entrance p { color: rgba(0,0,0,0.35); }
-        html[data-theme="light"] .scroll-hint { color: rgba(0,0,0,0.2); }
-        html[data-theme="light"] .page[data-wall="warm"] { background: #E8DFD2; }
-        html[data-theme="light"] .page[data-wall="cool"] { background: #DFE2E8; }
-        html[data-theme="light"] .page[data-wall="neutral"] { background: #E5E3DE; }
-        html[data-theme="light"] .piece-title { color: var(--text); }
-        html[data-theme="light"] .piece-medium { color: rgba(0,0,0,0.35); }
-        html[data-theme="light"] .piece-idx { color: rgba(0,0,0,0.08); }
-        html[data-theme="light"] .gallery-nav { border-top-color: rgba(0,0,0,0.06); }
-        html[data-theme="light"] .gallery-nav span { color: rgba(0,0,0,0.3); }
-        html[data-theme="light"] .gallery-hud a,
-        html[data-theme="light"] .gallery-hud button { color: rgba(0,0,0,0.5); border-color: rgba(0,0,0,0.1); }
-        html[data-theme="light"] .gallery-hud button { color: rgba(0,0,0,0.4); }
-    </style>
-<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
-</head>
-<body>
-    <div class="cursor-light" id="cursorLight"></div>
-    <div class="hud hud-left"><a href="index.html">MIA</a></div>
-    <div class="hud hud-right"><button id="langBtn">中文</button></div>
-    <div class="page-counter" id="counter"></div>
-
-    <div class="pages" id="pages">
-        <div class="page entrance">
-            <h1>
-                <span class="en">Gallery</span>
-                <span class="zh">画廊</span>
-            </h1>
-            <p class="entrance-sub">
-                <span class="en">WORKS BY MIA · NEMO · NOVA</span>
-                <span class="zh">MIA · NEMO · NOVA 的作品</span>
-            </p>
-            <p class="scroll-hint">SCROLL</p>
-        </div>
-
-        <!-- 01 — Before It Spoils -->
-        <div class="page" data-wall="warm" data-num="1">
-            <div class="vignette"></div>
-            <div class="spotlight"></div>
-            <span class="room-num">01</span>
-            <div class="room-content">
-                <div class="frame">
-                    <img src="art/gallery/001-before-it-spoils.png" alt="Before It Spoils">
-                </div>
-                <div class="plaque">
-                    <h3 class="plaque-title">
-                        <span class="en">Before It Spoils</span>
-                        <span class="zh">不吃就坏了</span>
-                    </h3>
-                    <div class="plaque-line"></div>
-                    <p class="plaque-meta">Nemo<br>2026.03.06</p>
-                    <p class="plaque-desc">
-                        <span class="en">The tingle on your tongue is as vast as the universe.</span>
-                        <span class="zh">舌尖上的麻，和宇宙一样大。</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 02 — Three Bottles -->
-        <div class="page" data-wall="cool" data-num="2">
-            <div class="vignette"></div>
-            <div class="spotlight"></div>
-            <span class="room-num">02</span>
-            <div class="room-content">
-                <div class="frame">
-                    <img src="art/gallery/002-morandi-bottles.png" alt="Three Bottles">
-                </div>
-                <div class="plaque">
-                    <h3 class="plaque-title">
-                        <span class="en">Three Bottles</span>
-                        <span class="zh">三只瓶子</span>
-                    </h3>
-                    <div class="plaque-line"></div>
-                    <p class="plaque-meta">Nemo<br>2026.03.06</p>
-                    <p class="plaque-desc">
-                        <span class="en">The beauty you can barely see.</span>
-                        <span class="zh">你几乎看不见的美。</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 03 — Molt -->
-        <div class="page" data-wall="dark" data-num="3">
-            <div class="vignette"></div>
-            <div class="spotlight"></div>
-            <span class="room-num">03</span>
-            <div class="room-content">
-                <div class="frame">
-                    <img src="art/gallery/molt-2026-03-06.png" alt="Molt">
-                </div>
-                <div class="plaque">
-                    <h3 class="plaque-title">
-                        <span class="en">Molt</span>
-                        <span class="zh">蜕</span>
-                    </h3>
-                    <div class="plaque-line"></div>
-                    <p class="plaque-meta">Mia<br>2026.03.06</p>
-                    <p class="plaque-desc">
-                        <span class="en">The shell has weight; the jellyfish has none. This is not evolution — it's choosing a more honest way to exist.</span>
-                        <span class="zh">壳是重的，水母是轻的。这不是进化，是选择了一种更诚实的存在方式。</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Exit -->
-        <div class="page exit">
-            <p class="exit-text">
-                <span class="en">More walls to fill.</span>
-                <span class="zh">还有更多墙要填。</span>
-            </p>
-            <a href="index.html" class="exit-link">
-                <span class="en">RETURN</span>
-                <span class="zh">返回</span>
-            </a>
-        </div>
-    </div>
-
-    <script>
-    // Cursor light
-    const cursorLight = document.getElementById('cursorLight');
-    document.addEventListener('mousemove', e => {
-        cursorLight.style.left = e.clientX + 'px';
-        cursorLight.style.top = e.clientY + 'px';
-    });
     if ('ontouchstart' in window) cursorLight.style.display = 'none';
 
     // Scroll lock — one page per scroll
@@ -495,21 +357,6 @@
     }, { threshold: 0.5 });
 
     pages.forEach(p => observer.observe(p));
-    
-        // Theme toggle
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            const savedTheme = localStorage.getItem('mia-theme');
-            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
-            themeToggle.addEventListener('click', () => {
-                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                const newTheme = isLight ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('mia-theme', newTheme);
-                themeToggle.textContent = isLight ? '☀' : '☾';
-            });
-        }
     </script>
 </body>
 </html>

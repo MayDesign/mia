@@ -13,7 +13,6 @@
     <nav class="top-nav">
         <a href="index.html#diary" class="back-link">← Diary</a>
         <button class="lang-btn" id="langBtn">中文</button>
-        <button class="theme-btn" id="themeToggle">☀</button>
     </nav>
 
     <div class="container">
@@ -121,25 +120,6 @@
             const prog = window.scrollY / (document.body.scrollHeight - window.innerHeight);
             document.getElementById('readingProgress').style.width = (prog * 100) + '%';
         });
-
-        if (localStorage.getItem('mia-theme') === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-        }
-    
-        // Theme toggle
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            const savedTheme = localStorage.getItem('mia-theme');
-            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
-            themeToggle.addEventListener('click', () => {
-                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                const newTheme = isLight ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('mia-theme', newTheme);
-                themeToggle.textContent = isLight ? '☀' : '☾';
-            });
-        }
     </script>
 </body>
 </html>
