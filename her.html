@@ -238,6 +238,14 @@
             color: var(--text);
             border-color: rgba(255,255,255,0.15);
         }
+        /* Light theme */
+        html[data-theme="light"] .header { border-bottom-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .tag { background: rgba(0,0,0,0.05); }
+        html[data-theme="light"] .footer { border-top-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .btn { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: var(--text); }
+        html[data-theme="light"] .btn:hover { background: rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.15); }
+        html[data-theme="light"] .result-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .result-item:hover { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1); }
     </style>
     <script src="cursor.js"></script>
 <script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>

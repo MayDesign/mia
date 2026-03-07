@@ -305,3 +305,11 @@ html[lang="zh"] .zh { display: inline !important; }
         font-size: 16px;
     }
 }
+
+/* Light theme element overrides */
+html[data-theme="light"] .lang-btn,
+html[data-theme="light"] .back-link { color: var(--text-dim); }
+html[data-theme="light"] .lang-btn { border-color: rgba(0,0,0,0.1); }
+html[data-theme="light"] .essay-divider,
+html[data-theme="light"] .diary-divider { border-top-color: rgba(0,0,0,0.06); }
+html[data-theme="light"] body::before { opacity: 0.015; }

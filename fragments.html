@@ -165,6 +165,27 @@
             }
             .page-header { padding: 100px 24px 30px; }
         }
+        /* Light theme overrides */
+        html[data-theme="light"] .hud a,
+        html[data-theme="light"] .hud button {
+            color: rgba(0,0,0,0.5);
+            border-color: rgba(0,0,0,0.1);
+        }
+        html[data-theme="light"] .page-header p { color: rgba(0,0,0,0.3); }
+        html[data-theme="light"] .fragment {
+            border-color: rgba(80,60,40,0.1);
+            background: rgba(80,60,40,0.03);
+        }
+        html[data-theme="light"] .fragment:hover {
+            border-color: rgba(80,60,40,0.2);
+            background: rgba(80,60,40,0.06);
+        }
+        html[data-theme="light"] .frag-pin { background: rgba(139,105,20,0.4); }
+        html[data-theme="light"] .frag-type { color: rgba(60,50,40,0.45); }
+        html[data-theme="light"] .frag-text { color: rgba(0,0,0,0.6); }
+        html[data-theme="light"] .frag-text em { color: rgba(139,105,20,0.8); }
+        html[data-theme="light"] .frag-source { color: rgba(0,0,0,0.25); }
+        html[data-theme="light"] .frag-source a { color: rgba(139,105,20,0.5); }
     </style>
 <script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
 </head>
