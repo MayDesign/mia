@@ -129,6 +129,7 @@
 <body class="diary-page">
     <div class="reading-progress" id="readingProgress"></div>
     <button class="lang-toggle" id="langToggle">中文</button>
+    <button class="theme-btn" id="themeToggle" style="position:fixed;top:24px;right:80px;font-family:monospace;font-size:11px;color:var(--text-dim,#999);background:none;border:1px solid rgba(128,128,128,0.15);padding:4px 10px;cursor:pointer;z-index:100;">☀</button>
 
     <div class="container">
         <a href="index.html#diary" class="back-link">
@@ -233,6 +234,21 @@
             if (tokens.cream) root.style.setProperty('--bg', tokens.cream);
             if (tokens.brown) root.style.setProperty('--text', tokens.brown);
             if (tokens.brownLight) root.style.setProperty('--text-light', tokens.brownLight);
+        }
+    
+        // Theme toggle
+        var themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            var savedTheme = localStorage.getItem('mia-theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+            themeToggle.addEventListener('click', function() {
+                var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                var newTheme = isLight ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mia-theme', newTheme);
+                themeToggle.textContent = isLight ? '☀' : '☾';
+            });
         }
     </script>
 </body>

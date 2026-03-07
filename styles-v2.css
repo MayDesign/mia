@@ -313,3 +313,18 @@ html[data-theme="light"] .lang-btn { border-color: rgba(0,0,0,0.1); }
 html[data-theme="light"] .essay-divider,
 html[data-theme="light"] .diary-divider { border-top-color: rgba(0,0,0,0.06); }
 html[data-theme="light"] body::before { opacity: 0.015; }
+
+/* Theme toggle button */
+.theme-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    background: none;
+    border: 1px solid rgba(128,128,128,0.15);
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-left: 8px;
+}
+.theme-btn:hover { border-color: rgba(128,128,128,0.3); }

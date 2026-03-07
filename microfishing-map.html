@@ -321,6 +321,7 @@
 <script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
 </head>
 <body>
+    <button class="theme-btn" id="themeToggle" style="position:fixed;top:24px;right:80px;font-family:monospace;font-size:11px;color:var(--text-dim,#999);background:none;border:1px solid rgba(128,128,128,0.15);padding:4px 10px;cursor:pointer;z-index:100;">☀</button>
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
 
@@ -454,6 +455,21 @@
 
         function addLocation() {
             alert('📍 添加新钓点\n\n• 标记当前位置\n• 拍照记录环境\n• 添加钓点信息\n• 设置私密/公开');
+        }
+    
+        // Theme toggle
+        var themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            var savedTheme = localStorage.getItem('mia-theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+            themeToggle.addEventListener('click', function() {
+                var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                var newTheme = isLight ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mia-theme', newTheme);
+                themeToggle.textContent = isLight ? '☀' : '☾';
+            });
         }
     </script>
 </body>
