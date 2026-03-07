@@ -318,7 +318,7 @@
             .hud-right { right: 20px; }
             .page-counter { right: 20px; bottom: 20px; }
             .room-num { right: 20px; top: 20px; }
-        }
+        }    </style>
 </head>
 <body>
     <div class="cursor-light" id="cursorLight"></div>
@@ -454,8 +454,12 @@
     };
 
     const pages = document.querySelectorAll('.page[data-num]');
+    const entrance = document.querySelector('.page.entrance');
     const counter = document.getElementById('counter');
     const total = pages.length;
+
+    // Make entrance visible on load
+    if (entrance) setTimeout(() => entrance.classList.add('visible'), 100);
 
     const observer = new IntersectionObserver(entries => {
         entries.forEach(e => {
