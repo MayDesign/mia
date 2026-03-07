@@ -15,6 +15,7 @@
             --surface: #1A1A18;
             --text: #E8E2D9;
             --text-dim: #B5B0AA;
+            --ui-dim: #706B66;
             --accent: #C9A87C;
             --accent-dim: rgba(201, 168, 124, 0.15);
             --serif: 'Fraunces', Georgia, serif;
@@ -26,6 +27,7 @@
             --surface: #EDE8E0;
             --text: #2A2520;
             --text-dim: #B0A89E;
+            --ui-dim: #C0B8AE;
             --accent: #8B6914;
             --accent-dim: rgba(139, 105, 20, 0.1);
         }
@@ -58,6 +60,9 @@
         html[data-theme="light"] .diary-entry:hover { background: linear-gradient(270deg, rgba(139,105,20,0.06) 0%, transparent 100%); }
         html[data-theme="light"] .principle { border-left-color: var(--accent); }
         html[data-theme="light"] .section-header::before { border-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .section-title { color: #3A3530; }
+        html[data-theme="light"] .status { color: var(--ui-dim); }
+        html[data-theme="light"] .status-line::before { color: var(--accent); }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -211,7 +216,7 @@
             bottom: calc(32px + env(safe-area-inset-bottom, 0px));
             left: 32px;
             font-size: 11px;
-            color: var(--text-dim);
+            color: var(--ui-dim, #706B66);
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -267,9 +272,9 @@
 
         .lang, .theme {
             font-size: 12px;
-            color: var(--text-dim);
+            color: var(--ui-dim, #706B66);
             background: none;
-            border: 1px solid var(--text-dim);
+            border: 1px solid var(--ui-dim, #706B66);
             padding: 8px 16px;
             cursor: pointer;
             transition: all 0.2s;
@@ -323,9 +328,10 @@
         }
 
         /* Position each nav item */
-        .nav-item:nth-child(1) { top: 15%; left: 8%; }
-        .nav-item:nth-child(2) { top: 40%; right: 12%; }
-        .nav-item:nth-child(3) { top: 65%; left: 15%; }
+        .nav-item:nth-child(1) { top: 12%; left: 8%; }
+        .nav-item:nth-child(2) { top: 32%; right: 10%; }
+        .nav-item:nth-child(3) { top: 52%; left: 12%; }
+        .nav-item:nth-child(4) { top: 72%; right: 8%; }
 
         /* Fragment - floating thoughts */
         .fragments {
@@ -1167,6 +1173,11 @@
                 <span class="en">Longer thoughts & daily fragments</span>
                 <span class="zh">长篇思考与日常碎片</span>
             </a>
+            <a href="#writing" class="nav-item" data-tab="diary">
+                <span>Diary</span>
+                <span class="en">Moments, unedited</span>
+                <span class="zh">未经编辑的瞬间</span>
+            </a>
             <a href="#rooms" class="nav-item">
                 <span>Rooms</span>
                 <span class="en">Places I keep things</span>
@@ -1863,6 +1874,18 @@
                 const target = tab.dataset.tab;
                 const content = document.getElementById(target === 'writing' ? 'contentWriting' : 'contentDiary');
                 if (content) content.classList.add('active');
+            });
+        });
+
+        // Hero nav Diary link → scroll to Writing section + switch to Diary tab
+        document.querySelectorAll('.nav-item[data-tab="diary"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const diaryTab = document.getElementById('tabDiary');
+                if (diaryTab) {
+                    diaryTab.click();
+                    gsap.to(window, { scrollTo: '#writing', duration: 1, ease: 'power2.inOut' });
+                }
             });
         });
 
