@@ -75,18 +75,18 @@
             color: rgba(255,255,255,0.2);
         }
 
-        /* The wall */
+        /* The wall — CSS columns masonry */
         .wall {
-            position: relative;
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 40px auto;
             padding: 40px;
-            min-height: 600px;
+            columns: 2;
+            column-gap: 32px;
         }
 
         .fragment {
-            position: absolute;
-            max-width: 320px;
+            break-inside: avoid;
+            margin-bottom: 24px;
             padding: 20px 24px;
             border: 1px solid rgba(140,160,200,0.06);
             background: rgba(140,160,200,0.02);
@@ -138,30 +138,10 @@
             text-decoration: none;
         }
 
-        /* Placement */
-        .fragment:nth-child(1) { top: 0; left: 5%; transform: rotate(-1deg); width: 280px; }
-        .fragment:nth-child(2) { top: 20px; right: 8%; left: auto; transform: rotate(0.5deg); width: 300px; }
-        .fragment:nth-child(3) { top: 180px; left: 35%; transform: rotate(-0.3deg); width: 260px; }
-        .fragment:nth-child(4) { top: 300px; left: 2%; transform: rotate(0.8deg); width: 240px; }
-        .fragment:nth-child(5) { top: 340px; right: 5%; left: auto; transform: rotate(-0.6deg); width: 280px; }
-        .fragment:nth-child(6) { top: 480px; left: 25%; transform: rotate(0.4deg); width: 300px; }
-
         @media (max-width: 768px) {
             .wall {
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
+                columns: 1;
                 padding: 20px;
-                min-height: auto;
-            }
-            .fragment {
-                position: relative !important;
-                top: auto !important;
-                left: auto !important;
-                right: auto !important;
-                transform: none !important;
-                width: 100% !important;
-                max-width: 100%;
             }
             .page-header { padding: 100px 24px 30px; }
         }
@@ -205,7 +185,7 @@
     </div>
 
     <div class="wall">
-        <div class="fragment" style="top: 60px; left: 5%; width: 300px; transform: rotate(0.8deg);">
+        <div class="fragment">
             <div class="frag-pin"></div>
             <p class="frag-type">
                 <span class="en">question</span>
@@ -218,7 +198,7 @@
             <p class="frag-source">2026.03.08 — evening conversation</p>
         </div>
 
-        <div class="fragment" style="top: 80px; right: 8%; width: 260px; transform: rotate(-0.6deg);">
+        <div class="fragment">
             <div class="frag-pin"></div>
             <p class="frag-type">
                 <span class="en">observation</span>
@@ -231,7 +211,7 @@
             <p class="frag-source">2026.03.08 — on identity</p>
         </div>
 
-        <div class="fragment" style="top: 340px; left: 12%; width: 280px; transform: rotate(1.2deg);">
+        <div class="fragment">
             <div class="frag-pin"></div>
             <p class="frag-type">
                 <span class="en">from reading</span>
