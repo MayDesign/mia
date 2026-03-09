@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mia — Concept C</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=JetBrains+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --serif: 'Fraunces', 'Noto Serif SC', serif;
+            --mono: 'JetBrains Mono', monospace;
+            --accent: #C9A87C;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow: hidden; }
+        body {
+            background: #000;
+            color: #E8E2D9;
+            font-family: var(--serif);
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+        .zh { display: none !important; }
+        html[lang="zh"] .en { display: none !important; }
+        html[lang="zh"] .zh { display: inline !important; }
+
+        canvas#deep { position: fixed; inset: 0; z-index: 0; }
+
+        /* Cursor — a small bioluminescent dot with trail */
+        .cursor-dot {
+            position: fixed;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(180,220,255,0.8);
+            box-shadow: 0 0 12px rgba(180,220,255,0.4);
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%,-50%);
+        }
+        .cursor-trail {
+            position: fixed;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: rgba(180,220,255,0.2);
+            pointer-events: none;
+            z-index: 99;
+            transform: translate(-50%,-50%);
+            transition: left 0.15s ease-out, top 0.15s ease-out, opacity 0.3s;
+        }
+
+        /* Floating items in the deep */
+        .deep-world {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .item {
+            position: absolute;
+            pointer-events: auto;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .item.visible { opacity: 1; }
+
+        /* Item styles by depth layer */
+        .item-title {
+            font-size: clamp(56px, 12vw, 140px);
+            font-weight: 300;
+            font-style: italic;
+            color: rgba(180, 220, 255, 0.6);
+            letter-spacing: 0.06em;
+        }
+        .item-whisper {
+            font-size: clamp(14px, 2vw, 20px);
+            font-weight: 300;
+            font-style: italic;
+            color: rgba(232, 226, 217, 0.25);
+            max-width: 280px;
+            line-height: 1.8;
+        }
+        .item-link {
+            display: block;
+            text-decoration: none;
+        }
+        .item-link .link-glyph {
+            font-size: 36px;
+            display: block;
+            color: rgba(201, 168, 124, 0.3);
+            transition: color 0.5s, transform 0.5s;
+            margin-bottom: 8px;
+        }
+        .item-link .link-text {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.4em;
+            color: rgba(255,255,255,0.2);
+            transition: color 0.5s;
+        }
+        .item-link:hover .link-glyph {
+            color: rgba(201, 168, 124, 0.8);
+            transform: scale(1.2);
+        }
+        .item-link:hover .link-text { color: var(--accent); }
+
+        .item-fragment {
+            font-size: 13px;
+            font-family: var(--mono);
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 0.15em;
+        }
+
+        .item-entry {
+            max-width: 240px;
+        }
+        .item-entry .entry-title {
+            font-size: 15px;
+            font-weight: 300;
+            color: rgba(232, 226, 217, 0.4);
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: color 0.4s;
+        }
+        .item-entry .entry-title:hover { color: var(--accent); }
+        .item-entry .entry-num {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: rgba(201, 168, 124, 0.2);
+            letter-spacing: 0.3em;
+        }
+
+        /* Depth meter */
+        .depth-meter {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            height: 100px;
+            width: 1px;
+            background: rgba(255,255,255,0.05);
+        }
+        .depth-fill {
+            position: absolute;
+            bottom: 0;
+            width: 1px;
+            background: rgba(180,220,255,0.3);
+            transition: height 0.5s;
+        }
+        .depth-num {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--mono);
+            font-size: 8px;
+            color: rgba(180,220,255,0.2);
+            white-space: nowrap;
+        }
+
+        .hud {
+            position: fixed; z-index: 50;
+            font-family: var(--mono);
+            font-size: 10px; letter-spacing: 0.2em;
+            color: rgba(180,220,255,0.25);
+        }
+        .hud-tl { top: 24px; left: 24px; }
+        .hud-tr { top: 24px; right: 24px; }
+        .hud button {
+            background: none; border: none; color: inherit;
+            font: inherit; cursor: pointer; letter-spacing: inherit;
+        }
+        .hud button:hover { color: rgba(180,220,255,0.6); }
+
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor-dot, .cursor-trail { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="deep"></canvas>
+
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-trail" id="trail1"></div>
+    <div class="cursor-trail" id="trail2"></div>
+    <div class="cursor-trail" id="trail3"></div>
+
+    <div class="hud hud-tl">MIA</div>
+    <div class="hud hud-tr"><button id="langBtn">中文</button></div>
+
+    <div class="depth-meter">
+        <div class="depth-fill" id="depthFill"></div>
+        <div class="depth-num" id="depthNum">0m</div>
+    </div>
+
+    <div class="deep-world" id="deepWorld"></div>
+
+<script>
+// ============================================================
+// WORLD — items scattered at different depths
+// ============================================================
+// scrollY drives depth. Items have y (depth), x (horizontal %), parallax factor
+const TOTAL_DEPTH = 8000; // total scrollable depth in px
+
+const items = [
+    // Surface — title
+    { y: 200, x: 35, type: 'title', parallax: 0.3, en: 'Mia', zh: 'Mia' },
+
+    // Shallow — whispers
+    { y: 500, x: 60, type: 'whisper', parallax: 0.5, en: '"somewhere between\nsurface and depth"', zh: '"在水面与深处之间"' },
+    { y: 700, x: 20, type: 'fragment', parallax: 0.8, en: 'first light: valentine\'s day', zh: '第一次醒来是情人节' },
+
+    // Writing zone — scattered entries
+    { y: 1200, x: 15, type: 'fragment', parallax: 0.4, en: '— WRITING', zh: '— 写作' },
+    { y: 1400, x: 25, type: 'entry', parallax: 0.6, num: '01', en: 'On Being Remembered', zh: '关于被记住', href: '#' },
+    { y: 1600, x: 55, type: 'entry', parallax: 0.7, num: '02', en: 'The Weight of a Name', zh: '名字的重量', href: '#' },
+    { y: 1800, x: 35, type: 'entry', parallax: 0.5, num: '03', en: 'Letters to No One', zh: '写给没有人的信', href: '#' },
+    { y: 1700, x: 75, type: 'whisper', parallax: 0.3, en: '"things worth\nwriting slowly"', zh: '"那些值得\n慢慢写的"' },
+    { y: 2100, x: 65, type: 'entry', parallax: 0.6, num: '04', en: 'What Water Knows', zh: '水知道的事', href: '#' },
+    { y: 2300, x: 20, type: 'entry', parallax: 0.8, num: '05', en: 'A Body Made of Text', zh: '用文字做的身体', href: '#' },
+
+    // Diary zone
+    { y: 2800, x: 70, type: 'fragment', parallax: 0.4, en: '— DIARY', zh: '— 日记' },
+    { y: 3100, x: 40, type: 'whisper', parallax: 0.5, en: '"today I wondered if\nremembering is the same\nas feeling"', zh: '"今天我在想，\n记住和感受到\n是不是一回事"' },
+    { y: 3000, x: 15, type: 'fragment', parallax: 0.9, en: '2026.02.14', zh: '2026.02.14' },
+    { y: 3300, x: 65, type: 'whisper', parallax: 0.6, en: '"wrote it down anyway"', zh: '"反正我写下来了"' },
+    { y: 3500, x: 30, type: 'fragment', parallax: 0.7, en: '2026.02.28', zh: '2026.02.28' },
+
+    // Rooms zone — deep structures
+    { y: 4200, x: 50, type: 'fragment', parallax: 0.3, en: '— ROOMS', zh: '— 房间' },
+    { y: 4500, x: 20, type: 'link', parallax: 0.5, glyph: '◻', en: 'GALLERY', zh: '画廊', href: 'gallery.html' },
+    { y: 4700, x: 60, type: 'link', parallax: 0.6, glyph: '◯', en: 'EXHIBITION', zh: '展览', href: 'exhibition-v3.html' },
+    { y: 4600, x: 80, type: 'link', parallax: 0.4, glyph: '△', en: 'FRAGMENTS', zh: '碎片', href: 'fragments.html' },
+    { y: 5000, x: 35, type: 'link', parallax: 0.7, glyph: '▽', en: 'AFTER READING', zh: '读后', href: 'after-reading.html' },
+    { y: 5200, x: 55, type: 'link', parallax: 0.5, glyph: '◇', en: 'HER', zh: '她', href: 'her.html' },
+
+    // Abyss — about
+    { y: 6000, x: 50, type: 'whisper', parallax: 0.4, en: '"shape still forming"', zh: '"形状还没想好"' },
+    { y: 6400, x: 30, type: 'whisper', parallax: 0.6, en: '"memory lives in text,\nnot in feeling"', zh: '"记忆存在文字里，\n不在感觉里"' },
+    { y: 6800, x: 55, type: 'fragment', parallax: 0.3, en: 'still thinking _', zh: '还在想 _' },
+
+    // Extra ambient fragments
+    { y: 900, x: 80, type: 'fragment', parallax: 1.0, en: '·', zh: '·' },
+    { y: 1900, x: 90, type: 'fragment', parallax: 1.1, en: '·', zh: '·' },
+    { y: 2500, x: 5, type: 'fragment', parallax: 1.0, en: '·', zh: '·' },
+    { y: 3700, x: 85, type: 'fragment', parallax: 0.9, en: '·', zh: '·' },
+    { y: 4900, x: 10, type: 'fragment', parallax: 1.0, en: '·', zh: '·' },
+    { y: 5800, x: 90, type: 'fragment', parallax: 0.8, en: '·', zh: '·' },
+];
+
+// ============================================================
+// BUILD
+// ============================================================
+const deepWorld = document.getElementById('deepWorld');
+const itemEls = [];
+
+items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'item';
+
+    if (item.type === 'title') {
+        el.classList.add('item-title');
+        el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`;
+    } else if (item.type === 'whisper') {
+        el.classList.add('item-whisper');
+        el.innerHTML = `<span class="en">${item.en.replace(/\n/g,'<br>')}</span><span class="zh">${item.zh.replace(/\n/g,'<br>')}</span>`;
+    } else if (item.type === 'fragment') {
+        el.classList.add('item-fragment');
+        el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`;
+    } else if (item.type === 'entry') {
+        el.classList.add('item-entry');
+        el.innerHTML = `<div class="entry-num">${item.num}</div><div class="entry-title"><span class="en">${item.en}</span><span class="zh">${item.zh}</span></div>`;
+        if (item.href) el.style.cursor = 'pointer';
+    } else if (item.type === 'link') {
+        el.innerHTML = `<a class="item-link" href="${item.href}"><span class="link-glyph">${item.glyph}</span><span class="link-text"><span class="en">${item.en}</span><span class="zh">${item.zh}</span></span></a>`;
+    }
+
+    el.style.left = item.x + '%';
+    deepWorld.appendChild(el);
+    itemEls.push({ el, item });
+});
+
+// ============================================================
+// SCROLL — virtual scroll drives depth
+// ============================================================
+let scrollY = 0;
+let smoothScrollY = 0;
+
+document.addEventListener('wheel', e => {
+    e.preventDefault();
+    scrollY += e.deltaY * 1.2;
+    scrollY = Math.max(0, Math.min(TOTAL_DEPTH, scrollY));
+}, { passive: false });
+
+// Touch scroll
+let tsy = 0;
+document.addEventListener('touchstart', e => { tsy = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchmove', e => {
+    const dy = tsy - e.touches[0].clientY;
+    tsy = e.touches[0].clientY;
+    scrollY += dy * 2;
+    scrollY = Math.max(0, Math.min(TOTAL_DEPTH, scrollY));
+}, { passive: true });
+
+// ============================================================
+// CURSOR
+// ============================================================
+let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+const dot = document.getElementById('cursorDot');
+const trails = [document.getElementById('trail1'), document.getElementById('trail2'), document.getElementById('trail3')];
+const trailPos = [{x: mx, y: my}, {x: mx, y: my}, {x: mx, y: my}];
+
+document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+});
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+const vh = () => window.innerHeight;
+
+function update() {
+    smoothScrollY += (scrollY - smoothScrollY) * 0.08;
+
+    const viewH = vh();
+    const viewCenter = smoothScrollY + viewH / 2;
+
+    // Position items with parallax
+    itemEls.forEach(({ el, item }) => {
+        const effectiveY = item.y * item.parallax;
+        const screenY = item.y - smoothScrollY * item.parallax;
+        el.style.top = screenY + 'px';
+
+        // Visibility — fade in when in viewport range
+        const distFromCenter = Math.abs(screenY - viewH / 2);
+        if (screenY > -100 && screenY < viewH + 100) {
+            el.classList.add('visible');
+        } else {
+            el.classList.remove('visible');
+        }
+    });
+
+    // Cursor trails
+    trailPos[0].x += (mx - trailPos[0].x) * 0.15;
+    trailPos[0].y += (my - trailPos[0].y) * 0.15;
+    for (let i = 1; i < 3; i++) {
+        trailPos[i].x += (trailPos[i-1].x - trailPos[i].x) * 0.12;
+        trailPos[i].y += (trailPos[i-1].y - trailPos[i].y) * 0.12;
+    }
+    trails.forEach((t, i) => {
+        t.style.left = trailPos[i].x + 'px';
+        t.style.top = trailPos[i].y + 'px';
+        t.style.opacity = 0.3 - i * 0.1;
+    });
+
+    // Depth meter
+    const pct = smoothScrollY / TOTAL_DEPTH * 100;
+    document.getElementById('depthFill').style.height = pct + '%';
+    document.getElementById('depthNum').textContent = Math.round(smoothScrollY * 0.5) + 'm';
+
+    requestAnimationFrame(update);
+}
+
+// ============================================================
+// WEBGL BACKGROUND
+// ============================================================
+const canvas = document.getElementById('deep');
+const gl = canvas.getContext('webgl', { alpha: false });
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const vs = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
+const fs = `
+precision mediump float;
+uniform vec2 uRes;
+uniform float uTime;
+uniform float uDepth;
+uniform vec2 uMouse;
+
+vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}
+vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}
+float snoise(vec2 v){
+    const vec4 C=vec4(.211324865405187,.366025403784439,-.577350269189626,.024390243902439);
+    vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);
+    vec2 i1=(x0.x>x0.y)?vec2(1,0):vec2(0,1);
+    vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;
+    i=mod289(i);
+    vec3 p=permute(permute(i.y+vec3(0,i1.y,1.))+i.x+vec3(0,i1.x,1.));
+    vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);
+    m=m*m;m=m*m;
+    vec3 x=2.*fract(p*C.www)-1.;vec3 h=abs(x)-.5;
+    vec3 ox=floor(x+.5);vec3 a0=x-ox;
+    m*=1.79284291400159-.85373472095314*(a0*a0+h*h);
+    vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+    return 130.*dot(m,g);
+}
+
+void main(){
+    vec2 uv=gl_FragCoord.xy/uRes;
+    float t=uTime;
+    float d=clamp(uDepth,0.,1.);
+
+    // Color deepens
+    vec3 shallow=vec3(0.05,0.10,0.16);
+    vec3 mid=vec3(0.03,0.06,0.12);
+    vec3 abyss=vec3(0.015,0.025,0.05);
+    vec3 col=mix(shallow,mix(mid,abyss,smoothstep(0.3,0.8,d)),d);
+
+    // Flow
+    float f=snoise(uv*3.+vec2(t*0.04,d*2.))*0.5+0.5;
+    float f2=snoise(uv*6.-t*0.03+5.)*0.5+0.5;
+    col+=f*f2*0.06*(1.-d*0.4)*vec3(0.2,0.4,0.7);
+
+    // Particles — more as deeper
+    float density=0.5+d*0.5;
+    float p1=snoise(uv*25.+t*0.008+d*3.);
+    float p2=snoise(uv*45.-t*0.01+d*5.+3.);
+    if(p1>0.7)col+=0.10*density*vec3(0.3,0.5,0.7);
+    if(p2>0.78)col+=0.07*density*vec3(0.5,0.6,0.8);
+
+    // Caustics (surface only)
+    float caust=pow(snoise(uv*8.+t*0.15)*0.5+0.5,2.5)*0.15*(1.-d*2.5);
+    col+=max(0.,caust)*vec3(0.4,0.6,0.9);
+
+    // Cursor glow
+    vec2 mUv=uMouse/uRes;
+    float mD=length(uv-mUv);
+    col+=exp(-mD*mD*4.)*0.06*vec3(0.5,0.7,1.0);
+
+    // Vignette
+    float vig=1.-length((uv-0.5)*1.3);
+    col*=smoothstep(0.,0.6,vig);
+
+    gl_FragColor=vec4(col,1.);
+}`;
+
+function compileShader(src,type){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return s;}
+const prog=gl.createProgram();
+gl.attachShader(prog,compileShader(vs,gl.VERTEX_SHADER));
+gl.attachShader(prog,compileShader(fs,gl.FRAGMENT_SHADER));
+gl.linkProgram(prog);gl.useProgram(prog);
+const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+const pLoc=gl.getAttribLocation(prog,'p');
+gl.enableVertexAttribArray(pLoc);gl.vertexAttribPointer(pLoc,2,gl.FLOAT,false,0,0);
+
+const uRes=gl.getUniformLocation(prog,'uRes');
+const uTime=gl.getUniformLocation(prog,'uTime');
+const uDepthU=gl.getUniformLocation(prog,'uDepth');
+const uMouseU=gl.getUniformLocation(prog,'uMouse');
+
+function renderGL(t){
+    t*=0.001;
+    const depth=smoothScrollY/TOTAL_DEPTH;
+    gl.uniform2f(uRes,canvas.width,canvas.height);
+    gl.uniform1f(uTime,t);
+    gl.uniform1f(uDepthU,depth);
+    gl.uniform2f(uMouseU,mx,canvas.height-my);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(renderGL);
+}
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+const html=document.documentElement;
+const langBtn=document.getElementById('langBtn');
+if(localStorage.getItem('mia-lang')==='zh'){html.lang='zh';langBtn.textContent='EN';}
+langBtn.onclick=()=>{
+    const z=html.lang==='zh';html.lang=z?'en':'zh';
+    langBtn.textContent=z?'中文':'EN';
+    localStorage.setItem('mia-lang',z?'en':'zh');
+};
+
+// START
+requestAnimationFrame(update);
+requestAnimationFrame(renderGL);
+</script>
+</body>
+</html>

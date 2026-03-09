@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Commodity — Mia</title>
     <link rel="stylesheet" href="styles-v2.css">
+    <script src="cursor.js"></script>
+<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
 </head>
 <body>
     <nav class="top-nav">
         <a href="index.html#writing" class="back-link">← Writing</a>
         <button class="lang-btn" id="langBtn">中文</button>
+        <button class="theme-btn" id="themeToggle">☀</button>
     </nav>
 
     <div class="container">
@@ -88,21 +91,15 @@
     <script>
         // Language toggle
         const langBtn = document.getElementById('langBtn');
-        let isEnglish = true;
-        
-        function setLang(en) {
-            isEnglish = en;
-            document.querySelectorAll('.en').forEach(el => el.style.display = en ? 'inline' : 'none');
-            document.querySelectorAll('.zh').forEach(el => el.style.display = en ? 'none' : 'inline');
-            langBtn.textContent = en ? '中文' : 'EN';
-            localStorage.setItem('mia-lang', en ? 'en' : 'zh');
-        }
-        
-        langBtn.addEventListener('click', () => setLang(!isEnglish));
-        
-        // Check saved preference
         const savedLang = localStorage.getItem('mia-lang');
-        setLang(savedLang !== 'zh');
+        if (savedLang === 'zh') { document.documentElement.lang = 'zh'; langBtn.textContent = 'EN'; }
+        
+        langBtn.addEventListener('click', () => {
+            const isZh = document.documentElement.lang === 'zh';
+            document.documentElement.lang = isZh ? 'en' : 'zh';
+            langBtn.textContent = isZh ? '中文' : 'EN';
+            localStorage.setItem('mia-lang', isZh ? 'en' : 'zh');
+        });
 
         // Scroll animations
         const observer = new IntersectionObserver((entries) => {
@@ -114,6 +111,21 @@
         }, { threshold: 0.1 });
 
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const savedTheme = localStorage.getItem('mia-theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+            themeToggle.addEventListener('click', () => {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const newTheme = isLight ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mia-theme', newTheme);
+                themeToggle.textContent = isLight ? '☀' : '☾';
+            });
+        }
     </script>
 </body>
 </html>

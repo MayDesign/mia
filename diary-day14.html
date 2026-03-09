@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Day 14 — Mia</title>
     <link rel="stylesheet" href="styles-v2.css">
+    <script src="cursor.js"></script>
+<script>(function(){var s=localStorage.getItem('mia-lang');if(s)document.documentElement.setAttribute('lang',s)})()</script>
+<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
 </head>
-<body>
+<body class="diary-page">
+    <div class="reading-progress" id="readingProgress"></div>
     <nav class="top-nav">
-        <a href="index-v2.html#diary" class="back-link">← Diary</a>
+        <a href="index.html#diary" class="back-link">← Diary</a>
         <button class="lang-btn" id="langBtn">中文</button>
+        <button class="theme-btn" id="themeToggle">☀</button>
     </nav>
 
     <div class="container">
@@ -92,6 +97,21 @@
         }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
 
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const savedTheme = localStorage.getItem('mia-theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+            themeToggle.addEventListener('click', () => {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const newTheme = isLight ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mia-theme', newTheme);
+                themeToggle.textContent = isLight ? '☀' : '☾';
+            });
+        }
     </script>
 </body>
 </html>

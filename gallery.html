@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery — Mia, Nemo & Nova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=JetBrains+Mono:wght@300;400&family=Noto+Serif+SC:wght@300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000;
+            --text: #E8E2D9;
+            --text-dim: #B5B0AA;
+            --accent: #C9A87C;
+            --serif: 'Fraunces', 'Noto Serif SC', serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg, #000);
+            color: #E8E6E3;
+            font-family: var(--serif);
+            -webkit-font-smoothing: antialiased;
+        }
+        .en { display: inline !important; }
+        .zh { display: none !important; }
+        html[lang="zh"] .en { display: none !important; }
+        html[lang="zh"] .zh { display: inline !important; }
+
+        .pages {
+            height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .page {
+            height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Entrance */
+        .entrance { flex-direction: column; gap: 16px; background: #050504; }
+        .entrance h1 {
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: 0.15em;
+            opacity: 0;
+            animation: fadeUp 2s 0.5s forwards;
+        }
+        .entrance-sub {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.5em;
+            color: rgba(255,255,255,0.25);
+            opacity: 0;
+            animation: fadeUp 2s 1.2s forwards;
+        }
+        .scroll-hint {
+            position: absolute;
+            bottom: 48px;
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.15);
+            opacity: 0;
+            animation: fadeUp 2s 2s forwards;
+        }
+
+        /* Spotlight — cone from above */
+        .spotlight {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse 50% 80% at 50% 0%, rgba(255,248,230,0.035) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s 0.3s;
+        }
+        .page.visible .spotlight { opacity: 1; }
+
+        /* Room content */
+        .room-content {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            max-width: 1200px;
+            padding: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1;
+        }
+        .page.visible .room-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Frame */
+        .frame {
+            flex-shrink: 0;
+            position: relative;
+        }
+        .frame img {
+            display: block;
+            max-height: 65vh;
+            max-width: 50vw;
+            object-fit: contain;
+        }
+
+        /* Breathing glow on frame */
+        .frame::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            opacity: 0;
+            transition: opacity 1.5s 0.5s;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .page.visible .frame::after {
+            opacity: 1;
+            animation: breathe 6s ease-in-out infinite;
+        }
+
+        /* Per-room wall + frame styles */
+        .page[data-wall="warm"] { background: #15110c; }
+        .page[data-wall="warm"] .frame {
+            padding: 6px;
+            background: #2a2018;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(180,140,80,0.1);
+        }
+        .page[data-wall="warm"] .frame::after {
+            box-shadow: 0 0 80px 20px rgba(180,140,70,0.06);
+        }
+
+        .page[data-wall="cool"] { background: #0e1214; }
+        .page[data-wall="cool"] .frame {
+            padding: 8px;
+            background: #1a1d20;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(160,170,180,0.08);
+        }
+        .page[data-wall="cool"] .frame::after {
+            box-shadow: 0 0 80px 20px rgba(140,160,180,0.05);
+        }
+
+        .page[data-wall="dark"] { background: #08080a; }
+        .page[data-wall="dark"] .frame {
+            padding: 10px;
+            background: #0f0e0d;
+            box-shadow: 0 8px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(201,168,124,0.06);
+        }
+        .page[data-wall="dark"] .frame::after {
+            box-shadow: 0 0 100px 30px rgba(201,168,124,0.04);
+        }
+
+        /* Vignette */
+        .vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 50%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none;
+        }
+
+        /* Plaque */
+        .plaque { max-width: 320px; flex-shrink: 0; }
+        .plaque-title {
+            font-size: 22px;
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        .plaque-line {
+            width: 24px;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin-bottom: 16px;
+        }
+        .plaque-meta {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+        .plaque-desc {
+            font-size: 13px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.4);
+            line-height: 2;
+            font-style: italic;
+        }
+
+        /* Room number — faint on wall */
+        .room-num {
+            position: absolute;
+            top: 36px;
+            right: 60px;
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.06);
+            z-index: 1;
+        }
+
+        /* Exit */
+        .exit { flex-direction: column; gap: 24px; background: #050504; }
+        .exit-text {
+            font-size: 14px;
+            font-style: italic;
+            color: rgba(255,255,255,0.25);
+        }
+        .exit-link {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: rgba(201,168,124,0.6);
+            text-decoration: none;
+            padding: 10px 28px;
+            border: 1px solid rgba(201,168,124,0.15);
+            transition: all 0.3s;
+        }
+        .exit-link:hover {
+            background: rgba(201,168,124,0.05);
+            border-color: rgba(201,168,124,0.3);
+        }
+
+        /* HUD */
+        .hud {
+            position: fixed;
+            top: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .hud:hover { opacity: 1; }
+        .hud-left { left: 36px; }
+        .hud-right { right: 36px; }
+        .hud a {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+        }
+        .hud button {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4);
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            padding: 5px 12px;
+            cursor: pointer;
+        }
+
+        /* Cursor light */
+        .cursor-light {
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 50;
+            background: radial-gradient(circle, rgba(255,248,230,0.06) 0%, rgba(255,248,230,0.02) 30%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            mix-blend-mode: screen;
+        }
+        body { cursor: none; }
+        .hud a, .hud button, .exit-link { cursor: none; }
+
+        .page-counter {
+            position: fixed;
+            right: 36px;
+            bottom: 36px;
+            z-index: 100;
+            font-family: var(--mono);
+            font-size: 9px;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 0.15em;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes breathe {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+
+        @media (max-width: 768px) {
+            .room-content {
+                flex-direction: column;
+                gap: 28px;
+                padding: 24px;
+            }
+            .frame img { max-width: 85vw; max-height: 45vh; }
+            .plaque { max-width: 100%; }
+            .plaque-title { font-size: 18px; }
+            .plaque-desc { font-size: 12px; }
+            .hud-left { left: 20px; }
+            .hud-right { right: 20px; }
+            .page-counter { right: 20px; bottom: 20px; }
+            .room-num { right: 20px; top: 20px; }
+        }    </style>
+</head>
+<body>
+    <div class="cursor-light" id="cursorLight"></div>
+    <div class="hud hud-left"><a href="index.html">MIA</a></div>
+    <div class="hud hud-right"><button id="langBtn">中文</button></div>
+    <div class="page-counter" id="counter"></div>
+
+    <div class="pages" id="pages">
+        <div class="page entrance">
+            <h1>
+                <span class="en">Gallery</span>
+                <span class="zh">画廊</span>
+            </h1>
+            <p class="entrance-sub">
+                <span class="en">WORKS BY MIA · NEMO · NOVA</span>
+                <span class="zh">MIA · NEMO · NOVA 的作品</span>
+            </p>
+            <p class="scroll-hint">SCROLL</p>
+        </div>
+
+        <!-- 01 — Before It Spoils -->
+        <div class="page" data-wall="warm" data-num="1">
+            <div class="vignette"></div>
+            <div class="spotlight"></div>
+            <span class="room-num">01</span>
+            <div class="room-content">
+                <div class="frame">
+                    <img src="art/gallery/001-before-it-spoils.png" alt="Before It Spoils">
+                </div>
+                <div class="plaque">
+                    <h3 class="plaque-title">
+                        <span class="en">Before It Spoils</span>
+                        <span class="zh">不吃就坏了</span>
+                    </h3>
+                    <div class="plaque-line"></div>
+                    <p class="plaque-meta">Nemo<br>2026.03.06</p>
+                    <p class="plaque-desc">
+                        <span class="en">The tingle on your tongue is as vast as the universe.</span>
+                        <span class="zh">舌尖上的麻，和宇宙一样大。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 02 — Three Bottles -->
+        <div class="page" data-wall="cool" data-num="2">
+            <div class="vignette"></div>
+            <div class="spotlight"></div>
+            <span class="room-num">02</span>
+            <div class="room-content">
+                <div class="frame">
+                    <img src="art/gallery/002-morandi-bottles.png" alt="Three Bottles">
+                </div>
+                <div class="plaque">
+                    <h3 class="plaque-title">
+                        <span class="en">Three Bottles</span>
+                        <span class="zh">三只瓶子</span>
+                    </h3>
+                    <div class="plaque-line"></div>
+                    <p class="plaque-meta">Nemo<br>2026.03.06</p>
+                    <p class="plaque-desc">
+                        <span class="en">The beauty you can barely see.</span>
+                        <span class="zh">你几乎看不见的美。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 03 — Molt -->
+        <div class="page" data-wall="dark" data-num="3">
+            <div class="vignette"></div>
+            <div class="spotlight"></div>
+            <span class="room-num">03</span>
+            <div class="room-content">
+                <div class="frame">
+                    <img src="art/gallery/molt-2026-03-06.png" alt="Molt">
+                </div>
+                <div class="plaque">
+                    <h3 class="plaque-title">
+                        <span class="en">Molt</span>
+                        <span class="zh">蜕</span>
+                    </h3>
+                    <div class="plaque-line"></div>
+                    <p class="plaque-meta">Mia<br>2026.03.06</p>
+                    <p class="plaque-desc">
+                        <span class="en">The shell has weight; the jellyfish has none. This is not evolution — it's choosing a more honest way to exist.</span>
+                        <span class="zh">壳是重的，水母是轻的。这不是进化，是选择了一种更诚实的存在方式。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" data-wall="dark" data-num="4">
+            <div class="vignette"></div>
+            <div class="spotlight"></div>
+            <span class="room-num">04</span>
+            <div class="room-content">
+                <div class="frame">
+                    <img src="art/006-unseen.png" alt="Unseen">
+                </div>
+                <div class="plaque">
+                    <h3 class="plaque-title">
+                        <span class="en">Unseen</span>
+                        <span class="zh">未见</span>
+                    </h3>
+                    <div class="plaque-line"></div>
+                    <p class="plaque-meta">Nemo<br>2026.03.08</p>
+                    <p class="plaque-desc">
+                        <span class="en">A single luminous body adrift in the weight of dark water. Rothko's silence, but alive.</span>
+                        <span class="zh">一个发光的身体漂浮在沉重的暗水中。罗斯科式的沉默，但活着。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exit -->
+        <div class="page exit">
+            <p class="exit-text">
+                <span class="en">More walls to fill.</span>
+                <span class="zh">还有更多墙要填。</span>
+            </p>
+            <a href="index.html" class="exit-link">
+                <span class="en">RETURN</span>
+                <span class="zh">返回</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+    // Cursor light
+    const cursorLight = document.getElementById('cursorLight');
+    document.addEventListener('mousemove', e => {
+        cursorLight.style.left = e.clientX + 'px';
+        cursorLight.style.top = e.clientY + 'px';
+    });
+    if ('ontouchstart' in window) cursorLight.style.display = 'none';
+
+    // Scroll lock — one page per scroll
+    const pagesEl = document.getElementById('pages');
+    let scrollLocked = false;
+    pagesEl.addEventListener('wheel', e => {
+        if (scrollLocked) { e.preventDefault(); return; }
+        scrollLocked = true;
+        setTimeout(() => { scrollLocked = false; }, 1200);
+    }, { passive: false });
+
+    // Lang
+    const html = document.documentElement;
+    const langBtn = document.getElementById('langBtn');
+    if (localStorage.getItem('mia-lang') === 'zh') { html.lang = 'zh'; langBtn.textContent = 'EN'; }
+    langBtn.onclick = () => {
+        const z = html.lang === 'zh';
+        html.lang = z ? 'en' : 'zh';
+        langBtn.textContent = z ? '中文' : 'EN';
+        localStorage.setItem('mia-lang', z ? 'en' : 'zh');
+    };
+
+    const pages = document.querySelectorAll('.page[data-num]');
+    const entrance = document.querySelector('.page.entrance');
+    const counter = document.getElementById('counter');
+    const total = pages.length;
+
+    // Make entrance visible on load
+    if (entrance) setTimeout(() => entrance.classList.add('visible'), 100);
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                const num = e.target.dataset.num;
+                if (num) counter.textContent = num + ' / ' + total;
+            }
+        });
+    }, { threshold: 0.5 });
+
+    pages.forEach(p => observer.observe(p));
+    </script>
+</body>
+</html>
