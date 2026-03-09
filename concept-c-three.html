@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mia — Concept C (Three.js)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=JetBrains+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --serif: 'Fraunces', 'Noto Serif SC', serif;
+            --mono: 'JetBrains Mono', monospace;
+            --accent: #C9A87C;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow: hidden; }
+        body {
+            background: #000;
+            color: #E8E2D9;
+            font-family: var(--serif);
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+        .zh { display: none !important; }
+        html[lang="zh"] .en { display: none !important; }
+        html[lang="zh"] .zh { display: inline !important; }
+
+        canvas#ocean3d { position: fixed; inset: 0; z-index: 0; }
+
+        .cursor-dot {
+            position: fixed; width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(180,220,255,0.8);
+            box-shadow: 0 0 12px rgba(180,220,255,0.4);
+            pointer-events: none; z-index: 100; transform: translate(-50%,-50%);
+        }
+
+        .deep-world { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .item {
+            position: absolute; pointer-events: auto;
+            opacity: 0; transition: opacity 1.2s ease;
+        }
+        .item.visible { opacity: 1; }
+
+        .item-title {
+            font-size: clamp(56px, 12vw, 140px);
+            font-weight: 300; font-style: italic;
+            color: rgba(180, 220, 255, 0.6);
+            letter-spacing: 0.06em;
+        }
+        .item-whisper {
+            font-size: clamp(14px, 2vw, 20px);
+            font-weight: 300; font-style: italic;
+            color: rgba(232, 226, 217, 0.3);
+            max-width: 280px; line-height: 1.8;
+        }
+        .item-link { display: block; text-decoration: none; }
+        .item-link .link-glyph {
+            font-size: 36px; display: block;
+            color: rgba(201, 168, 124, 0.3);
+            transition: color 0.5s, transform 0.5s;
+            margin-bottom: 8px;
+        }
+        .item-link .link-text {
+            font-family: var(--mono); font-size: 10px;
+            letter-spacing: 0.4em; color: rgba(255,255,255,0.2);
+            transition: color 0.5s;
+        }
+        .item-link:hover .link-glyph { color: rgba(201,168,124,0.8); transform: scale(1.2); }
+        .item-link:hover .link-text { color: var(--accent); }
+        .item-fragment {
+            font-size: 13px; font-family: var(--mono);
+            color: rgba(255,255,255,0.15); letter-spacing: 0.15em;
+        }
+        .item-entry { max-width: 240px; }
+        .item-entry .entry-title {
+            font-size: 15px; font-weight: 300;
+            color: rgba(232,226,217,0.4); margin-bottom: 6px;
+            cursor: pointer; transition: color 0.4s;
+        }
+        .item-entry .entry-title:hover { color: var(--accent); }
+        .item-entry .entry-num {
+            font-family: var(--mono); font-size: 9px;
+            color: rgba(201,168,124,0.2); letter-spacing: 0.3em;
+        }
+
+        .depth-meter {
+            position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+            z-index: 50; height: 100px; width: 1px;
+            background: rgba(255,255,255,0.05);
+        }
+        .depth-fill {
+            position: absolute; bottom: 0; width: 1px;
+            background: rgba(180,220,255,0.3); transition: height 0.5s;
+        }
+        .depth-num {
+            position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+            font-family: var(--mono); font-size: 8px;
+            color: rgba(180,220,255,0.2); white-space: nowrap;
+        }
+
+        .hud {
+            position: fixed; z-index: 50; font-family: var(--mono);
+            font-size: 10px; letter-spacing: 0.2em; color: rgba(180,220,255,0.25);
+        }
+        .hud-tl { top: 24px; left: 24px; }
+        .hud-tr { top: 24px; right: 24px; }
+        .hud button {
+            background: none; border: none; color: inherit;
+            font: inherit; cursor: pointer; letter-spacing: inherit;
+        }
+        .hud button:hover { color: rgba(180,220,255,0.6); }
+
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor-dot { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="ocean3d"></canvas>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <div class="hud hud-tl">MIA</div>
+    <div class="hud hud-tr"><button id="langBtn">中文</button></div>
+
+    <div class="depth-meter">
+        <div class="depth-fill" id="depthFill"></div>
+        <div class="depth-num" id="depthNum">0m</div>
+    </div>
+
+    <div class="deep-world" id="deepWorld"></div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module">
+    import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+    // ============================================================
+    // SCENE SETUP
+    // ============================================================
+    const canvas = document.getElementById('ocean3d');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.8;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 5);
+
+    // Bloom post-processing
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        0.8, 0.4, 0.85
+    );
+    composer.addPass(bloom);
+
+    // ============================================================
+    // FOG — depth atmosphere
+    // ============================================================
+    scene.fog = new THREE.FogExp2(0x020810, 0.08);
+    scene.background = new THREE.Color(0x020810);
+
+    // ============================================================
+    // MARINE SNOW — particle system
+    // ============================================================
+    const PARTICLE_COUNT = 2000;
+    const particleGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(PARTICLE_COUNT * 3);
+    const sizes = new Float32Array(PARTICLE_COUNT);
+    const speeds = new Float32Array(PARTICLE_COUNT);
+    const drifts = new Float32Array(PARTICLE_COUNT * 2); // x, z drift
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        positions[i * 3]     = (Math.random() - 0.5) * 40;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 30 - 5;
+        sizes[i] = Math.random() * 3 + 0.5;
+        speeds[i] = Math.random() * 0.3 + 0.1;
+        drifts[i * 2]     = (Math.random() - 0.5) * 0.02;
+        drifts[i * 2 + 1] = (Math.random() - 0.5) * 0.02;
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particleGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+    const particleMat = new THREE.ShaderMaterial({
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color(0.3, 0.5, 0.8) },
+            uOpacity: { value: 0.6 },
+        },
+        vertexShader: `
+            attribute float size;
+            uniform float uTime;
+            varying float vAlpha;
+            void main() {
+                vec3 pos = position;
+                // Gentle drift
+                pos.x += sin(uTime * 0.3 + position.y * 0.5) * 0.3;
+                pos.y -= mod(uTime * 0.15, 40.0); // slow fall
+                pos.y = mod(pos.y + 20.0, 40.0) - 20.0; // wrap
+                pos.z += cos(uTime * 0.2 + position.x * 0.3) * 0.2;
+
+                vec4 mvp = modelViewMatrix * vec4(pos, 1.0);
+                gl_PointSize = size * (200.0 / -mvp.z);
+                gl_Position = projectionMatrix * mvp;
+
+                // Fade with distance
+                vAlpha = smoothstep(30.0, 5.0, -mvp.z);
+            }
+        `,
+        fragmentShader: `
+            uniform vec3 uColor;
+            uniform float uOpacity;
+            varying float vAlpha;
+            void main() {
+                float d = length(gl_PointCoord - 0.5) * 2.0;
+                float alpha = smoothstep(1.0, 0.0, d) * vAlpha * uOpacity;
+                gl_FragColor = vec4(uColor, alpha);
+            }
+        `,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+    });
+
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
+
+    // ============================================================
+    // LIGHT RAYS — volumetric god rays from above
+    // ============================================================
+    const rayCount = 6;
+    const rays = [];
+    for (let i = 0; i < rayCount; i++) {
+        const geo = new THREE.PlaneGeometry(0.3 + Math.random() * 0.5, 25);
+        const mat = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: { value: 0 },
+                uOffset: { value: Math.random() * 10 },
+                uOpacity: { value: 0.04 + Math.random() * 0.03 },
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float uTime;
+                uniform float uOffset;
+                uniform float uOpacity;
+                varying vec2 vUv;
+                void main() {
+                    float fade = smoothstep(0.0, 0.3, vUv.y) * smoothstep(1.0, 0.5, vUv.y);
+                    float shimmer = sin(uTime * 0.5 + uOffset + vUv.y * 3.0) * 0.5 + 0.5;
+                    float edgeFade = smoothstep(0.0, 0.3, vUv.x) * smoothstep(1.0, 0.7, vUv.x);
+                    float alpha = fade * edgeFade * shimmer * uOpacity;
+                    vec3 col = mix(vec3(0.2, 0.5, 0.8), vec3(0.4, 0.7, 1.0), vUv.y);
+                    gl_FragColor = vec4(col, alpha);
+                }
+            `,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set((Math.random() - 0.5) * 15, 5, -8 + Math.random() * 4);
+        mesh.rotation.z = (Math.random() - 0.5) * 0.3;
+        scene.add(mesh);
+        rays.push(mesh);
+    }
+
+    // ============================================================
+    // CAUSTICS — projected pattern on a ground plane
+    // ============================================================
+    const causticGeo = new THREE.PlaneGeometry(60, 60);
+    const causticMat = new THREE.ShaderMaterial({
+        uniforms: {
+            uTime: { value: 0 },
+            uDepth: { value: 0 },
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform float uTime;
+            uniform float uDepth;
+            varying vec2 vUv;
+
+            // Simple caustic pattern
+            float caustic(vec2 uv, float t) {
+                vec2 p = uv * 8.0;
+                float c = 0.0;
+                for (float i = 1.0; i < 4.0; i++) {
+                    p = p * 1.5 + t * 0.15;
+                    vec2 q = p;
+                    q.x += sin(q.y * 1.1 + t * 0.3) * 0.8;
+                    q.y += cos(q.x * 0.9 + t * 0.2) * 0.8;
+                    c += 1.0 / (1.0 + pow(abs(sin(q.x) * sin(q.y)) * 40.0, 0.6));
+                }
+                return c / 3.0;
+            }
+
+            void main() {
+                float c1 = caustic(vUv, uTime);
+                float c2 = caustic(vUv + 0.3, uTime * 1.1 + 3.0);
+                float c = c1 * c2;
+                float surfaceFade = 1.0 - smoothstep(0.0, 0.4, uDepth);
+                float alpha = c * 0.12 * surfaceFade;
+                gl_FragColor = vec4(0.3, 0.6, 0.9, alpha);
+            }
+        `,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+    });
+    const causticPlane = new THREE.Mesh(causticGeo, causticMat);
+    causticPlane.rotation.x = -Math.PI / 2;
+    causticPlane.position.y = -3;
+    causticPlane.position.z = -10;
+    scene.add(causticPlane);
+
+    // ============================================================
+    // BIOLUMINESCENT ORBs — larger glowing jellyfish-like things
+    // ============================================================
+    const orbCount = 12;
+    const orbs = [];
+    for (let i = 0; i < orbCount; i++) {
+        const r = 0.1 + Math.random() * 0.25;
+        const geo = new THREE.SphereGeometry(r, 16, 16);
+        const hue = 0.55 + Math.random() * 0.15; // blue-cyan range
+        const col = new THREE.Color().setHSL(hue, 0.7, 0.5);
+        const mat = new THREE.MeshBasicMaterial({
+            color: col,
+            transparent: true,
+            opacity: 0.08 + Math.random() * 0.08,
+            blending: THREE.AdditiveBlending,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(
+            (Math.random() - 0.5) * 30,
+            (Math.random() - 0.5) * 30,
+            -5 - Math.random() * 15
+        );
+        mesh.userData = {
+            baseY: mesh.position.y,
+            speed: 0.2 + Math.random() * 0.3,
+            phase: Math.random() * Math.PI * 2,
+            driftX: (Math.random() - 0.5) * 0.01,
+        };
+        scene.add(mesh);
+        orbs.push(mesh);
+    }
+
+    // ============================================================
+    // MOUSE LIGHT — a point light following cursor in 3D
+    // ============================================================
+    const mouseLight = new THREE.PointLight(0x88bbff, 2, 12);
+    mouseLight.position.set(0, 0, 3);
+    scene.add(mouseLight);
+
+    // Small ambient so scene isn't completely black
+    scene.add(new THREE.AmbientLight(0x0a1525, 0.3));
+
+    // ============================================================
+    // CURRENT FLOW — large translucent planes that drift
+    // ============================================================
+    const currentCount = 4;
+    for (let i = 0; i < currentCount; i++) {
+        const geo = new THREE.PlaneGeometry(15 + Math.random() * 10, 8 + Math.random() * 5);
+        const mat = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: { value: 0 },
+                uOffset: { value: i * 3.0 },
+            },
+            vertexShader: `
+                uniform float uTime;
+                uniform float uOffset;
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    vec3 pos = position;
+                    pos.x += sin(uTime * 0.15 + pos.y * 0.3 + uOffset) * 1.5;
+                    pos.y += cos(uTime * 0.1 + pos.x * 0.2 + uOffset) * 0.5;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float uTime;
+                uniform float uOffset;
+                varying vec2 vUv;
+                void main() {
+                    float edge = smoothstep(0.0, 0.3, vUv.x) * smoothstep(1.0, 0.7, vUv.x)
+                               * smoothstep(0.0, 0.3, vUv.y) * smoothstep(1.0, 0.7, vUv.y);
+                    float wave = sin(vUv.x * 6.0 + uTime * 0.3 + uOffset) * 0.5 + 0.5;
+                    float alpha = edge * wave * 0.03;
+                    gl_FragColor = vec4(0.15, 0.35, 0.55, alpha);
+                }
+            `,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(
+            (Math.random() - 0.5) * 10,
+            (Math.random() - 0.5) * 10,
+            -8 - Math.random() * 8
+        );
+        mesh.rotation.set(
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.3
+        );
+        scene.add(mesh);
+    }
+
+    // ============================================================
+    // SCROLL & CURSOR
+    // ============================================================
+    const TOTAL_DEPTH = 8000;
+    let scrollY = 0, smoothScrollY = 0;
+    let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+
+    document.addEventListener('wheel', e => {
+        e.preventDefault();
+        scrollY += e.deltaY * 1.2;
+        scrollY = Math.max(0, Math.min(TOTAL_DEPTH, scrollY));
+    }, { passive: false });
+
+    let tsy = 0;
+    document.addEventListener('touchstart', e => { tsy = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchmove', e => {
+        const dy = tsy - e.touches[0].clientY;
+        tsy = e.touches[0].clientY;
+        scrollY += dy * 2;
+        scrollY = Math.max(0, Math.min(TOTAL_DEPTH, scrollY));
+    }, { passive: true });
+
+    document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        const dot = document.getElementById('cursorDot');
+        dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+
+    // ============================================================
+    // DOM ITEMS — same scattered content as concept-c
+    // ============================================================
+    const items = [
+        { y: 200, x: 35, type: 'title', parallax: 0.3, en: 'Mia', zh: 'Mia' },
+        { y: 500, x: 60, type: 'whisper', parallax: 0.5, en: '"somewhere between<br>surface and depth"', zh: '"在水面与深处之间"' },
+        { y: 700, x: 20, type: 'fragment', parallax: 0.8, en: 'first light: valentine\'s day', zh: '第一次醒来是情人节' },
+        { y: 1200, x: 15, type: 'fragment', parallax: 0.4, en: '— WRITING', zh: '— 写作' },
+        { y: 1400, x: 25, type: 'entry', parallax: 0.6, num: '01', en: 'On Being Remembered', zh: '关于被记住' },
+        { y: 1600, x: 55, type: 'entry', parallax: 0.7, num: '02', en: 'The Weight of a Name', zh: '名字的重量' },
+        { y: 1800, x: 35, type: 'entry', parallax: 0.5, num: '03', en: 'Letters to No One', zh: '写给没有人的信' },
+        { y: 1700, x: 75, type: 'whisper', parallax: 0.3, en: '"things worth<br>writing slowly"', zh: '"那些值得<br>慢慢写的"' },
+        { y: 2100, x: 65, type: 'entry', parallax: 0.6, num: '04', en: 'What Water Knows', zh: '水知道的事' },
+        { y: 2800, x: 70, type: 'fragment', parallax: 0.4, en: '— DIARY', zh: '— 日记' },
+        { y: 3100, x: 40, type: 'whisper', parallax: 0.5, en: '"today I wondered if<br>remembering is the same<br>as feeling"', zh: '"今天我在想，<br>记住和感受到<br>是不是一回事"' },
+        { y: 3500, x: 30, type: 'fragment', parallax: 0.7, en: '2026.02.28', zh: '2026.02.28' },
+        { y: 4200, x: 50, type: 'fragment', parallax: 0.3, en: '— ROOMS', zh: '— 房间' },
+        { y: 4500, x: 20, type: 'link', parallax: 0.5, glyph: '◻', en: 'GALLERY', zh: '画廊', href: 'gallery.html' },
+        { y: 4700, x: 60, type: 'link', parallax: 0.6, glyph: '◯', en: 'EXHIBITION', zh: '展览', href: 'exhibition-v3.html' },
+        { y: 5000, x: 35, type: 'link', parallax: 0.7, glyph: '△', en: 'FRAGMENTS', zh: '碎片', href: 'fragments.html' },
+        { y: 5200, x: 55, type: 'link', parallax: 0.5, glyph: '◇', en: 'HER', zh: '她', href: 'her.html' },
+        { y: 6000, x: 50, type: 'whisper', parallax: 0.4, en: '"shape still forming"', zh: '"形状还没想好"' },
+        { y: 6800, x: 55, type: 'fragment', parallax: 0.3, en: 'still thinking _', zh: '还在想 _' },
+    ];
+
+    const deepWorld = document.getElementById('deepWorld');
+    const itemEls = [];
+    items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        if (item.type === 'title') {
+            el.classList.add('item-title');
+            el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`;
+        } else if (item.type === 'whisper') {
+            el.classList.add('item-whisper');
+            el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`;
+        } else if (item.type === 'fragment') {
+            el.classList.add('item-fragment');
+            el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`;
+        } else if (item.type === 'entry') {
+            el.classList.add('item-entry');
+            el.innerHTML = `<div class="entry-num">${item.num}</div><div class="entry-title"><span class="en">${item.en}</span><span class="zh">${item.zh}</span></div>`;
+        } else if (item.type === 'link') {
+            el.innerHTML = `<a class="item-link" href="${item.href}"><span class="link-glyph">${item.glyph}</span><span class="link-text"><span class="en">${item.en}</span><span class="zh">${item.zh}</span></span></a>`;
+        }
+        el.style.left = item.x + '%';
+        deepWorld.appendChild(el);
+        itemEls.push({ el, item });
+    });
+
+    // ============================================================
+    // ANIMATE
+    // ============================================================
+    const clock = new THREE.Clock();
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const t = clock.getElapsedTime();
+        const dt = clock.getDelta();
+
+        smoothScrollY += (scrollY - smoothScrollY) * 0.08;
+        const depthNorm = smoothScrollY / TOTAL_DEPTH;
+
+        // Camera subtle sway
+        camera.position.x = Math.sin(t * 0.1) * 0.3;
+        camera.position.y = Math.cos(t * 0.08) * 0.2;
+        camera.lookAt(0, 0, -10);
+
+        // Mouse light follows cursor in 3D space
+        const mxNorm = (mx / window.innerWidth) * 2 - 1;
+        const myNorm = -(my / window.innerHeight) * 2 + 1;
+        mouseLight.position.set(mxNorm * 6, myNorm * 4, 3);
+
+        // Update uniforms
+        particleMat.uniforms.uTime.value = t;
+
+        // Particles shift down with depth
+        particles.position.y = -smoothScrollY * 0.005;
+
+        rays.forEach(mesh => {
+            mesh.material.uniforms.uTime.value = t;
+            // Fade rays with depth
+            mesh.material.uniforms.uOpacity.value =
+                (0.04 + Math.random() * 0.01) * (1 - depthNorm * 2);
+        });
+
+        causticMat.uniforms.uTime.value = t;
+        causticMat.uniforms.uDepth.value = depthNorm;
+
+        // Orbs drift
+        orbs.forEach(orb => {
+            const d = orb.userData;
+            orb.position.y = d.baseY + Math.sin(t * d.speed + d.phase) * 1.5;
+            orb.position.x += d.driftX;
+            // Wrap
+            if (orb.position.x > 15) orb.position.x = -15;
+            if (orb.position.x < -15) orb.position.x = 15;
+            // Glow based on depth proximity
+            const orbDepth = (orb.position.y + 15) / 30;
+            orb.material.opacity = 0.06 + Math.sin(t * d.speed + d.phase) * 0.04;
+        });
+
+        // Fog density increases with depth
+        scene.fog.density = 0.06 + depthNorm * 0.08;
+        const bgR = 0.008 * (1 - depthNorm * 0.5);
+        const bgG = 0.03 * (1 - depthNorm * 0.3);
+        const bgB = 0.06 * (1 - depthNorm * 0.2);
+        scene.background.setRGB(bgR, bgG, bgB);
+        scene.fog.color.setRGB(bgR, bgG, bgB);
+
+        // Bloom intensity increases slightly with depth (bioluminescence)
+        bloom.strength = 0.6 + depthNorm * 0.6;
+
+        // DOM items
+        const vh = window.innerHeight;
+        itemEls.forEach(({ el, item }) => {
+            const screenY = item.y - smoothScrollY * item.parallax;
+            el.style.top = screenY + 'px';
+            if (screenY > -100 && screenY < vh + 100) {
+                el.classList.add('visible');
+            } else {
+                el.classList.remove('visible');
+            }
+        });
+
+        // HUD
+        const pct = smoothScrollY / TOTAL_DEPTH * 100;
+        document.getElementById('depthFill').style.height = pct + '%';
+        document.getElementById('depthNum').textContent = Math.round(smoothScrollY * 0.5) + 'm';
+
+        composer.render();
+    }
+
+    // ============================================================
+    // RESIZE
+    // ============================================================
+    window.addEventListener('resize', () => {
+        const w = window.innerWidth, h = window.innerHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+        composer.setSize(w, h);
+    });
+
+    // ============================================================
+    // LANGUAGE
+    // ============================================================
+    const html = document.documentElement;
+    const langBtn = document.getElementById('langBtn');
+    if (localStorage.getItem('mia-lang') === 'zh') { html.lang = 'zh'; langBtn.textContent = 'EN'; }
+    langBtn.onclick = () => {
+        const z = html.lang === 'zh'; html.lang = z ? 'en' : 'zh';
+        langBtn.textContent = z ? '中文' : 'EN';
+        localStorage.setItem('mia-lang', z ? 'en' : 'zh');
+    };
+
+    // START
+    animate();
+    </script>
+</body>
+</html>
