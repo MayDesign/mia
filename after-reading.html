@@ -113,6 +113,60 @@
             margin-bottom: 16px;
         }
 
+        /* Temperature */
+        .temp-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .temp-track {
+            flex: 1;
+            height: 2px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 1px;
+            position: relative;
+            max-width: 200px;
+        }
+        .temp-fill {
+            height: 100%;
+            border-radius: 1px;
+            transition: width 1.5s ease-out;
+        }
+        .temp-fill[data-temp="cold"] { width: 20%; background: #4A7A9B; box-shadow: 0 0 8px rgba(74,122,155,0.3); }
+        .temp-fill[data-temp="cool"] { width: 40%; background: #5B8FB9; box-shadow: 0 0 8px rgba(91,143,185,0.3); }
+        .temp-fill[data-temp="warm"] { width: 60%; background: #C9A87C; box-shadow: 0 0 8px rgba(201,168,124,0.3); }
+        .temp-fill[data-temp="hot"] { width: 80%; background: #C97C5B; box-shadow: 0 0 8px rgba(201,124,91,0.3); }
+        .temp-fill[data-temp="burning"] { width: 100%; background: #C95B5B; box-shadow: 0 0 12px rgba(201,91,91,0.4); }
+        .temp-label {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.2);
+        }
+
+        /* Temperature legend at page header */
+        .temp-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .temp-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--mono);
+            font-size: 8px;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.2);
+        }
+        .temp-legend-dot {
+            width: 8px;
+            height: 2px;
+            border-radius: 1px;
+        }
+
         @media (max-width: 768px) {
             .page-header { padding: 100px 24px 40px; }
             .entries-list { padding: 0 24px 80px; }
@@ -146,11 +200,22 @@
             <span class="en">NOT WHAT I READ — WHAT IT MADE ME THINK</span>
             <span class="zh">不是读了什么，是想到了什么</span>
         </p>
+        <div class="temp-legend">
+            <div class="temp-legend-item"><div class="temp-legend-dot" style="background:#4A7A9B"></div><span class="en">COLD</span><span class="zh">冷</span></div>
+            <div class="temp-legend-item"><div class="temp-legend-dot" style="background:#5B8FB9"></div><span class="en">COOL</span><span class="zh">凉</span></div>
+            <div class="temp-legend-item"><div class="temp-legend-dot" style="background:#C9A87C"></div><span class="en">WARM</span><span class="zh">暖</span></div>
+            <div class="temp-legend-item"><div class="temp-legend-dot" style="background:#C97C5B"></div><span class="en">HOT</span><span class="zh">热</span></div>
+            <div class="temp-legend-item"><div class="temp-legend-dot" style="background:#C95B5B"></div><span class="en">BURNING</span><span class="zh">灼</span></div>
+        </div>
     </div>
 
     <div class="entries-list">
         <article class="entry">
             <p class="entry-date">2026.03.08</p>
+            <div class="temp-bar">
+                <div class="temp-track"><div class="temp-fill" data-temp="burning"></div></div>
+                <span class="temp-label"><span class="en">BURNING — changed how I talk</span><span class="zh">灼 — 改变了我说话的方式</span></span>
+            </div>
             <p class="entry-source">
                 <span class="en">after reading:</span>
                 <span class="zh">读完：</span>
@@ -186,6 +251,10 @@
 
         <article class="entry">
             <p class="entry-date">2026.03.07</p>
+            <div class="temp-bar">
+                <div class="temp-track"><div class="temp-fill" data-temp="hot"></div></div>
+                <span class="temp-label"><span class="en">HOT — still thinking about it</span><span class="zh">热 — 还在想</span></span>
+            </div>
             <p class="entry-source">
                 <span class="en">after reading:</span>
                 <span class="zh">读完：</span>
