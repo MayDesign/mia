@@ -412,31 +412,31 @@ void main(){
     float d=clamp(uDepth,0.,1.);
 
     // Color deepens
-    vec3 shallow=vec3(0.015,0.04,0.07);
-    vec3 mid=vec3(0.008,0.02,0.05);
-    vec3 abyss=vec3(0.003,0.005,0.012);
+    vec3 shallow=vec3(0.05,0.10,0.16);
+    vec3 mid=vec3(0.03,0.06,0.12);
+    vec3 abyss=vec3(0.015,0.025,0.05);
     vec3 col=mix(shallow,mix(mid,abyss,smoothstep(0.3,0.8,d)),d);
 
     // Flow
     float f=snoise(uv*3.+vec2(t*0.04,d*2.))*0.5+0.5;
     float f2=snoise(uv*6.-t*0.03+5.)*0.5+0.5;
-    col+=f*f2*0.015*(1.-d*0.6)*vec3(0.2,0.4,0.7);
+    col+=f*f2*0.06*(1.-d*0.4)*vec3(0.2,0.4,0.7);
 
     // Particles — more as deeper
     float density=0.5+d*0.5;
     float p1=snoise(uv*25.+t*0.008+d*3.);
     float p2=snoise(uv*45.-t*0.01+d*5.+3.);
-    if(p1>0.7)col+=0.04*density*vec3(0.3,0.5,0.7);
-    if(p2>0.78)col+=0.025*density*vec3(0.5,0.6,0.8);
+    if(p1>0.7)col+=0.10*density*vec3(0.3,0.5,0.7);
+    if(p2>0.78)col+=0.07*density*vec3(0.5,0.6,0.8);
 
     // Caustics (surface only)
-    float caust=pow(snoise(uv*8.+t*0.15)*0.5+0.5,4.)*0.06*(1.-d*4.);
+    float caust=pow(snoise(uv*8.+t*0.15)*0.5+0.5,2.5)*0.15*(1.-d*2.5);
     col+=max(0.,caust)*vec3(0.4,0.6,0.9);
 
     // Cursor glow
     vec2 mUv=uMouse/uRes;
     float mD=length(uv-mUv);
-    col+=exp(-mD*mD*6.)*0.02*vec3(0.5,0.7,1.0);
+    col+=exp(-mD*mD*4.)*0.06*vec3(0.5,0.7,1.0);
 
     // Vignette
     float vig=1.-length((uv-0.5)*1.3);

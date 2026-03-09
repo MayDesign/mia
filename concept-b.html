@@ -347,34 +347,34 @@ void main(){
     float t=uTime;
 
     // Base ocean color — deep blue-green
-    vec3 col=vec3(0.01, 0.03, 0.06);
+    vec3 col=vec3(0.04, 0.08, 0.14);
 
     // Water current flow
     float flow1=snoise(uv*3.+vec2(t*0.05, t*0.03));
     float flow2=snoise(uv*5.+vec2(-t*0.04, t*0.02)+4.);
-    col+=(flow1*0.5+0.5)*(flow2*0.5+0.5)*0.02*vec3(0.15,0.35,0.55);
+    col+=(flow1*0.5+0.5)*(flow2*0.5+0.5)*0.07*vec3(0.15,0.35,0.55);
 
     // Marine snow particles
     float p1=snoise(uv*30.+t*0.01);
     float p2=snoise(uv*50.-t*0.008+3.);
-    if(p1>0.73)col+=0.05*vec3(0.3,0.5,0.7);
-    if(p2>0.8)col+=0.03*vec3(0.5,0.6,0.8);
+    if(p1>0.73)col+=0.12*vec3(0.3,0.5,0.7);
+    if(p2>0.8)col+=0.08*vec3(0.5,0.6,0.8);
 
     // Mia's bioluminescent wake
     vec2 mUv=uMia/uRes;
     float mDist=length(uv-mUv);
-    col+=exp(-mDist*mDist*4.)*0.04*vec3(0.5,0.7,1.0);
+    col+=exp(-mDist*mDist*3.)*0.10*vec3(0.5,0.7,1.0);
 
     // Zone glows — subtle light sources at edges
     // Left (Writing)
     float dL=length(uv-vec2(0.1,0.5));
-    col+=exp(-dL*dL*3.)*0.01*vec3(0.6,0.8,1.0);
+    col+=exp(-dL*dL*2.5)*0.04*vec3(0.6,0.8,1.0);
     // Right (Rooms)
     float dR=length(uv-vec2(0.9,0.5));
-    col+=exp(-dR*dR*3.)*0.008*vec3(0.78,0.66,0.49);
+    col+=exp(-dR*dR*2.5)*0.035*vec3(0.78,0.66,0.49);
     // Bottom (Diary)
     float dB=length(uv-vec2(0.5,0.1));
-    col+=exp(-dB*dB*3.)*0.008*vec3(0.5,0.7,0.9);
+    col+=exp(-dB*dB*2.5)*0.035*vec3(0.5,0.7,0.9);
 
     // Vignette
     float vig=1.-length((uv-0.5)*1.3);
