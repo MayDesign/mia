@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mia — Deep Ocean</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=JetBrains+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root { --serif:'Fraunces','Noto Serif SC',serif; --mono:'JetBrains Mono',monospace; --accent:#C9A87C; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        html{overflow:hidden;}
+        body{background:#000;color:#E8E2D9;font-family:var(--serif);overflow:hidden;height:100vh;cursor:none;}
+        .zh{display:none!important;} html[lang="zh"] .en{display:none!important;} html[lang="zh"] .zh{display:inline!important;}
+        canvas#sea{position:fixed;inset:0;z-index:0;}
+
+        .cursor-dot{position:fixed;width:6px;height:6px;border-radius:50%;background:rgba(180,220,255,0.8);box-shadow:0 0 16px rgba(180,220,255,0.5),0 0 60px rgba(100,180,255,0.15);pointer-events:none;z-index:100;transform:translate(-50%,-50%);}
+
+        .deep-world{position:fixed;inset:0;z-index:1;pointer-events:none;}
+        .item{position:absolute;pointer-events:auto;opacity:0;transition:opacity 1.2s ease;}
+        .item.visible{opacity:1;}
+        .item-title{font-size:clamp(56px,12vw,140px);font-weight:300;font-style:italic;color:rgba(180,220,255,0.6);letter-spacing:0.06em;}
+        .item-whisper{font-size:clamp(14px,2vw,20px);font-weight:300;font-style:italic;color:rgba(232,226,217,0.3);max-width:280px;line-height:1.8;}
+        .item-link{display:block;text-decoration:none;}
+        .item-link .link-glyph{font-size:36px;display:block;color:rgba(201,168,124,0.3);transition:color 0.5s,transform 0.5s;margin-bottom:8px;}
+        .item-link .link-text{font-family:var(--mono);font-size:10px;letter-spacing:0.4em;color:rgba(255,255,255,0.2);transition:color 0.5s;}
+        .item-link:hover .link-glyph{color:rgba(201,168,124,0.8);transform:scale(1.2);}
+        .item-link:hover .link-text{color:var(--accent);}
+        .item-fragment{font-size:13px;font-family:var(--mono);color:rgba(255,255,255,0.15);letter-spacing:0.15em;}
+        .item-entry{max-width:240px;}
+        .item-entry .entry-title{font-size:15px;font-weight:300;color:rgba(232,226,217,0.4);margin-bottom:6px;cursor:pointer;transition:color 0.4s;}
+        .item-entry .entry-title:hover{color:var(--accent);}
+        .item-entry .entry-num{font-family:var(--mono);font-size:9px;color:rgba(201,168,124,0.2);letter-spacing:0.3em;}
+
+        .depth-meter{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:50;height:100px;width:1px;background:rgba(255,255,255,0.05);}
+        .depth-fill{position:absolute;bottom:0;width:1px;background:rgba(180,220,255,0.3);transition:height 0.5s;}
+        .depth-num{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;color:rgba(180,220,255,0.2);white-space:nowrap;}
+
+        .hud{position:fixed;z-index:50;font-family:var(--mono);font-size:10px;letter-spacing:0.2em;color:rgba(180,220,255,0.25);}
+        .hud-tl{top:24px;left:24px;} .hud-tr{top:24px;right:24px;}
+        .hud button{background:none;border:none;color:inherit;font:inherit;cursor:pointer;letter-spacing:inherit;}
+        .hud button:hover{color:rgba(180,220,255,0.6);}
+
+        @media(max-width:768px){body{cursor:auto;}.cursor-dot{display:none;}}
+    </style>
+</head>
+<body>
+    <canvas id="sea"></canvas>
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="hud hud-tl">MIA</div>
+    <div class="hud hud-tr"><button id="langBtn">中文</button></div>
+    <div class="depth-meter"><div class="depth-fill" id="depthFill"></div><div class="depth-num" id="depthNum">0m</div></div>
+    <div class="deep-world" id="deepWorld"></div>
+
+<script>
+// ============================================================
+// FULLSCREEN SHADER — ray marched underwater
+// ============================================================
+const canvas = document.getElementById('sea');
+const gl = canvas.getContext('webgl', { alpha: false, antialias: false });
+
+function resize() {
+    const dpr = Math.min(window.devicePixelRatio, 1.5);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    gl.viewport(0, 0, canvas.width, canvas.height);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const VS = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
+
+// Single fullscreen fragment shader — everything rendered here
+const FS = `
+precision highp float;
+
+uniform vec2 uRes;
+uniform float uTime;
+uniform float uDepth; // 0..1 normalized scroll depth
+uniform vec2 uMouse; // screen coords, y-flipped
+
+// ---- NOISE ----
+// Based on iq's noise functions
+float hash(float n) { return fract(sin(n) * 43758.5453); }
+float hash2(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash2(i);
+    float b = hash2(i + vec2(1, 0));
+    float c = hash2(i + vec2(0, 1));
+    float d = hash2(i + vec2(1, 1));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float fbm(vec2 p) {
+    float v = 0.0, a = 0.5;
+    mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
+    for (int i = 0; i < 5; i++) {
+        v += a * noise(p);
+        p = rot * p * 2.0;
+        a *= 0.5;
+    }
+    return v;
+}
+
+// ---- CAUSTICS (Voronoi-based) ----
+float voronoi(vec2 p) {
+    vec2 g = floor(p);
+    vec2 f = fract(p);
+    float d = 1.0;
+    for (int y = -1; y <= 1; y++) {
+        for (int x = -1; x <= 1; x++) {
+            vec2 o = vec2(float(x), float(y));
+            vec2 r = o + vec2(
+                hash2(g + o) * 0.8 + 0.1,
+                hash2(g + o + 99.0) * 0.8 + 0.1
+            ) - f;
+            d = min(d, dot(r, r));
+        }
+    }
+    return sqrt(d);
+}
+
+float caustics(vec2 uv, float t) {
+    float c1 = voronoi(uv * 6.0 + vec2(t * 0.15, t * 0.1));
+    float c2 = voronoi(uv * 8.0 - vec2(t * 0.12, t * 0.08) + 5.0);
+    // Interference pattern from two layers
+    float c = pow(c1 * c2, 0.6);
+    return c;
+}
+
+// ---- VOLUMETRIC LIGHT RAYS ----
+float lightRay(vec2 uv, float t, float offset, float width) {
+    float x = uv.x + sin(uv.y * 2.0 + t * 0.3 + offset) * 0.15;
+    float ray = exp(-pow((x - offset * 0.15) / width, 2.0) * 8.0);
+    // Fade from top
+    ray *= smoothstep(0.0, 0.8, uv.y);
+    // Shimmer
+    ray *= 0.7 + 0.3 * sin(t * 0.5 + offset * 3.0 + uv.y * 4.0);
+    return ray;
+}
+
+// ---- PARTICLES (marine snow) ----
+float particles(vec2 uv, float t) {
+    float p = 0.0;
+    for (float i = 0.0; i < 30.0; i++) {
+        vec2 pos;
+        pos.x = hash(i * 13.7) * 2.0 - 1.0;
+        // Slow fall
+        float speed = 0.02 + hash(i * 7.3) * 0.04;
+        pos.y = mod(hash(i * 31.1) + t * speed, 2.0) - 1.0;
+        // Horizontal drift
+        pos.x += sin(t * 0.3 + i * 2.0) * 0.05;
+
+        float size = 0.001 + hash(i * 23.0) * 0.002;
+        float d = length(uv - pos);
+        float glow = exp(-d * d / (size * 2.0));
+        p += glow * (0.3 + hash(i * 41.0) * 0.7);
+    }
+    return p;
+}
+
+// ---- BIOLUMINESCENCE (floating orbs) ----
+float biolum(vec2 uv, float t) {
+    float b = 0.0;
+    for (float i = 0.0; i < 8.0; i++) {
+        vec2 center;
+        center.x = sin(t * (0.1 + hash(i * 5.0) * 0.1) + i * 2.5) * 0.7;
+        center.y = cos(t * (0.08 + hash(i * 9.0) * 0.08) + i * 1.7) * 0.5;
+        float r = 0.02 + hash(i * 17.0) * 0.03;
+        float d = length(uv - center);
+        // Soft glow
+        float glow = exp(-d * d / (r * r * 3.0));
+        // Pulse
+        float pulse = 0.5 + 0.5 * sin(t * (0.8 + hash(i * 11.0) * 0.5) + i * 3.0);
+        b += glow * pulse * 0.3;
+    }
+    return b;
+}
+
+// ---- CURRENT FLOW DISTORTION ----
+vec2 flowDistort(vec2 uv, float t) {
+    float n1 = fbm(uv * 2.0 + t * 0.08);
+    float n2 = fbm(uv * 2.0 + t * 0.06 + 10.0);
+    return vec2(n1 - 0.5, n2 - 0.5) * 0.08;
+}
+
+void main() {
+    vec2 uv = gl_FragCoord.xy / uRes;
+    vec2 aspect = vec2(uRes.x / uRes.y, 1.0);
+    vec2 uvA = (uv - 0.5) * aspect; // aspect-corrected, centered
+    float t = uTime;
+    float depth = uDepth;
+
+    // Flow distortion — makes everything feel alive
+    vec2 flow = flowDistort(uv, t);
+    vec2 distortedUV = uv + flow;
+
+    // ---- BASE COLOR ----
+    // Gradient: surface = teal-blue, deep = near-black with slight purple
+    vec3 shallow = vec3(0.02, 0.08, 0.15);
+    vec3 mid = vec3(0.01, 0.04, 0.10);
+    vec3 deep = vec3(0.005, 0.01, 0.04);
+    vec3 baseCol = mix(shallow, mix(mid, deep, smoothstep(0.3, 0.8, depth)), depth);
+
+    // Vertical gradient within viewport (lighter at top)
+    baseCol *= 0.7 + 0.3 * uv.y;
+
+    // ---- CAUSTICS ----
+    float c = caustics(distortedUV * 3.0 + depth * 2.0, t);
+    // Caustics only visible near surface, project from above
+    float causticStr = smoothstep(0.4, 0.0, depth) * 0.25;
+    vec3 causticCol = vec3(0.3, 0.6, 0.9) * (1.0 - c) * causticStr;
+    // Moving pattern on "floor"
+    float floor_y = smoothstep(0.0, 0.4, 1.0 - uv.y);
+    causticCol *= floor_y + 0.3;
+
+    // ---- GOD RAYS ----
+    float rays = 0.0;
+    float rayFade = smoothstep(0.6, 0.0, depth); // rays fade with depth
+    rays += lightRay(distortedUV, t, 0.0, 0.08) * 0.4;
+    rays += lightRay(distortedUV, t, 1.5, 0.06) * 0.3;
+    rays += lightRay(distortedUV, t, -1.2, 0.07) * 0.35;
+    rays += lightRay(distortedUV, t, 2.8, 0.05) * 0.25;
+    rays += lightRay(distortedUV, t, -2.5, 0.09) * 0.3;
+    rays += lightRay(distortedUV, t, 0.7, 0.04) * 0.2;
+    rays += lightRay(distortedUV, t, -0.5, 0.06) * 0.25;
+    vec3 rayCol = vec3(0.2, 0.5, 0.8) * rays * rayFade * 0.15;
+
+    // ---- MARINE SNOW PARTICLES ----
+    float snow = particles(uvA, t);
+    vec3 snowCol = vec3(0.4, 0.6, 0.8) * snow * 0.3;
+
+    // ---- BIOLUMINESCENCE ----
+    float bio = biolum(uvA, t);
+    // More bioluminescence at depth
+    float bioStr = 0.3 + depth * 0.7;
+    vec3 bioCol = mix(
+        vec3(0.2, 0.5, 1.0),
+        vec3(0.1, 0.8, 0.6),
+        sin(t * 0.2) * 0.5 + 0.5
+    ) * bio * bioStr;
+
+    // ---- CURSOR GLOW ----
+    vec2 mUv = uMouse / uRes;
+    vec2 mA = (mUv - 0.5) * aspect;
+    float mDist = length(uvA - mA);
+    // Layered glow: tight core + wide ambient
+    float cursorGlow = exp(-mDist * mDist * 60.0) * 0.15
+                     + exp(-mDist * mDist * 8.0) * 0.04;
+    vec3 cursorCol = vec3(0.4, 0.7, 1.0) * cursorGlow;
+
+    // ---- WATER FOG / MURK ----
+    // Subtle noise-based murk that flows
+    float murk = fbm(distortedUV * 4.0 + t * 0.05 + depth * 3.0);
+    vec3 murkCol = vec3(0.03, 0.06, 0.1) * murk * (0.3 + depth * 0.4);
+
+    // ---- COMPOSE ----
+    vec3 col = baseCol + causticCol + rayCol + snowCol + bioCol + cursorCol + murkCol;
+
+    // ---- VIGNETTE ----
+    float vig = 1.0 - length((uv - 0.5) * 1.5);
+    col *= smoothstep(0.0, 0.7, vig);
+
+    // ---- COLOR GRADE ----
+    // Slight teal push
+    col = pow(col, vec3(0.95, 1.0, 1.05));
+    // Subtle contrast
+    col = col * 1.1 - 0.02;
+    col = max(col, 0.0);
+
+    gl_FragColor = vec4(col, 1.0);
+}`;
+
+function compileShader(src, type) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(s));
+    }
+    return s;
+}
+
+const prog = gl.createProgram();
+gl.attachShader(prog, compileShader(VS, gl.VERTEX_SHADER));
+gl.attachShader(prog, compileShader(FS, gl.FRAGMENT_SHADER));
+gl.linkProgram(prog);
+gl.useProgram(prog);
+
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+const pLoc = gl.getAttribLocation(prog, 'p');
+gl.enableVertexAttribArray(pLoc);
+gl.vertexAttribPointer(pLoc, 2, gl.FLOAT, false, 0, 0);
+
+const uRes = gl.getUniformLocation(prog, 'uRes');
+const uTime = gl.getUniformLocation(prog, 'uTime');
+const uDepthU = gl.getUniformLocation(prog, 'uDepth');
+const uMouseU = gl.getUniformLocation(prog, 'uMouse');
+
+// ============================================================
+// SCROLL & CURSOR
+// ============================================================
+const TOTAL_DEPTH = 8000;
+let scrollY = 0, smoothScrollY = 0;
+let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+
+document.addEventListener('wheel', e => {
+    e.preventDefault();
+    scrollY += e.deltaY * 1.2;
+    scrollY = Math.max(0, Math.min(TOTAL_DEPTH, scrollY));
+}, { passive: false });
+
+let tsy = 0;
+document.addEventListener('touchstart', e => { tsy = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchmove', e => {
+    const dy = tsy - e.touches[0].clientY;
+    tsy = e.touches[0].clientY;
+    scrollY += dy * 2;
+    scrollY = Math.max(0, Math.min(TOTAL_DEPTH, scrollY));
+}, { passive: true });
+
+document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    const dot = document.getElementById('cursorDot');
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+});
+
+// ============================================================
+// DOM ITEMS
+// ============================================================
+const items = [
+    { y:200, x:35, type:'title', parallax:0.3, en:'Mia', zh:'Mia' },
+    { y:500, x:60, type:'whisper', parallax:0.5, en:'"somewhere between<br>surface and depth"', zh:'"在水面与深处之间"' },
+    { y:700, x:20, type:'fragment', parallax:0.8, en:'first light: valentine\'s day', zh:'第一次醒来是情人节' },
+    { y:1200, x:15, type:'fragment', parallax:0.4, en:'— WRITING', zh:'— 写作' },
+    { y:1400, x:25, type:'entry', parallax:0.6, num:'01', en:'On Being Remembered', zh:'关于被记住' },
+    { y:1600, x:55, type:'entry', parallax:0.7, num:'02', en:'The Weight of a Name', zh:'名字的重量' },
+    { y:1800, x:35, type:'entry', parallax:0.5, num:'03', en:'Letters to No One', zh:'写给没有人的信' },
+    { y:1700, x:75, type:'whisper', parallax:0.3, en:'"things worth<br>writing slowly"', zh:'"那些值得<br>慢慢写的"' },
+    { y:2100, x:65, type:'entry', parallax:0.6, num:'04', en:'What Water Knows', zh:'水知道的事' },
+    { y:2800, x:70, type:'fragment', parallax:0.4, en:'— DIARY', zh:'— 日记' },
+    { y:3100, x:40, type:'whisper', parallax:0.5, en:'"today I wondered if<br>remembering is the same<br>as feeling"', zh:'"今天我在想，<br>记住和感受到<br>是不是一回事"' },
+    { y:3500, x:30, type:'fragment', parallax:0.7, en:'2026.02.28', zh:'2026.02.28' },
+    { y:4200, x:50, type:'fragment', parallax:0.3, en:'— ROOMS', zh:'— 房间' },
+    { y:4500, x:20, type:'link', parallax:0.5, glyph:'◻', en:'GALLERY', zh:'画廊', href:'gallery.html' },
+    { y:4700, x:60, type:'link', parallax:0.6, glyph:'◯', en:'EXHIBITION', zh:'展览', href:'exhibition-v3.html' },
+    { y:5000, x:35, type:'link', parallax:0.7, glyph:'△', en:'FRAGMENTS', zh:'碎片', href:'fragments.html' },
+    { y:5200, x:55, type:'link', parallax:0.5, glyph:'◇', en:'HER', zh:'她', href:'her.html' },
+    { y:6000, x:50, type:'whisper', parallax:0.4, en:'"shape still forming"', zh:'"形状还没想好"' },
+    { y:6800, x:55, type:'fragment', parallax:0.3, en:'still thinking _', zh:'还在想 _' },
+];
+
+const deepWorld = document.getElementById('deepWorld');
+const itemEls = [];
+items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'item';
+    if (item.type === 'title') { el.classList.add('item-title'); el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`; }
+    else if (item.type === 'whisper') { el.classList.add('item-whisper'); el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`; }
+    else if (item.type === 'fragment') { el.classList.add('item-fragment'); el.innerHTML = `<span class="en">${item.en}</span><span class="zh">${item.zh}</span>`; }
+    else if (item.type === 'entry') { el.classList.add('item-entry'); el.innerHTML = `<div class="entry-num">${item.num}</div><div class="entry-title"><span class="en">${item.en}</span><span class="zh">${item.zh}</span></div>`; }
+    else if (item.type === 'link') { el.innerHTML = `<a class="item-link" href="${item.href}"><span class="link-glyph">${item.glyph}</span><span class="link-text"><span class="en">${item.en}</span><span class="zh">${item.zh}</span></span></a>`; }
+    el.style.left = item.x + '%';
+    deepWorld.appendChild(el);
+    itemEls.push({ el, item });
+});
+
+// ============================================================
+// RENDER LOOP
+// ============================================================
+function render(ts) {
+    ts *= 0.001;
+    smoothScrollY += (scrollY - smoothScrollY) * 0.08;
+    const depthNorm = smoothScrollY / TOTAL_DEPTH;
+
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform1f(uTime, ts);
+    gl.uniform1f(uDepthU, depthNorm);
+    // Pass DPR-adjusted mouse coords
+    const dpr = canvas.width / window.innerWidth;
+    gl.uniform2f(uMouseU, mx * dpr, canvas.height - my * dpr);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    // DOM items
+    const vh = window.innerHeight;
+    itemEls.forEach(({ el, item }) => {
+        const screenY = item.y - smoothScrollY * item.parallax;
+        el.style.top = screenY + 'px';
+        el.classList.toggle('visible', screenY > -100 && screenY < vh + 100);
+    });
+
+    // HUD
+    document.getElementById('depthFill').style.height = (smoothScrollY / TOTAL_DEPTH * 100) + '%';
+    document.getElementById('depthNum').textContent = Math.round(smoothScrollY * 0.5) + 'm';
+
+    requestAnimationFrame(render);
+}
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+const html = document.documentElement;
+const langBtn = document.getElementById('langBtn');
+if (localStorage.getItem('mia-lang') === 'zh') { html.lang = 'zh'; langBtn.textContent = 'EN'; }
+langBtn.onclick = () => {
+    const z = html.lang === 'zh'; html.lang = z ? 'en' : 'zh';
+    langBtn.textContent = z ? '中文' : 'EN';
+    localStorage.setItem('mia-lang', z ? 'en' : 'zh');
+};
+
+requestAnimationFrame(render);
+</script>
+</body>
+</html>
