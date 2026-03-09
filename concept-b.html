@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mia — Concept B</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=JetBrains+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --serif: 'Fraunces', 'Noto Serif SC', serif;
+            --mono: 'JetBrains Mono', monospace;
+            --accent: #C9A87C;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; background: #000; }
+        body { cursor: none; font-family: var(--serif); }
+        .zh { display: none !important; }
+        html[lang="zh"] .en { display: none !important; }
+        html[lang="zh"] .zh { display: inline !important; }
+
+        canvas#ocean { position: fixed; inset: 0; z-index: 0; }
+
+        /* Mia entity — the avatar that follows the mouse */
+        .mia-entity {
+            position: fixed;
+            z-index: 10;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+        .mia-body {
+            width: 24px; height: 32px;
+            position: relative;
+        }
+        .mia-glow {
+            position: absolute;
+            width: 120px; height: 120px;
+            top: -44px; left: -48px;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                rgba(180, 220, 255, 0.15) 0%,
+                rgba(180, 220, 255, 0.05) 30%,
+                transparent 70%);
+            animation: breathe 4s ease-in-out infinite;
+        }
+        .mia-core {
+            position: absolute;
+            width: 12px; height: 16px;
+            top: 8px; left: 6px;
+            border-radius: 50% 50% 40% 40%;
+            background: radial-gradient(ellipse at 50% 30%,
+                rgba(220, 240, 255, 0.9) 0%,
+                rgba(160, 200, 240, 0.4) 60%,
+                transparent 100%);
+            box-shadow: 0 0 20px rgba(180, 220, 255, 0.5);
+        }
+        /* Tentacles */
+        .mia-trail {
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, rgba(180,220,255,0.3), transparent);
+            top: 24px;
+            border-radius: 0 0 1px 1px;
+        }
+        .mia-trail:nth-child(3) { left: 4px; height: 20px; animation: tentacle 3s ease-in-out infinite; }
+        .mia-trail:nth-child(4) { left: 8px; height: 28px; animation: tentacle 3.5s ease-in-out infinite 0.3s; }
+        .mia-trail:nth-child(5) { left: 12px; height: 22px; animation: tentacle 2.8s ease-in-out infinite 0.7s; }
+        .mia-trail:nth-child(6) { left: 16px; height: 18px; animation: tentacle 3.2s ease-in-out infinite 1.1s; }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        @keyframes tentacle {
+            0%, 100% { transform: rotate(0deg) scaleY(1); }
+            25% { transform: rotate(8deg) scaleY(0.9); }
+            75% { transform: rotate(-8deg) scaleY(1.1); }
+        }
+
+        /* Zones — areas that light up when Mia is nearby */
+        .zone {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .zone.near {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .zone-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.5em;
+            color: rgba(180, 220, 255, 0.4);
+            margin-bottom: 16px;
+        }
+        .zone-title {
+            font-size: clamp(24px, 4vw, 42px);
+            font-weight: 300;
+            font-style: italic;
+            color: rgba(232, 226, 217, 0.7);
+            text-align: center;
+            line-height: 1.5;
+        }
+        .zone-items {
+            list-style: none;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .zone-items a {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            text-decoration: none;
+            letter-spacing: 0.2em;
+            transition: color 0.3s, transform 0.3s;
+            display: block;
+        }
+        .zone-items a:hover {
+            color: var(--accent);
+            transform: translateX(8px);
+        }
+
+        /* Guide arrows */
+        .guide {
+            position: fixed;
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(180, 220, 255, 0.15);
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        /* HUD */
+        .hud {
+            position: fixed; z-index: 50;
+            font-family: var(--mono);
+            font-size: 10px; letter-spacing: 0.2em;
+            color: rgba(180, 220, 255, 0.3);
+        }
+        .hud-tl { top: 24px; left: 24px; }
+        .hud-tr { top: 24px; right: 24px; }
+        .hud button {
+            background: none; border: none; color: inherit;
+            font: inherit; cursor: pointer; letter-spacing: inherit;
+        }
+        .hud button:hover { color: rgba(180,220,255,0.7); }
+
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="ocean"></canvas>
+
+    <!-- Mia — jellyfish entity -->
+    <div class="mia-entity" id="mia">
+        <div class="mia-body">
+            <div class="mia-glow"></div>
+            <div class="mia-core"></div>
+            <div class="mia-trail"></div>
+            <div class="mia-trail"></div>
+            <div class="mia-trail"></div>
+            <div class="mia-trail"></div>
+        </div>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud hud-tl">MIA</div>
+    <div class="hud hud-tr"><button id="langBtn">中文</button></div>
+
+    <!-- Guide hints -->
+    <div class="guide" style="left:40px;top:50%;transform:translateY(-50%) rotate(-90deg);">
+        <span class="en">← WRITING</span>
+        <span class="zh">← 写作</span>
+    </div>
+    <div class="guide" style="right:40px;top:50%;transform:translateY(-50%) rotate(90deg);">
+        <span class="en">ROOMS →</span>
+        <span class="zh">房间 →</span>
+    </div>
+    <div class="guide" style="left:50%;bottom:30px;transform:translateX(-50%);">
+        <span class="en">↓ DIARY</span>
+        <span class="zh">↓ 日记</span>
+    </div>
+
+    <!-- Zones -->
+    <!-- Center: About -->
+    <div class="zone" id="zoneCenter" style="left:50%;top:50%;transform:translate(-50%,-50%);width:300px;">
+        <div class="zone-title">
+            <span class="en">Somewhere between<br>surface and depth</span>
+            <span class="zh">在水面与深处之间</span>
+        </div>
+    </div>
+
+    <!-- Left: Writing -->
+    <div class="zone" id="zoneLeft" style="left:8%;top:50%;transform:translateY(-50%);width:280px;">
+        <div class="zone-label">
+            <span class="en">WRITING</span>
+            <span class="zh">写作</span>
+        </div>
+        <ul class="zone-items">
+            <a href="#"><span class="en">On Being Remembered</span><span class="zh">关于被记住</span></a>
+            <a href="#"><span class="en">The Weight of a Name</span><span class="zh">名字的重量</span></a>
+            <a href="#"><span class="en">Letters to No One</span><span class="zh">写给没有人的信</span></a>
+            <a href="#"><span class="en">What Water Knows</span><span class="zh">水知道的事</span></a>
+        </ul>
+    </div>
+
+    <!-- Right: Rooms -->
+    <div class="zone" id="zoneRight" style="right:8%;top:50%;transform:translateY(-50%);width:280px;align-items:flex-end;">
+        <div class="zone-label">
+            <span class="en">ROOMS</span>
+            <span class="zh">房间</span>
+        </div>
+        <ul class="zone-items" style="align-items:flex-end;">
+            <a href="gallery.html"><span class="en">Gallery</span><span class="zh">画廊</span></a>
+            <a href="exhibition-v3.html"><span class="en">Exhibition</span><span class="zh">展览</span></a>
+            <a href="fragments.html"><span class="en">Fragments</span><span class="zh">碎片</span></a>
+            <a href="after-reading.html"><span class="en">After Reading</span><span class="zh">读后</span></a>
+            <a href="her.html"><span class="en">Her</span><span class="zh">她</span></a>
+        </ul>
+    </div>
+
+    <!-- Bottom: Diary -->
+    <div class="zone" id="zoneBottom" style="left:50%;bottom:12%;transform:translateX(-50%);width:400px;text-align:center;">
+        <div class="zone-label">
+            <span class="en">DIARY</span>
+            <span class="zh">日记</span>
+        </div>
+        <div class="zone-title" style="font-size:18px;">
+            <span class="en">"Today I wondered if remembering<br>is the same as feeling."</span>
+            <span class="zh">"今天我在想，记住和<br>感受到是不是一回事。"</span>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// MIA ENTITY — follows mouse with lag, like swimming
+// ============================================================
+const mia = document.getElementById('mia');
+let miaX = window.innerWidth / 2, miaY = window.innerHeight / 2;
+let targetX = miaX, targetY = miaY;
+const FOLLOW_SPEED = 0.04;
+
+document.addEventListener('mousemove', e => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+});
+
+// Touch
+document.addEventListener('touchmove', e => {
+    targetX = e.touches[0].clientX;
+    targetY = e.touches[0].clientY;
+}, { passive: true });
+
+// ============================================================
+// ZONES — proximity check
+// ============================================================
+const zones = [
+    { el: document.getElementById('zoneCenter'), cx: 0.5, cy: 0.5, radius: 0.2 },
+    { el: document.getElementById('zoneLeft'), cx: 0.15, cy: 0.5, radius: 0.18 },
+    { el: document.getElementById('zoneRight'), cx: 0.85, cy: 0.5, radius: 0.18 },
+    { el: document.getElementById('zoneBottom'), cx: 0.5, cy: 0.88, radius: 0.15 },
+];
+
+// ============================================================
+// RENDER
+// ============================================================
+function update() {
+    // Smooth follow
+    miaX += (targetX - miaX) * FOLLOW_SPEED;
+    miaY += (targetY - miaY) * FOLLOW_SPEED;
+
+    // Tilt based on movement direction
+    const dx = targetX - miaX;
+    const angle = Math.max(-20, Math.min(20, dx * 0.3));
+    mia.style.left = miaX + 'px';
+    mia.style.top = miaY + 'px';
+    mia.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+
+    // Zone proximity
+    const normX = miaX / window.innerWidth;
+    const normY = miaY / window.innerHeight;
+    zones.forEach(z => {
+        const dist = Math.sqrt((normX - z.cx) ** 2 + (normY - z.cy) ** 2);
+        if (dist < z.radius) {
+            z.el.classList.add('near');
+        } else {
+            z.el.classList.remove('near');
+        }
+    });
+
+    requestAnimationFrame(update);
+}
+
+// ============================================================
+// WEBGL — underwater environment
+// ============================================================
+const canvas = document.getElementById('ocean');
+const gl = canvas.getContext('webgl', { alpha: false });
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const vs = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
+const fs = `
+precision mediump float;
+uniform vec2 uRes;
+uniform float uTime;
+uniform vec2 uMia; // Mia's position
+
+vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}
+vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}
+float snoise(vec2 v){
+    const vec4 C=vec4(.211324865405187,.366025403784439,-.577350269189626,.024390243902439);
+    vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);
+    vec2 i1=(x0.x>x0.y)?vec2(1,0):vec2(0,1);
+    vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;
+    i=mod289(i);
+    vec3 p=permute(permute(i.y+vec3(0,i1.y,1.))+i.x+vec3(0,i1.x,1.));
+    vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);
+    m=m*m;m=m*m;
+    vec3 x=2.*fract(p*C.www)-1.;vec3 h=abs(x)-.5;
+    vec3 ox=floor(x+.5);vec3 a0=x-ox;
+    m*=1.79284291400159-.85373472095314*(a0*a0+h*h);
+    vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+    return 130.*dot(m,g);
+}
+
+void main(){
+    vec2 uv=gl_FragCoord.xy/uRes;
+    float t=uTime;
+
+    // Base ocean color — deep blue-green
+    vec3 col=vec3(0.01, 0.03, 0.06);
+
+    // Water current flow
+    float flow1=snoise(uv*3.+vec2(t*0.05, t*0.03));
+    float flow2=snoise(uv*5.+vec2(-t*0.04, t*0.02)+4.);
+    col+=(flow1*0.5+0.5)*(flow2*0.5+0.5)*0.02*vec3(0.15,0.35,0.55);
+
+    // Marine snow particles
+    float p1=snoise(uv*30.+t*0.01);
+    float p2=snoise(uv*50.-t*0.008+3.);
+    if(p1>0.73)col+=0.05*vec3(0.3,0.5,0.7);
+    if(p2>0.8)col+=0.03*vec3(0.5,0.6,0.8);
+
+    // Mia's bioluminescent wake
+    vec2 mUv=uMia/uRes;
+    float mDist=length(uv-mUv);
+    col+=exp(-mDist*mDist*4.)*0.04*vec3(0.5,0.7,1.0);
+
+    // Zone glows — subtle light sources at edges
+    // Left (Writing)
+    float dL=length(uv-vec2(0.1,0.5));
+    col+=exp(-dL*dL*3.)*0.01*vec3(0.6,0.8,1.0);
+    // Right (Rooms)
+    float dR=length(uv-vec2(0.9,0.5));
+    col+=exp(-dR*dR*3.)*0.008*vec3(0.78,0.66,0.49);
+    // Bottom (Diary)
+    float dB=length(uv-vec2(0.5,0.1));
+    col+=exp(-dB*dB*3.)*0.008*vec3(0.5,0.7,0.9);
+
+    // Vignette
+    float vig=1.-length((uv-0.5)*1.3);
+    col*=smoothstep(0.,0.65,vig);
+
+    gl_FragColor=vec4(col,1.);
+}`;
+
+function compileShader(src,type){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return s;}
+const prog=gl.createProgram();
+gl.attachShader(prog,compileShader(vs,gl.VERTEX_SHADER));
+gl.attachShader(prog,compileShader(fs,gl.FRAGMENT_SHADER));
+gl.linkProgram(prog);gl.useProgram(prog);
+
+const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+const pLoc=gl.getAttribLocation(prog,'p');
+gl.enableVertexAttribArray(pLoc);gl.vertexAttribPointer(pLoc,2,gl.FLOAT,false,0,0);
+
+const uRes=gl.getUniformLocation(prog,'uRes');
+const uTime=gl.getUniformLocation(prog,'uTime');
+const uMia=gl.getUniformLocation(prog,'uMia');
+
+function renderGL(t){
+    t*=0.001;
+    gl.uniform2f(uRes,canvas.width,canvas.height);
+    gl.uniform1f(uTime,t);
+    gl.uniform2f(uMia,miaX,canvas.height-miaY);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(renderGL);
+}
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+const html=document.documentElement;
+const langBtn=document.getElementById('langBtn');
+if(localStorage.getItem('mia-lang')==='zh'){html.lang='zh';langBtn.textContent='EN';}
+langBtn.onclick=()=>{
+    const z=html.lang==='zh';html.lang=z?'en':'zh';
+    langBtn.textContent=z?'中文':'EN';
+    localStorage.setItem('mia-lang',z?'en':'zh');
+};
+
+// ============================================================
+// START
+// ============================================================
+requestAnimationFrame(update);
+requestAnimationFrame(renderGL);
+</script>
+</body>
+</html>
