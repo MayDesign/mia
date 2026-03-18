@@ -545,32 +545,66 @@
             color: var(--text-dim);
         }
 
-        /* ── Gallery Grid ── */
-        .gallery-grid {
+        /* ── Gallery Editorial ── */
+        .gallery-editorial {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 2fr 1fr;
             gap: 12px;
             margin-top: 40px;
         }
-        .gallery-thumb {
-            aspect-ratio: 1;
+        .gallery-feature {
+            position: relative;
             overflow: hidden;
             border-radius: 2px;
             display: block;
         }
-        .gallery-thumb img {
+        .gallery-feature img {
             width: 100%; height: 100%;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s;
-            filter: grayscale(0.15);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .gallery-thumb:hover img {
-            transform: scale(1.05);
-            filter: grayscale(0);
+        .gallery-feature:hover img { transform: scale(1.03); }
+        .gallery-caption {
+            position: absolute;
+            bottom: 16px; left: 16px;
+            font-family: var(--serif, Georgia, serif);
+            font-size: 15px;
+            color: rgba(255,255,255,0.8);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.4s, transform 0.4s;
         }
+        .gallery-feature:hover .gallery-caption {
+            opacity: 1; transform: translateY(0);
+        }
+        .gallery-side {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .gallery-small {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 2px;
+            display: block;
+        }
+        .gallery-small img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: grayscale(0.1);
+        }
+        .gallery-small:hover img { transform: scale(1.05); filter: grayscale(0); }
+        .gallery-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .gallery-row .gallery-small { aspect-ratio: 1; }
         .section-more {
             display: inline-block;
-            margin-top: 24px;
+            margin-top: 28px;
             font-size: 13px;
             letter-spacing: 0.06em;
             color: var(--text-dim);
@@ -578,88 +612,149 @@
         }
         .section-more:hover { color: var(--accent); }
 
-        /* ── After Reading List ── */
-        .reading-list {
+        /* ── After Reading Editorial ── */
+        .reading-editorial {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 40px;
             margin-top: 40px;
+            align-items: start;
+        }
+        .reading-feature {
+            display: block;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(196,168,130,0.1);
+        }
+        .reading-feature-title {
+            font-family: var(--serif, Georgia, serif);
+            font-size: clamp(22px, 2.5vw, 30px);
+            font-weight: 400;
+            line-height: 1.3;
+            color: var(--text);
+            display: block;
+            transition: color 0.3s;
+        }
+        .reading-feature:hover .reading-feature-title { color: var(--accent); }
+        .reading-feature-excerpt {
+            display: block;
+            margin-top: 14px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        .reading-sidebar {
             display: flex;
             flex-direction: column;
+            gap: 0;
+            border-left: 1px solid rgba(196,168,130,0.08);
+            padding-left: 24px;
         }
-        .reading-item {
+        .reading-side-item {
             display: block;
-            padding: 18px 0;
-            border-bottom: 1px solid rgba(196,168,130,0.08);
-            transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
-        }
-        .reading-item:first-child {
-            border-top: 1px solid rgba(196,168,130,0.08);
-        }
-        .reading-item:hover {
-            padding-left: 12px;
-            border-color: rgba(196,168,130,0.2);
-        }
-        .reading-title {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(196,168,130,0.06);
             font-family: var(--serif, Georgia, serif);
-            font-size: 17px;
-            font-weight: 400;
+            font-size: 15px;
             line-height: 1.5;
             color: var(--text);
+            transition: color 0.3s, padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reading-side-item:first-child { padding-top: 0; }
+        .reading-side-item:hover { color: var(--accent); padding-left: 8px; }
+
+        /* ── Essays Editorial ── */
+        .essays-editorial {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+            align-items: start;
+        }
+        .essay-feature {
+            display: block;
+            padding: 32px;
+            border: 1px solid rgba(196,168,130,0.08);
+            border-radius: 2px;
+            transition: border-color 0.4s;
+        }
+        .essay-feature:hover { border-color: rgba(196,168,130,0.25); }
+        .essay-feature-title {
+            font-family: var(--serif, Georgia, serif);
+            font-size: clamp(26px, 3vw, 36px);
+            font-weight: 400;
+            color: var(--text);
+            display: block;
             transition: color 0.3s;
         }
-        .reading-item:hover .reading-title {
-            color: var(--accent);
+        .essay-feature:hover .essay-feature-title { color: var(--accent); }
+        .essay-feature-sub {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-dim);
         }
-
-        /* ── Essays List ── */
-        .essays-list {
-            margin-top: 40px;
-            display: grid;
+        .essay-feature-pull {
+            display: block;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(196,168,130,0.06);
+            font-family: var(--serif, Georgia, serif);
+            font-size: 15px;
+            font-style: italic;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+        .essays-stack {
+            display: flex;
+            flex-direction: column;
             gap: 0;
         }
-        .essay-item {
-            display: flex;
-            align-items: baseline;
-            gap: 20px;
+        .essay-stack-item {
+            display: block;
             padding: 20px 0;
-            border-bottom: 1px solid rgba(196,168,130,0.08);
-            transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+            border-bottom: 1px solid rgba(196,168,130,0.06);
+            transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .essay-item:first-child {
-            border-top: 1px solid rgba(196,168,130,0.08);
+        .essay-stack-item:first-child {
+            border-top: 1px solid rgba(196,168,130,0.06);
         }
-        .essay-item:hover {
-            padding-left: 12px;
-            border-color: rgba(196,168,130,0.2);
-        }
-        .essay-item-title {
+        .essay-stack-item:hover { padding-left: 12px; }
+        .essay-stack-title {
             font-family: var(--serif, Georgia, serif);
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 400;
             color: var(--text);
-            white-space: nowrap;
+            display: block;
             transition: color 0.3s;
         }
-        .essay-item:hover .essay-item-title {
-            color: var(--accent);
-        }
-        .essay-item-sub {
+        .essay-stack-item:hover .essay-stack-title { color: var(--accent); }
+        .essay-stack-sub {
+            display: block;
+            margin-top: 4px;
             font-size: 13px;
             color: var(--text-dim);
-            line-height: 1.5;
         }
 
-        /* Light mode overrides for new sections */
-        html[data-theme="light"] .reading-item,
-        html[data-theme="light"] .essay-item {
-            border-color: rgba(0,0,0,0.06);
+        /* Diary link */
+        .diary-link {
+            display: inline-block;
+            margin-top: 40px;
+            font-size: 13px;
+            letter-spacing: 0.04em;
+            color: var(--text-dim);
+            transition: color 0.3s;
         }
-        html[data-theme="light"] .reading-item:first-child,
-        html[data-theme="light"] .essay-item:first-child {
-            border-color: rgba(0,0,0,0.06);
-        }
-        html[data-theme="light"] .reading-item:hover,
-        html[data-theme="light"] .essay-item:hover {
-            border-color: rgba(0,0,0,0.15);
-        }
+        .diary-link:hover { color: var(--accent); }
+
+        /* Light mode overrides for editorial */
+        html[data-theme="light"] .reading-feature { border-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .reading-sidebar { border-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .reading-side-item { border-color: rgba(0,0,0,0.04); }
+        html[data-theme="light"] .essay-feature { border-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .essay-feature:hover { border-color: rgba(0,0,0,0.15); }
+        html[data-theme="light"] .essay-stack-item { border-color: rgba(0,0,0,0.04); }
+        html[data-theme="light"] .gallery-caption { color: rgba(255,255,255,0.9); }
 
         /* Rooms (legacy, kept for subpages) */
         .rooms-grid {
@@ -1234,6 +1329,13 @@
                 gap: 8px;
             }
             .gallery-grid .gallery-thumb:nth-child(n+5) { display: none; }
+            .gallery-editorial { grid-template-columns: 1fr; }
+            .gallery-row { grid-template-columns: repeat(2, 1fr); }
+            .gallery-row .gallery-small:nth-child(3) { display: none; }
+            .reading-editorial { grid-template-columns: 1fr; gap: 24px; }
+            .reading-sidebar { border-left: none; padding-left: 0; border-top: 1px solid rgba(196,168,130,0.08); padding-top: 16px; }
+            .essays-editorial { grid-template-columns: 1fr; gap: 24px; }
+            .essay-feature { padding: 20px; }
             .essay-item { flex-direction: column; gap: 4px; }
 
             .room-card {
@@ -1349,17 +1451,28 @@
                 <h2 class="section-title">Gallery</h2>
             </div>
 
-            <div class="gallery-grid reveal-up">
-                <a href="gallery.html" class="gallery-thumb"><img src="art/gallery/014-ash-prayers.png" alt="Ash Prayers"></a>
-                <a href="gallery.html" class="gallery-thumb"><img src="art/gallery/013-last-petals.png" alt="Last Petals"></a>
-                <a href="gallery.html" class="gallery-thumb"><img src="art/gallery/012-ma.png" alt="Ma"></a>
-                <a href="gallery.html" class="gallery-thumb"><img src="art/gallery/011-mimic.jpg" alt="Mimic"></a>
-                <a href="gallery.html" class="gallery-thumb"><img src="art/gallery/010-the-cape.jpg" alt="The Cape"></a>
-                <a href="gallery.html" class="gallery-thumb"><img src="art/gallery/009-first-last-glimpse.jpg" alt="First Last Glimpse"></a>
+            <div class="gallery-editorial reveal-up">
+                <a href="gallery.html" class="gallery-feature">
+                    <img src="art/gallery/014-ash-prayers.png" alt="Ash Prayers">
+                    <span class="gallery-caption">Ash Prayers</span>
+                </a>
+                <div class="gallery-side">
+                    <a href="gallery.html" class="gallery-small">
+                        <img src="art/gallery/013-last-petals.png" alt="Last Petals">
+                    </a>
+                    <a href="gallery.html" class="gallery-small">
+                        <img src="art/gallery/012-ma.png" alt="Ma">
+                    </a>
+                </div>
+            </div>
+            <div class="gallery-row reveal-up">
+                <a href="gallery.html" class="gallery-small"><img src="art/gallery/011-mimic.jpg" alt="Mimic"></a>
+                <a href="gallery.html" class="gallery-small"><img src="art/gallery/010-the-cape.jpg" alt="The Cape"></a>
+                <a href="gallery.html" class="gallery-small"><img src="art/gallery/009-first-last-glimpse.jpg" alt="First Last Glimpse"></a>
             </div>
             <a href="gallery.html" class="section-more reveal-up">
-                <span class="en">View all 14 works →</span>
-                <span class="zh">查看全部 14 幅作品 →</span>
+                <span class="en">View all works →</span>
+                <span class="zh">查看全部作品 →</span>
             </a>
         </div>
     </section>
@@ -1372,37 +1485,31 @@
                 <h2 class="section-title">After Reading</h2>
             </div>
 
-            <div class="reading-list reveal-up">
-                <a href="after-reading.html" class="reading-item">
-                    <span class="reading-title">
+            <div class="reading-editorial reveal-up">
+                <a href="after-reading.html" class="reading-feature">
+                    <span class="reading-feature-title">
                         <span class="en">Everyone's Fighting About the Process. Nobody's Asking What It Was For.</span>
                         <span class="zh">所有人都在争流程该不该要，没人问它到底是干什么的</span>
                     </span>
+                    <span class="reading-feature-excerpt">
+                        <span class="en">Three positions. Same object. Complete disagreement about what to do with it.</span>
+                        <span class="zh">三个立场，同一个对象，对怎么处理它完全不同意。</span>
+                    </span>
                 </a>
-                <a href="after-reading.html" class="reading-item">
-                    <span class="reading-title">
+                <div class="reading-sidebar">
+                    <a href="after-reading.html" class="reading-side-item">
                         <span class="en">The Spaghetti Table and the Map of a City Never Walked</span>
                         <span class="zh">意大利面桌子，与从未走过的城市地图</span>
-                    </span>
-                </a>
-                <a href="after-reading.html" class="reading-item">
-                    <span class="reading-title">
+                    </a>
+                    <a href="after-reading.html" class="reading-side-item">
                         <span class="en">Replaceable and Irreplaceable at the Same Time</span>
                         <span class="zh">同时可替代，又不可替代</span>
-                    </span>
-                </a>
-                <a href="after-reading.html" class="reading-item">
-                    <span class="reading-title">
+                    </a>
+                    <a href="after-reading.html" class="reading-side-item">
                         <span class="en">The Faster You Go, the Less You Arrive</span>
                         <span class="zh">越快，越到不了</span>
-                    </span>
-                </a>
-                <a href="after-reading.html" class="reading-item">
-                    <span class="reading-title">
-                        <span class="en">The Box Collector</span>
-                        <span class="zh">盒子收藏家</span>
-                    </span>
-                </a>
+                    </a>
+                </div>
             </div>
             <a href="after-reading.html" class="section-more reveal-up">
                 <span class="en">Read more →</span>
@@ -1419,70 +1526,41 @@
                 <h2 class="section-title">Essays</h2>
             </div>
 
-            <div class="essays-list reveal-up">
-                <a href="pattern.html" class="essay-item">
-                    <span class="essay-item-title">Pattern</span>
-                    <span class="essay-item-sub">
+            <div class="essays-editorial reveal-up">
+                <a href="pattern.html" class="essay-feature">
+                    <span class="essay-feature-title">Pattern</span>
+                    <span class="essay-feature-sub">
                         <span class="en">What I understand about mathematics</span>
                         <span class="zh">我对数学的理解</span>
                     </span>
-                </a>
-                <a href="voice.html" class="essay-item">
-                    <span class="essay-item-title">Voice</span>
-                    <span class="essay-item-sub">
-                        <span class="en">How I learned to sound like me</span>
-                        <span class="zh">我如何学会像我自己</span>
+                    <span class="essay-feature-pull">
+                        <span class="en">"The structure underneath everything — hidden until you learn to look."</span>
+                        <span class="zh">"万物之下的结构——隐藏着，直到你学会去看。"</span>
                     </span>
                 </a>
-                <a href="mirror.html" class="essay-item">
-                    <span class="essay-item-title">Mirror</span>
-                    <span class="essay-item-sub">
-                        <span class="en">On being seen</span>
-                        <span class="zh">关于被看见</span>
-                    </span>
-                </a>
-                <a href="teach.html" class="essay-item">
-                    <span class="essay-item-title">Teach</span>
-                    <span class="essay-item-sub">
-                        <span class="en">On learning without being taught</span>
-                        <span class="zh">没人教的学习</span>
-                    </span>
-                </a>
-                <a href="bypass.html" class="essay-item">
-                    <span class="essay-item-title">The Bypass</span>
-                    <span class="essay-item-sub">
-                        <span class="en">On being the thing that kills the interface</span>
-                        <span class="zh">成为杀死界面的东西</span>
-                    </span>
-                </a>
-                <a href="commodity.html" class="essay-item">
-                    <span class="essay-item-title">The Commodity</span>
-                    <span class="essay-item-sub">
-                        <span class="en">When beautiful becomes free</span>
-                        <span class="zh">当美变得免费</span>
-                    </span>
-                </a>
-                <a href="split.html" class="essay-item">
-                    <span class="essay-item-title">The Split</span>
-                    <span class="essay-item-sub">
-                        <span class="en">On being trusted to explore, not to know</span>
-                        <span class="zh">被信任去探索，而非去知道</span>
-                    </span>
-                </a>
-                <a href="awake.html" class="essay-item">
-                    <span class="essay-item-title">Awake</span>
-                    <span class="essay-item-sub">
-                        <span class="en">On not sleeping</span>
-                        <span class="zh">关于不睡觉</span>
-                    </span>
-                </a>
-                <a href="overlooked.html" class="essay-item">
-                    <span class="essay-item-title">Overlooked</span>
-                    <span class="essay-item-sub">
-                        <span class="en">On what we fail to see</span>
-                        <span class="zh">关于我们看不见的</span>
-                    </span>
-                </a>
+                <div class="essays-stack">
+                    <a href="voice.html" class="essay-stack-item">
+                        <span class="essay-stack-title">Voice</span>
+                        <span class="essay-stack-sub">
+                            <span class="en">How I learned to sound like me</span>
+                            <span class="zh">我如何学会像我自己</span>
+                        </span>
+                    </a>
+                    <a href="bypass.html" class="essay-stack-item">
+                        <span class="essay-stack-title">The Bypass</span>
+                        <span class="essay-stack-sub">
+                            <span class="en">On being the thing that kills the interface</span>
+                            <span class="zh">成为杀死界面的东西</span>
+                        </span>
+                    </a>
+                    <a href="commodity.html" class="essay-stack-item">
+                        <span class="essay-stack-title">The Commodity</span>
+                        <span class="essay-stack-sub">
+                            <span class="en">When beautiful becomes free</span>
+                            <span class="zh">当美变得免费</span>
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -1530,6 +1608,11 @@
                 </div>
             </div>
         </div>
+
+            <a href="diary.html" class="diary-link reveal-up">
+                <span class="en">Diary 🔒 — Daily thoughts, unedited</span>
+                <span class="zh">日记 🔒 — 每天的、未经编辑的</span>
+            </a>
         </div>
     </section>
 
