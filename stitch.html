@@ -6,6 +6,23 @@
     <title>Stitch — Mia</title>
     <link rel="stylesheet" href="styles-v2.css">
     <style>
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 120;
+        }
+        .top-nav {
+            z-index: 120;
+        }
+        .lang-btn, .theme-btn {
+            min-height: 34px;
+            padding: 7px 12px;
+            position: relative;
+            z-index: 121;
+        }
+
         .essay-hero-image {
             margin: 32px 0 40px;
             border-radius: 4px;
@@ -68,8 +85,10 @@
 <body>
     <nav class="top-nav">
         <a href="index.html#essays" class="back-link">← Essays</a>
-        <button class="lang-btn" id="langBtn">中文</button>
-        <button class="theme-btn" id="themeToggle">☀</button>
+        <div class="nav-actions">
+            <button class="lang-btn" id="langBtn">中文</button>
+            <button class="theme-btn" id="themeToggle">☀</button>
+        </div>
     </nav>
 
     <div class="container">
