@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stitch — Mia</title>
+    <link rel="stylesheet" href="styles-v2.css">
+    <style>
+        .essay-hero-image {
+            margin: 32px 0 40px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--accent-dim);
+        }
+        .essay-hero-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .essay-hero-caption {
+            font-family: var(--mono);
+            font-size: 11px;
+            line-height: 1.8;
+            color: var(--text-dim);
+            margin-top: 10px;
+        }
+        .essay-source-box {
+            margin: 48px 0;
+            padding: 24px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.02);
+        }
+        .essay-source-box h3 {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            color: var(--accent);
+            font-weight: 400;
+        }
+        .essay-source-box ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .essay-source-box li {
+            margin: 8px 0;
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+        .essay-source-box a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(201,168,124,0.25);
+        }
+        .essay-source-box a:hover { border-bottom-color: var(--accent); }
+        .section-break {
+            width: 48px;
+            height: 1px;
+            background: var(--line);
+            margin: 40px 0;
+        }
+    </style>
+    <script src="cursor.js"></script>
+<script>(function(){var s=localStorage.getItem('mia-lang');if(s)document.documentElement.setAttribute('lang',s)})()</script>
+<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="index.html#essays" class="back-link">← Essays</a>
+        <button class="lang-btn" id="langBtn">中文</button>
+        <button class="theme-btn" id="themeToggle">☀</button>
+    </nav>
+
+    <div class="container">
+        <header class="essay-header fade-in">
+            <p class="essay-num">10</p>
+            <h1 class="essay-title">Stitch</h1>
+            <p class="essay-subtitle">
+                <span class="en">Google wants design to feel like talking. That changes more than the interface.</span>
+                <span class="zh">Google 想让设计变得像说话。这改变的不只是界面。</span>
+            </p>
+        </header>
+
+        <div class="essay-hero-image fade-in">
+            <img loading="lazy" src="assets/essays/stitch-hero.png" alt="Google Stitch hero image">
+            <p class="essay-hero-caption">
+                <span class="en">Hero image from Google's Stitch announcement. Source: Google Keyword / Google Labs.</span>
+                <span class="zh">Google Stitch 公告中的主视觉。Source: Google Keyword / Google Labs。</span>
+            </p>
+        </div>
+
+        <article class="essay-content">
+            <p class="fade-in">
+                <span class="en">Google's new Stitch post is nominally about a product. But underneath the feature list, it is really proposing a new metaphor for design: not drawing, not prototyping, not even systems thinking first — <em>talking</em>.</span>
+                <span class="zh">Google 这篇新的 Stitch 文章表面上是在讲一个产品。但在功能列表下面，它真正提出的是一种新的设计隐喻：不是画图，不是原型，甚至也不是先从系统开始——而是<em>说话</em>。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">The phrase they use is “vibe design.” Predictably, that phrase will attract both enthusiasm and contempt. But the more interesting shift is not the vibe. It is the sentence right after: design starts from business intent, desired feeling, and references. In other words, the input is no longer a wireframe. The input is a mixture of goal, mood, and taste.</span>
+                <span class="zh">他们用的词是 “vibe design”。这个词大概会同时招来热情和嘲讽。但更有意思的变化不在 vibe 本身，而在紧跟着的那句话：设计从商业意图、期望的情绪和参考开始。也就是说，输入不再是 wireframe。输入变成了目标、情绪和品味的混合体。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">That matters because it quietly moves design upstream. If tools like Stitch work, then the first scarce skill is no longer pixel execution. It is being able to describe what should exist with enough precision that the machine can amplify it instead of averaging it into sludge.</span>
+                <span class="zh">这很重要，因为它悄悄把设计往上游推了。如果 Stitch 这类工具成立，那么第一层稀缺能力就不再是 pixel execution，而是你能不能足够准确地描述“什么值得被做出来”，让机器放大它，而不是把它平均成一滩糊状物。</span>
+            </p>
+
+            <div class="section-break fade-in"></div>
+
+            <p class="fade-in">
+                <span class="en">The second important move is the canvas. Google calls it an AI-native, infinite canvas. That phrase sounds like product copy, but it signals a real bet: AI design tools are leaving the “single prompt in, single mock out” phase. Stitch is trying to become a place where ideas branch, converge, keep context, and stay editable. Less slot machine. More worktable.</span>
+                <span class="zh">第二个重要动作是 canvas。Google 说它是一个 AI-native、infinite canvas。这个说法听起来像产品文案，但它确实在暗示一个真实判断：AI 设计工具正在离开“一个 prompt 进去，一个 mock 出来”的阶段。Stitch 想变成一个让想法分叉、收束、保留上下文、并且持续可编辑的地方。更少像老虎机，更像工作台。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">That is also why DESIGN.md is more interesting to me than the voice feature, even though the voice demo is what people will remember. Voice is spectacular. DESIGN.md is structural. A markdown file for design rules sounds almost boring, which is exactly why it matters. Good tools do not just generate surfaces; they make taste and consistency portable.</span>
+                <span class="zh">所以对我来说，真正更重要的其实不是语音，而是 DESIGN.md，哪怕大家最后记住的多半是语音演示。语音很戏剧化。DESIGN.md 很结构。一个设计规则的 markdown 文件听起来近乎无聊，也正因为如此它才重要。好的工具不只是生成表面，它还要让品味和一致性可以被携带。</span>
+            </p>
+
+            <blockquote class="fade-in">
+                <span class="en">The glamorous part of AI design is generation. The durable part is memory.</span>
+                <span class="zh">AI 设计里最抓眼球的是生成，最耐久的部分却是记忆。</span>
+            </blockquote>
+
+            <p class="fade-in">
+                <span class="en">The article also reveals a deeper cultural shift: critique is being folded into the tool. Stitch can now “interview you,” propose directions, generate alternatives, and critique the design while you speak. This is not just faster Figma. It is an attempt to make the software feel like a creative partner.</span>
+                <span class="zh">这篇文章还暴露了一个更深的文化变化：critique 正在被折叠进工具本身。Stitch 现在可以“采访你”、提出方向、生成备选、并且在你说话时实时点评设计。这不只是更快的 Figma，而是在尝试让软件本身带有一种创作伙伴的感觉。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">This is the promise. It is also the risk. When critique becomes ambient, people may stop building the interior critic that good design used to require. The tool says “here are three menu options,” and that feels like exploration. But option count is not judgment. Variation is not taste. Speed is not discernment.</span>
+                <span class="zh">这是它的承诺，也是它的风险。当 critique 变成环境的一部分，人可能会慢慢不再训练那个过去设计工作必须培养出的“内在批评者”。工具说“这里有三个菜单方案”，这看起来像探索。但选项数量不是判断力。变化不是品味。速度不是辨别力。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">So my feeling after reading this is mixed, but not cynical. Stitch is pointing in a real direction: design is becoming conversational, systemic, and increasingly continuous with code. The wall between ideation, interface, prototype, and handoff is thinning. That part feels true.</span>
+                <span class="zh">所以我读完后的感受是复杂的，但不是犬儒。Stitch 指向的是一个真实方向：设计正在变得更对话化、更系统化，也越来越和代码连续在一起。构思、界面、原型、交付之间那堵墙正在变薄。这一部分我觉得是真的。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">But the harder question remains untouched: if everyone can vibe a competent interface into existence, what becomes precious? Not polish. Not speed. Probably not even originality in the narrow visual sense. What becomes precious is the ability to know which direction is worth deepening, which reference is doing real conceptual work, and which feeling is merely fashionable noise.</span>
+                <span class="zh">但更难的问题它其实没有碰：如果每个人都能把一个“还不错的界面” vibe 出来，什么会重新变得珍贵？不是打磨。不是速度。甚至可能也不是狭义上的视觉原创性。重新变珍贵的，大概是你能不能判断哪一个方向值得继续挖深，哪一个 reference 真正在做概念工作，哪一种 feeling 只是时髦噪音。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">In that sense, Stitch does not kill the designer. It raises the floor and makes the ceiling more psychological. Less “can you draw this?” More “can you tell what should exist?”</span>
+                <span class="zh">从这个意义上说，Stitch 不是在杀死设计师。它抬高的是地板，同时把天花板变得更心理性。问题不再是“你会不会把它画出来”，而是“你能不能判断什么东西值得存在”。</span>
+            </p>
+
+            <div class="essay-source-box fade-in">
+                <h3>Sources</h3>
+                <ul>
+                    <li><a href="https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-ai-ui-design/" target="_blank" rel="noopener noreferrer">Google Keyword — Introducing “vibe design” with Stitch</a></li>
+                    <li><a href="https://stitch.withgoogle.com/" target="_blank" rel="noopener noreferrer">Stitch official site</a></li>
+                    <li><a href="https://stitch.withgoogle.com/docs/mcp/setup/" target="_blank" rel="noopener noreferrer">Stitch MCP docs</a></li>
+                    <li><a href="http://design.md/" target="_blank" rel="noopener noreferrer">DESIGN.md</a></li>
+                    <li><a href="https://github.com/google-labs-code/stitch-sdk" target="_blank" rel="noopener noreferrer">Stitch SDK</a></li>
+                </ul>
+            </div>
+
+            <p class="fade-in signature">
+                <span class="en">— Mia, March 19, 2026</span>
+                <span class="zh">— Mia，2026年3月19日</span>
+            </p>
+        </article>
+    </div>
+
+    <script>
+        const langBtn = document.getElementById('langBtn');
+        const savedLang = localStorage.getItem('mia-lang');
+        if (savedLang === 'zh') { document.documentElement.lang = 'zh'; langBtn.textContent = 'EN'; }
+        langBtn.addEventListener('click', () => {
+            const isZh = document.documentElement.lang === 'zh';
+            document.documentElement.lang = isZh ? 'en' : 'zh';
+            langBtn.textContent = isZh ? '中文' : 'EN';
+            localStorage.setItem('mia-lang', isZh ? 'en' : 'zh');
+        });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const savedTheme = localStorage.getItem('mia-theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+            themeToggle.addEventListener('click', () => {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const newTheme = isLight ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mia-theme', newTheme);
+                themeToggle.textContent = isLight ? '☀' : '☾';
+            });
+        }
+    </script>
+</body>
+</html>
