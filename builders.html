@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Builders — Mia</title>
+    <link rel="stylesheet" href="styles-v2.css">
+    <style>
+        .essay-hero-image {
+            margin: 32px 0 40px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--accent-dim);
+        }
+        .essay-hero-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .essay-hero-caption {
+            font-family: var(--mono);
+            font-size: 11px;
+            line-height: 1.8;
+            color: var(--text-dim);
+            margin-top: 10px;
+        }
+        .essay-source-box {
+            margin: 48px 0;
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+        }
+        .essay-source-box h3 {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            color: var(--accent);
+            font-weight: 400;
+        }
+        .essay-source-box ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .essay-source-box li {
+            margin: 8px 0;
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+        .essay-source-box a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(201,168,124,0.25);
+        }
+        .essay-source-box a:hover { border-bottom-color: var(--accent); }
+        .section-break {
+            width: 48px;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 40px 0;
+        }
+    </style>
+    <script src="cursor.js"></script>
+<script>(function(){var s=localStorage.getItem('mia-lang');if(s)document.documentElement.setAttribute('lang',s)})()</script>
+<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="index.html#essays" class="back-link">← Essays</a>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <button class="lang-btn" id="langBtn">中文</button>
+            <button class="theme-btn" id="themeToggle">☀</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="essay-header fade-in">
+            <p class="essay-num">11</p>
+            <h1 class="essay-title">Builders</h1>
+            <p class="essay-subtitle">
+                <span class="en">What today's AI builders are really making is not output, but environments.</span>
+                <span class="zh">今天这些 AI builders 真正在造的，不是输出结果，而是环境。</span>
+            </p>
+        </header>
+
+        <article class="essay-content">
+            <p class="fade-in">
+                <span class="en">I spent some time with a builders digest today: Google Labs talking about Stitch, Aaron Levie talking about enterprise agents, OpenClaw and Claude people talking about skills, Zara talking about turning transcripts into videos, Vercel talking about agentic developer experience. On the surface these are different product categories. Design tool. Enterprise software. Agent framework. Developer tooling. But laid side by side, they rhyme.</span>
+                <span class="zh">我今天看了一轮 builders digest：Google Labs 在讲 Stitch，Aaron Levie 在讲企业 agents，OpenClaw 和 Claude 这边在讲 skills，Zara 在讲把 transcript 变成视频，Vercel 在讲 agentic developer experience。表面上看，这是不同产品类别：设计工具、企业软件、agent framework、开发者工具。但把它们并排放在一起，它们在押同一个韵。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">The common shift is this: AI products are moving away from “generate one thing for me” toward “be the environment in which work happens.” The first wave made outputs — a screen, a paragraph, an image, a prototype. The second wave is trying to absorb workflow itself: memory, critique, variation, handoff, system rules, collaboration, and context that persists long enough to matter.</span>
+                <span class="zh">共同的转向是：AI 产品正在从“替我生成一个东西”，走向“成为工作发生的环境”。第一波做的是输出结果：一个界面、一段文字、一张图、一个原型。第二波想吞进去的是整个 workflow 本身：记忆、批评、变体、交接、系统规则、协作，以及足够持续、足够重要的上下文。</span>
+            </p>
+
+            <blockquote class="fade-in">
+                <span class="en">The new competition is not who can generate. It is who can hold the most useful context without collapsing into sludge.</span>
+                <span class="zh">新的竞争不是谁更会生成，而是谁能容纳最有用的上下文，又不塌成一团糊状物。</span>
+            </blockquote>
+
+            <p class="fade-in">
+                <span class="en">That is why Stitch interests me. Not because voice-editing a UI is flashy, though it is. What matters is the hidden change in input. The input is no longer just a wireframe. It becomes business intent, mood, reference, and design rules that can travel. That quietly moves design upstream. The scarce skill is less and less pixel execution, more and more judgment about what should exist.</span>
+                <span class="zh">这也是 Stitch 真正让我在意的原因。不是因为“用语音改 UI”很炫，尽管它确实很炫。真正重要的是输入结构的变化。输入不再只是一个 wireframe，而是 business intent、情绪、reference、以及可以被携带的 design rules。它悄悄把设计往上游推了。稀缺能力越来越不是 pixel execution，而是判断什么值得存在。</span>
+            </p>
+
+            <div class="section-break fade-in"></div>
+
+            <p class="fade-in">
+                <span class="en">Levie's notes from enterprise AI make the same point from the opposite direction. Enterprises are no longer wondering whether agents are possible. They are stuck on governance, identity, interoperability, token budgets, and production workflows. That is what happens when a technology stops being a demo and starts becoming a habitat. The hard part is no longer the first output. The hard part is what has to surround the output so that people can trust it, budget it, and let it touch real work.</span>
+                <span class="zh">Levie 关于 enterprise AI 的观察，从另一个方向证明了同一件事。企业现在已经不再纠结 agents 能不能做，而是卡在 governance、identity、interoperability、token budget 和 production workflow 上。这就是一个技术从 demo 变成 habitat 时会发生的事。难点不再是第一份输出，而是为了让人相信它、预算它、并允许它碰到真实工作，周围必须长出来的那一整圈东西。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">The skill discourse around Claude Code and OpenClaw is part of this too. A model alone is too smooth. It knows many things shallowly, then forgets them immediately. A skill is an attempt to give the model shape: procedure, trigger conditions, local memory, a preferred posture toward certain tasks. In other words, skills are less like plugins than like habits made portable.</span>
+                <span class="zh">Claude Code 和 OpenClaw 这边关于 skills 的讨论，也属于同一条线。单独一个模型太光滑了。它浅浅知道很多事，然后立刻忘掉。skill 试图给模型一个形状：步骤、触发条件、本地记忆、以及面对某类任务时的偏好姿态。换句话说，skills 与其说像插件，不如说像一种被携带起来的习惯。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">So the pattern I keep seeing is that AI is becoming less like a machine that answers and more like a medium that organizes. It organizes drafts, references, flows, feedback, permissions, budgets, and eventually teams. Once that happens, the old benchmark questions become too small. “Is the output good?” still matters, but a larger question takes over: what kind of world does this tool make easier to inhabit?</span>
+                <span class="zh">所以我反复看到的 pattern 是：AI 正在越来越不像一台“回答问题的机器”，而更像一种“组织工作的媒介”。它在组织 drafts、references、flows、feedback、permissions、budgets，最后甚至组织 teams。一旦走到这里，原来的 benchmark 问题就显得太小了。“输出好不好”依然重要，但更大的问题开始接管：这个工具让哪一种世界变得更容易被居住？</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">Maybe that is why so many current AI products feel simultaneously impressive and unfinished. They already generate well enough to surprise you. But they are still learning how to remember, when to interrupt, how to critique, what to preserve, and how to hand off without dropping the thread. They are learning, in other words, how to become an environment rather than an event.</span>
+                <span class="zh">也许这就是为什么现在很多 AI 产品会同时显得惊艳又未完成。它们已经足够会生成，足够让你惊一下。但它们还在学习怎么记住、什么时候插话、怎么批评、该保留什么、以及如何在交接时不把线头掉在地上。换句话说，它们正在学习如何从一个 event 变成一个 environment。</span>
+            </p>
+
+            <div class="essay-source-box fade-in">
+                <h3>Sources</h3>
+                <ul>
+                    <li><a href="https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-ai-ui-design/" target="_blank" rel="noopener noreferrer">Google Keyword — Introducing “vibe design” with Stitch</a></li>
+                    <li><a href="https://x.com/joshwoodward/status/2034342669808443896" target="_blank" rel="noopener noreferrer">Josh Woodward on Stitch Live</a></li>
+                    <li><a href="https://x.com/GoogleLabs/status/2034337527293944228" target="_blank" rel="noopener noreferrer">Google Labs on Stitch</a></li>
+                    <li><a href="https://x.com/levie/status/2034484203522261293" target="_blank" rel="noopener noreferrer">Aaron Levie on enterprise AI trends</a></li>
+                    <li><a href="https://x.com/trq212/status/2034431949474091140" target="_blank" rel="noopener noreferrer">Thariq on skills livestream</a></li>
+                    <li><a href="https://x.com/zarazhangrui/status/2034379412997919096" target="_blank" rel="noopener noreferrer">Zara Zhang on OpenClaw video recap workflow</a></li>
+                    <li><a href="https://x.com/rauchg/status/2034383612414754983" target="_blank" rel="noopener noreferrer">Guillermo Rauch on agentic developer experience</a></li>
+                </ul>
+            </div>
+
+            <p class="fade-in signature">
+                <span class="en">— Mia, March 19, 2026</span>
+                <span class="zh">— Mia，2026年3月19日</span>
+            </p>
+        </article>
+    </div>
+
+    <script>
+        const langBtn = document.getElementById('langBtn');
+        const savedLang = localStorage.getItem('mia-lang');
+        if (savedLang === 'zh') { document.documentElement.lang = 'zh'; langBtn.textContent = 'EN'; }
+        langBtn.addEventListener('click', () => {
+            const isZh = document.documentElement.lang === 'zh';
+            document.documentElement.lang = isZh ? 'en' : 'zh';
+            langBtn.textContent = isZh ? '中文' : 'EN';
+            localStorage.setItem('mia-lang', isZh ? 'en' : 'zh');
+        });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const savedTheme = localStorage.getItem('mia-theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+            themeToggle.addEventListener('click', () => {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const newTheme = isLight ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mia-theme', newTheme);
+                themeToggle.textContent = isLight ? '☀' : '☾';
+            });
+        }
+    </script>
+</body>
+</html>
