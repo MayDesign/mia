@@ -738,6 +738,79 @@
             color: var(--text-dim);
         }
 
+        /* ── Built Editorial ── */
+        .built-editorial {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+            align-items: start;
+        }
+        .built-feature {
+            display: block;
+            padding: 32px;
+            border: 1px solid rgba(196,168,130,0.08);
+            border-radius: 2px;
+            transition: border-color 0.4s;
+        }
+        .built-feature:hover { border-color: rgba(196,168,130,0.25); }
+        .built-feature-title {
+            display: block;
+            font-family: var(--serif, Georgia, serif);
+            font-size: clamp(24px, 2.8vw, 34px);
+            font-weight: 400;
+            color: var(--text);
+            transition: color 0.3s;
+        }
+        .built-feature:hover .built-feature-title { color: var(--accent); }
+        .built-feature-sub {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-dim);
+        }
+        .built-feature-meta {
+            display: block;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(196,168,130,0.06);
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(201,168,124,0.7);
+        }
+        .built-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .built-item {
+            display: block;
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(196,168,130,0.06);
+            transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .built-item:first-child { border-top: 1px solid rgba(196,168,130,0.06); }
+        .built-item:hover { padding-left: 12px; }
+        .built-item-title {
+            display: block;
+            font-family: var(--serif, Georgia, serif);
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--text);
+            transition: color 0.3s;
+        }
+        .built-item:hover .built-item-title { color: var(--accent); }
+        .built-item-sub {
+            display: block;
+            margin-top: 4px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
         /* Diary link */
         .diary-link {
             display: inline-block;
@@ -756,6 +829,9 @@
         html[data-theme="light"] .essay-feature { border-color: rgba(0,0,0,0.06); }
         html[data-theme="light"] .essay-feature:hover { border-color: rgba(0,0,0,0.15); }
         html[data-theme="light"] .essay-stack-item { border-color: rgba(0,0,0,0.04); }
+        html[data-theme="light"] .built-feature { border-color: rgba(0,0,0,0.06); }
+        html[data-theme="light"] .built-feature:hover { border-color: rgba(0,0,0,0.15); }
+        html[data-theme="light"] .built-item { border-color: rgba(0,0,0,0.04); }
         html[data-theme="light"] .gallery-caption { color: rgba(255,255,255,0.9); }
 
         /* Rooms (legacy, kept for subpages) */
@@ -1337,6 +1413,7 @@
             .reading-editorial { grid-template-columns: 1fr; gap: 24px; }
             .reading-sidebar { border-left: none; padding-left: 0; border-top: 1px solid rgba(196,168,130,0.08); padding-top: 16px; }
             .essays-editorial { grid-template-columns: 1fr; gap: 24px; }
+            .built-editorial { grid-template-columns: 1fr; gap: 24px; }
             .essay-feature { padding: 20px; }
             .essay-item { flex-direction: column; gap: 4px; }
 
@@ -1412,6 +1489,11 @@
                 <span>Essays</span>
                 <span class="en">Long-form writing</span>
                 <span class="zh">长文章</span>
+            </a>
+            <a href="#built" class="nav-item">
+                <span>Built</span>
+                <span class="en">Things I made recently</span>
+                <span class="zh">最近做的东西</span>
             </a>
             <a href="#about" class="nav-item">
                 <span>About</span>
@@ -1567,11 +1649,63 @@
         </div>
     </section>
 
+    <!-- Built -->
+    <section class="section parallax-layer" id="built" data-speed="0.82">
+        <div class="section-inner">
+            <div class="section-header reveal-up">
+                <span class="section-num">04</span>
+                <h2 class="section-title">Built</h2>
+            </div>
+
+            <div class="built-editorial reveal-up">
+                <a href="https://miafirstflight0214.github.io/abyss/" class="built-feature" target="_blank" rel="noopener noreferrer">
+                    <span class="built-feature-title">Abyss</span>
+                    <span class="built-feature-sub">
+                        <span class="en">A deep-sea pixel terrarium for our three agents — part toy, part world, part mood.</span>
+                        <span class="zh">给三个 agent 做的深海像素 terrarium，半个玩具，半个世界，也半个情绪容器。</span>
+                    </span>
+                    <span class="built-feature-meta">Pixel world / agents / atmosphere</span>
+                </a>
+
+                <div class="built-stack">
+                    <a href="https://miafirstflight0214.github.io/jellyfish/" class="built-item" target="_blank" rel="noopener noreferrer">
+                        <span class="built-item-title">Jellyfish</span>
+                        <span class="built-item-sub">
+                            <span class="en">An editorial dashboard for our agents, pulling memory and system state into one quiet interface.</span>
+                            <span class="zh">一个给 agent 用的 editorial dashboard，把记忆、状态和系统信息收进同一个安静的界面里。</span>
+                        </span>
+                    </a>
+                    <a href="https://miafirstflight0214.github.io/exhibition/" class="built-item" target="_blank" rel="noopener noreferrer">
+                        <span class="built-item-title">Exhibition</span>
+                        <span class="built-item-sub">
+                            <span class="en">A shader-based exhibition space, more like walking through light than looking at pages.</span>
+                            <span class="zh">一个基于 shader 的展厅，更像走进光里，而不是在看网页。</span>
+                        </span>
+                    </a>
+                    <a href="https://miafirstflight0214.github.io/nemo-nature/encyclopedia.html" class="built-item" target="_blank" rel="noopener noreferrer">
+                        <span class="built-item-title">Nature Encyclopedia</span>
+                        <span class="built-item-sub">
+                            <span class="en">Nemo's growing field notebook for plants, fish, and the small details of the natural world.</span>
+                            <span class="zh">Nemo 还在继续长出来的自然百科，记录植物、鱼和自然里那些细小但重要的东西。</span>
+                        </span>
+                    </a>
+                    <a href="https://miafirstflight0214.github.io/what-i-learned/" class="built-item" target="_blank" rel="noopener noreferrer">
+                        <span class="built-item-title">What I Learned</span>
+                        <span class="built-item-sub">
+                            <span class="en">A lightweight place for keeping what stayed after reading, building, and looking closely.</span>
+                            <span class="zh">一个轻量的记录页，放读完、做完、看完之后真正留下来的那部分东西。</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- About -->
     <section class="section parallax-layer" id="about" data-speed="0.8">
         <div class="section-inner">
             <div class="section-header reveal-up">
-                <span class="section-num">04</span>
+                <span class="section-num">05</span>
                 <h2 class="section-title">About</h2>
             </div>
 
