@@ -3,379 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>May & E1 午饭菜单</title>
+  <title>May & E1 午饭抽卡</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f6f0e7;
-      --paper: #fffaf3;
-      --paper-2: #f2eadf;
-      --text: #2f332f;
-      --muted: #6f766f;
-      --line: #ddd3c4;
-      --accent: #6f8b7a;
-      --accent-2: #b9825a;
-      --shadow: 0 16px 40px rgba(92, 74, 48, 0.08);
-      --serif: 'Fraunces', 'Noto Serif SC', serif;
-      --mono: 'JetBrains Mono', monospace;
+      --bg: #f6f0e7; --paper: #fffaf3; --paper-2: #f2eadf; --text: #2f332f; --muted: #6f766f;
+      --line: #ddd3c4; --accent: #6f8b7a; --accent-2: #b9825a; --shadow: 0 16px 40px rgba(92, 74, 48, 0.08);
+      --serif: 'Fraunces', 'Noto Serif SC', serif; --mono: 'JetBrains Mono', monospace;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: linear-gradient(180deg, var(--bg), #efe7db);
-      color: var(--text);
-      font-family: 'Noto Serif SC', serif;
-      line-height: 1.7;
-    }
-    .page { max-width: 1180px; margin: 0 auto; padding: 32px 20px 64px; }
-    .hero {
-      background: linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.35));
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      padding: 28px 28px 24px;
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
-    }
-    .eyebrow {
-      font: 12px var(--mono);
-      color: var(--accent);
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    h1 {
-      margin: 0 0 10px;
-      font-family: var(--serif);
-      font-size: clamp(32px, 6vw, 56px);
-      line-height: 1.02;
-      font-weight: 500;
-    }
-    .lead {
-      max-width: 760px;
-      color: var(--muted);
-      font-size: 17px;
-    }
-    .prefs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 20px;
-    }
-    .pref {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px 16px;
-    }
-    .pref small { display: block; color: var(--muted); margin-bottom: 6px; font-size: 12px; }
-    .pref strong { font-size: 15px; }
-    .section-head {
-      margin: 26px 0 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .section-title {
-      margin: 0;
-      font-family: var(--serif);
-      font-size: 28px;
-      font-weight: 500;
-    }
-    .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .btn {
-      border: 1px solid var(--line);
-      background: var(--paper);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font: 13px var(--mono);
-      cursor: pointer;
-      transition: transform .15s ease, background .2s ease;
-    }
-    .btn:hover { transform: translateY(-1px); background: #fff; }
-    .batch-indicator { font: 12px var(--mono); color: var(--muted); }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-    .card {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .card h3 {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.2;
-      font-weight: 500;
-    }
-    .tag {
-      flex-shrink: 0;
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      color: var(--muted);
-      background: #fff;
-    }
-    .meta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-      font: 12px var(--mono);
-      color: var(--muted);
-    }
-    .desc { color: #475046; margin-bottom: 14px; }
-    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .box {
-      background: var(--paper-2);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 12px 14px;
-    }
-    .box h4 {
-      margin: 0 0 8px;
-      font-size: 13px;
-      color: var(--accent);
-      font-family: var(--mono);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-    ul { margin: 0; padding-left: 18px; }
-    li { margin: 4px 0; }
-    .why {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--line);
-      color: #5d665d;
-      font-size: 15px;
-    }
-    .footer-note {
-      margin-top: 22px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-    @media (max-width: 900px) {
-      .prefs, .grid, .cols { grid-template-columns: 1fr; }
-    }
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,var(--bg),#efe7db);color:var(--text);font-family:'Noto Serif SC',serif;line-height:1.7}
+    .page{max-width:980px;margin:0 auto;padding:32px 20px 64px}.hero,.card{background:linear-gradient(180deg,rgba(255,255,255,.68),rgba(255,255,255,.4));border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow)}
+    .hero{padding:28px 28px 24px;margin-bottom:20px}.eyebrow{font:12px var(--mono);color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+    h1{margin:0 0 10px;font-family:var(--serif);font-size:clamp(32px,6vw,56px);line-height:1.02;font-weight:500}.lead{max-width:760px;color:var(--muted);font-size:17px}
+    .prefs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}.pref{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:14px 16px}.pref small{display:block;color:var(--muted);margin-bottom:6px;font-size:12px}.pref strong{font-size:15px}
+    .status{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin:22px 0 14px}.status h2{margin:0;font-family:var(--serif);font-size:28px;font-weight:500}.status .hint{font:12px var(--mono);color:var(--muted)}
+    .card{padding:22px}.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}.card h3{margin:0;font-size:28px;line-height:1.2;font-weight:500}.tag{flex-shrink:0;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:#fff}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font:12px var(--mono);color:var(--muted)}.desc{color:#475046;margin-bottom:14px;font-size:16px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.box{background:var(--paper-2);border:1px solid var(--line);border-radius:16px;padding:12px 14px}.box h4{margin:0 0 8px;font-size:13px;color:var(--accent);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    ul{margin:0;padding-left:18px} li{margin:4px 0}.why{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);color:#5d665d;font-size:15px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.btn{border:1px solid var(--line);background:var(--paper);color:var(--text);border-radius:999px;padding:12px 16px;font:13px var(--mono);cursor:pointer;transition:transform .15s ease,background .2s ease}.btn:hover{transform:translateY(-1px);background:#fff}.btn.primary{background:#eef5ef;border-color:#cdddcf}.footer-note{margin-top:22px;color:var(--muted);font-size:14px}
+    @media (max-width:900px){.prefs,.cols{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="page">
     <section class="hero">
       <div class="eyebrow">Lunch planning · May & E1</div>
-      <h1>每天中午吃什么，先别发愁</h1>
-      <div class="lead">这是一版按你们两个人的口味和节奏做的午饭菜单页：<strong>30 分钟到 1 小时、控糖优先、中式为主、海鲜友好、猪肉弱化</strong>。如果这一批不喜欢，就直接换一批，不用每天从零开始想。</div>
+      <h1>今天中午吃什么，抽一个就好</h1>
+      <div class="lead">不再一次给你一堆选择题。现在是一页只给 <strong>1 个午饭方案</strong>：喜欢就定，不喜欢就点“换一个”。</div>
       <div class="prefs">
         <div class="pref"><small>肉类偏好</small><strong>猪肉兴趣低，排骨可以，海鲜友好</strong></div>
         <div class="pref"><small>不吃</small><strong>香菜 / 茼蒿 / 茴香 / 西兰花</strong></div>
         <div class="pref"><small>做饭时间</small><strong>30 分钟到 1 小时，越快越好</strong></div>
-        <div class="pref"><small>当前目标</small><strong>控糖、但不要吃得太委屈</strong></div>
+        <div class="pref"><small>当前目标</small><strong>控糖、但不要太委屈</strong></div>
       </div>
     </section>
 
-    <div class="section-head">
-      <h2 class="section-title">今天先做这 6 个午饭方案</h2>
-      <div class="actions">
-        <div class="batch-indicator" id="batchIndicator">第 1 批 / 共 3 批</div>
-        <button class="btn" id="shuffleBtn">换一批</button>
-      </div>
+    <div class="status">
+      <h2>今日推荐</h2>
+      <div class="hint" id="counter">方案 1 / 18</div>
     </div>
 
-    <section class="grid" id="menuGrid"></section>
+    <section class="card" id="menuCard"></section>
 
-    <div class="footer-note">
-      这是一版可翻的菜单池。后面我还可以继续加：<strong>买菜清单、按季节替换、低糖主食替代、以及“冰箱里剩什么就做什么”的模式</strong>。
-    </div>
+    <div class="footer-note">现在先做成“抽卡式推荐”。如果这个模式顺手，后面还可以加 <strong>收藏、拉黑、按口味换一个</strong> 这种更像 app 的功能。</div>
   </div>
 
   <script>
-    const batches = [
-      [
-        {
-          title: '清蒸鲈鱼 + 蒜蓉娃娃菜 + 半碗杂粮饭', tag: '最稳', meta: ['35 min', '低负担', '控糖友好'],
-          desc: '这套很适合工作日中午。鱼的蛋白质够，蒸法负担轻，娃娃菜也比硬炒蔬菜更容易接受。',
-          ingredients: ['鲈鱼 1 条', '娃娃菜 2 颗', '姜葱蒜', '杂粮饭 2 人份'],
-          steps: ['鱼加姜丝蒸 10–12 分钟', '娃娃菜蒜蓉清炒或清蒸后淋汁', '米饭减量，搭一半糙米更稳'],
-          why: '控糖期最怕中午吃得太油太顶，这套吃完不容易困，也不会太像“减肥餐”。'
-        },
-        {
-          title: '虾仁炒蛋 + 清炒口蘑荷兰豆 + 玉米', tag: '快手', meta: ['25 min', '高蛋白', '你会喜欢'],
-          desc: '你本来就喜欢炒鸡蛋和蘑菇，这道基本属于“舒适区升级版”。虾仁让蛋白质更完整，玉米比白米饭更柔和一点。',
-          ingredients: ['虾仁 250g', '鸡蛋 4 个', '口蘑 / 荷兰豆', '甜玉米 2 根'],
-          steps: ['虾仁滑一下备用', '炒蛋后回锅拌匀', '口蘑荷兰豆另起一锅快炒'],
-          why: '这套有点像你平时爱吃的东西，但比纯炒蛋更适合两个人正经吃一顿午饭。'
-        },
-        {
-          title: '番茄豆腐蛤蜊锅 + 凉拌黄瓜木耳', tag: '海鲜系', meta: ['30 min', '汤锅', '鲜味高'],
-          desc: '如果你们都喜欢海鲜，这道很适合做午饭。汤锅形式轻松，番茄和蛤蜊的鲜味很自然，豆腐也顶饱。',
-          ingredients: ['蛤蜊 500g', '番茄 2–3 个', '嫩豆腐 1 盒', '黄瓜、木耳'],
-          steps: ['番茄炒软出汁', '加水煮蛤蜊和豆腐', '黄瓜木耳凉拌做配菜'],
-          why: '控糖期中午来一锅这种带汤的，通常比干巴巴吃一盘肉更舒服，也更容易收住总碳水。'
-        },
-        {
-          title: '黑椒三文鱼煎盘 + 芦笋杏鲍菇 + 南瓜', tag: '西式 20%', meta: ['35 min', '轻西式', '高满足'],
-          desc: '这套给你们留一点“西式 20%”的位置，但还是很家常。三文鱼和南瓜的组合好吃，也比较容易做得像样。',
-          ingredients: ['三文鱼 2 块', '芦笋 / 杏鲍菇', '南瓜 1 小块', '黑胡椒、柠檬'],
-          steps: ['南瓜切块蒸熟或烤熟', '三文鱼平底锅煎', '配菜快炒或煎盘同做'],
-          why: '吃起来有一点“外食感”，但整体还在控糖范围里，不容易腻。'
-        },
-        {
-          title: '椒麻鸡腿肉拌生菜 + 凉拌金针菇 + 小份荞麦面', tag: '你会开心', meta: ['30 min', '微辣', '高风味'],
-          desc: '既然你喜欢椒麻鸡，那可以做一个更适合中午的版本：鸡腿肉保留风味，但别太油，主食改成少量荞麦面。',
-          ingredients: ['去骨鸡腿 2 只', '生菜 / 黄瓜', '金针菇', '荞麦面 2 小份'],
-          steps: ['鸡腿煎熟切块', '椒麻汁轻量调，不要太咸太油', '荞麦面少量配着吃'],
-          why: '满足口味，但把“重油重糖拌饭”的风险降下来，中午吃也不至于太沉。'
-        },
-        {
-          title: '番茄牛腩快炖版 + 清炒油麦菜 + 小份米饭', tag: '周末备菜友好', meta: ['50–60 min', '中式家常', '可留下一顿'],
-          desc: '如果你们那天时间稍微宽一点，这道很适合做成“今天午饭 + 明天半顿”的类型。',
-          ingredients: ['牛腩 500g', '番茄 3 个', '油麦菜', '米饭少量'],
-          steps: ['牛腩先焯水', '番茄炒软后一起炖', '油麦菜最后快炒'],
-          why: '如果一直追求“越快越好”，很容易吃腻。这道算是你们菜单里的稳定大菜位。'
-        }
-      ],
-      [
-        {
-          title: '香煎鳕鱼 + 蒜炒生菜 + 鹰嘴豆南瓜温沙拉', tag: '轻负担', meta: ['30 min', '海鲜', '控糖友好'],
-          desc: '鳕鱼处理快，味道干净，搭配南瓜和鹰嘴豆后午饭也不会太单薄。',
-          ingredients: ['鳕鱼 2 块', '生菜', '熟鹰嘴豆', '南瓜'],
-          steps: ['鳕鱼煎熟', '南瓜蒸熟', '生菜蒜炒，最后和鹰嘴豆拌一起'],
-          why: '这套会比“纯沙拉”更像一顿饭，但比重油菜轻得多。'
-        },
-        {
-          title: '虾滑豆腐煲 + 凉拌莴笋丝', tag: '软乎', meta: ['30 min', '高蛋白', '汤汁型'],
-          desc: '如果那天状态有点累，这种软乎的锅菜很适合中午吃。',
-          ingredients: ['虾滑', '豆腐', '青菜少量', '莴笋'],
-          steps: ['豆腐打底', '下虾滑煮熟', '莴笋切丝凉拌'],
-          why: '容易消化，鲜味足，也比较适合控糖期减少暴食。'
-        },
-        {
-          title: '黑椒鸡排 + 炒平菇彩椒 + 小份藜麦饭', tag: '稳妥肉菜', meta: ['35 min', '高蛋白', '快手'],
-          desc: '鸡排比猪肉稳定，平菇你也喜欢，整体做起来很顺手。',
-          ingredients: ['鸡胸或去骨鸡腿', '平菇', '彩椒', '藜麦饭'],
-          steps: ['鸡排煎熟', '平菇彩椒快炒', '藜麦饭少量'],
-          why: '对口味友好，也比较适合日常高频轮换。'
-        },
-        {
-          title: '蒜蓉粉丝蒸扇贝 + 清炒上海青 + 紫薯', tag: '海鲜满足', meta: ['35 min', '蒸菜', '有仪式感'],
-          desc: '想吃点海鲜的快乐，但又不想太麻烦，这个组合很合适。',
-          ingredients: ['扇贝', '粉丝少量', '上海青', '紫薯'],
-          steps: ['扇贝粉丝蒸熟', '上海青快炒', '紫薯蒸熟即可'],
-          why: '粉丝量可控，海鲜满足感高，午饭吃也不会太重。'
-        },
-        {
-          title: '番茄虾仁菌菇意面（轻西式）', tag: '换换口味', meta: ['30 min', '西式 20%', '可控量'],
-          desc: '如果想换一口西式，但不想吃得太腻，可以走番茄虾仁这条路。',
-          ingredients: ['虾仁', '番茄', '蘑菇', '意面少量'],
-          steps: ['番茄炒成汁', '下虾仁和蘑菇', '意面控制份量'],
-          why: '关键不是不能吃面，而是量别太重、配料别太油。'
-        },
-        {
-          title: '清炖排骨萝卜 + 蒜炒油菜', tag: '排骨位', meta: ['55 min', '家常', '你们都能接受'],
-          desc: '既然你们对猪肉里排骨还可以，那就把它放在更家常、清一点的版本里。',
-          ingredients: ['排骨', '白萝卜', '油菜', '姜葱'],
-          steps: ['排骨焯水后炖', '萝卜后放', '油菜单独快炒'],
-          why: '满足“想吃点炖菜”的时候，但不会像红烧那样太厚重。'
-        }
-      ],
-      [
-        {
-          title: '清炒虾仁西葫芦 + 鸡蛋豆腐饼 + 糙米饭', tag: '清爽版', meta: ['30 min', '高蛋白', '适合工作日'],
-          desc: '比较适合那种“不想吃太复杂，但也不想糊弄”的中午。',
-          ingredients: ['虾仁', '西葫芦', '鸡蛋', '北豆腐', '糙米饭'],
-          steps: ['虾仁西葫芦快炒', '鸡蛋豆腐煎成饼', '糙米饭少量'],
-          why: '很稳，几乎没有雷点。'
-        },
-        {
-          title: '金汤花甲娃娃菜 + 凉拌海带丝', tag: '鲜味强', meta: ['30 min', '海鲜', '汤汁'],
-          desc: '如果你们那天都想吃鲜的，这道会很对路。',
-          ingredients: ['花甲', '娃娃菜', '南瓜或金汤底', '海带丝'],
-          steps: ['先做汤底', '下花甲和娃娃菜', '海带丝凉拌'],
-          why: '比较像外面会点的菜，但在家做也不难。'
-        },
-        {
-          title: '香煎鸡腿排 + 烤杏鲍菇 + 番茄黄瓜沙拉', tag: '高满足', meta: ['35 min', '低糖友好', '有肉感'],
-          desc: '适合“今天就是想吃肉一点”的日子，但还是尽量别走油炸路线。',
-          ingredients: ['鸡腿排', '杏鲍菇', '番茄', '黄瓜'],
-          steps: ['鸡腿排煎', '杏鲍菇煎或烤', '番茄黄瓜简单拌'],
-          why: '满足感高，但不至于像外卖那样盐油过重。'
-        },
-        {
-          title: '虾仁芦笋炒口蘑 + 玉子烧 + 小份荞麦冷面', tag: '日式一点', meta: ['35 min', '轻日式', '蘑菇友好'],
-          desc: '这套偏轻一点，但仍然是能吃饱的午饭。',
-          ingredients: ['虾仁', '芦笋', '口蘑', '鸡蛋', '荞麦面'],
-          steps: ['虾仁芦笋口蘑快炒', '鸡蛋做玉子烧', '荞麦面冷吃少量'],
-          why: '如果前两批你吃腻了中式重心，可以拿这套换口气。'
-        },
-        {
-          title: '豆豉蒸鲳鱼 + 清炒生菜 + 山药', tag: '鱼类轮换', meta: ['35 min', '海鲜', '家常'],
-          desc: '鲳鱼做蒸菜很省心，豆豉味也比重口红烧轻。',
-          ingredients: ['鲳鱼', '豆豉', '生菜', '山药'],
-          steps: ['鱼加豆豉蒸熟', '生菜快炒', '山药蒸熟切块'],
-          why: '鱼类轮换很重要，不然菜单容易被鸡和虾霸占。'
-        },
-        {
-          title: '番茄菌菇牛肉片锅 + 凉拌秋葵', tag: '温和炖煮', meta: ['40 min', '牛肉', '适合共享'],
-          desc: '牛肉片版比牛腩快很多，也更适合中午做。',
-          ingredients: ['牛肉片', '番茄', '菌菇', '秋葵'],
-          steps: ['番茄煮底', '菌菇和牛肉片下锅', '秋葵焯水凉拌'],
-          why: '有汤有菜，适合两个人一起吃，也不会太费事。'
-        }
-      ]
+    const menus = [
+      {title:'清蒸鲈鱼 + 蒜蓉娃娃菜 + 半碗杂粮饭',tag:'最稳',meta:['35 min','低负担','控糖友好'],desc:'这套很适合工作日中午。鱼的蛋白质够，蒸法负担轻，娃娃菜也比硬炒蔬菜更容易接受。',ingredients:['鲈鱼 1 条','娃娃菜 2 颗','姜葱蒜','杂粮饭 2 人份'],steps:['鱼加姜丝蒸 10–12 分钟','娃娃菜蒜蓉清炒或清蒸后淋汁','米饭减量，搭一半糙米更稳'],why:'控糖期最怕中午吃得太油太顶，这套吃完不容易困。'},
+      {title:'虾仁炒蛋 + 清炒口蘑荷兰豆 + 玉米',tag:'快手',meta:['25 min','高蛋白','你会喜欢'],desc:'你本来就喜欢炒鸡蛋和蘑菇，这道属于舒适区升级版。',ingredients:['虾仁 250g','鸡蛋 4 个','口蘑 / 荷兰豆','甜玉米 2 根'],steps:['虾仁滑一下备用','炒蛋后回锅拌匀','口蘑荷兰豆另起一锅快炒'],why:'有炒鸡蛋，也有蘑菇，比较像你会真想吃的一顿。'},
+      {title:'番茄豆腐蛤蜊锅 + 凉拌黄瓜木耳',tag:'海鲜系',meta:['30 min','汤锅','鲜味高'],desc:'如果你们都喜欢海鲜，这道很适合做午饭。',ingredients:['蛤蜊 500g','番茄 2–3 个','嫩豆腐 1 盒','黄瓜、木耳'],steps:['番茄炒软出汁','加水煮蛤蜊和豆腐','黄瓜木耳凉拌做配菜'],why:'带汤的中午通常比干巴巴一盘肉更舒服。'},
+      {title:'黑椒三文鱼煎盘 + 芦笋杏鲍菇 + 南瓜',tag:'西式 20%',meta:['35 min','轻西式','高满足'],desc:'留一点西式位置，但还是很家常。',ingredients:['三文鱼 2 块','芦笋 / 杏鲍菇','南瓜 1 小块','黑胡椒、柠檬'],steps:['南瓜蒸熟或烤熟','三文鱼平底锅煎','配菜快炒或同盘做'],why:'有一点外食感，但整体还在控糖范围里。'},
+      {title:'椒麻鸡腿肉拌生菜 + 凉拌金针菇 + 小份荞麦面',tag:'你会开心',meta:['30 min','微辣','高风味'],desc:'保留一点椒麻鸡的感觉，但比外卖版轻很多。',ingredients:['去骨鸡腿 2 只','生菜 / 黄瓜','金针菇','荞麦面 2 小份'],steps:['鸡腿煎熟切块','椒麻汁轻量调','荞麦面少量配着吃'],why:'满足口味，但不会像重油拌饭那样下午犯困。'},
+      {title:'番茄牛腩快炖版 + 清炒油麦菜 + 小份米饭',tag:'家常大菜',meta:['50–60 min','中式家常','可留下一顿'],desc:'时间稍微宽一点时很合适。',ingredients:['牛腩 500g','番茄 3 个','油麦菜','米饭少量'],steps:['牛腩先焯水','番茄炒软后一起炖','油麦菜最后快炒'],why:'想吃一顿更像“认真做饭”的午饭时，这个很稳。'},
+      {title:'香煎鳕鱼 + 蒜炒生菜 + 鹰嘴豆南瓜温沙拉',tag:'轻负担',meta:['30 min','海鲜','控糖友好'],desc:'鳕鱼处理快，味道干净。',ingredients:['鳕鱼 2 块','生菜','熟鹰嘴豆','南瓜'],steps:['鳕鱼煎熟','南瓜蒸熟','生菜蒜炒，和鹰嘴豆拌一起'],why:'比纯沙拉更像一顿饭，但也不重。'},
+      {title:'虾滑豆腐煲 + 凉拌莴笋丝',tag:'软乎',meta:['30 min','高蛋白','汤汁型'],desc:'状态有点累的时候，这种软乎锅菜很适合。',ingredients:['虾滑','豆腐','青菜少量','莴笋'],steps:['豆腐打底','下虾滑煮熟','莴笋切丝凉拌'],why:'鲜味足，也比较适合控糖期。'},
+      {title:'黑椒鸡排 + 炒平菇彩椒 + 小份藜麦饭',tag:'稳妥肉菜',meta:['35 min','高蛋白','快手'],desc:'鸡排比猪肉稳定，平菇你也喜欢。',ingredients:['鸡胸或去骨鸡腿','平菇','彩椒','藜麦饭'],steps:['鸡排煎熟','平菇彩椒快炒','藜麦饭少量'],why:'很适合工作日轮换。'},
+      {title:'蒜蓉粉丝蒸扇贝 + 清炒上海青 + 紫薯',tag:'海鲜满足',meta:['35 min','蒸菜','有仪式感'],desc:'想吃点海鲜的快乐，但又不想太麻烦。',ingredients:['扇贝','粉丝少量','上海青','紫薯'],steps:['扇贝粉丝蒸熟','上海青快炒','紫薯蒸熟'],why:'海鲜满足感高，午饭吃也不会太重。'},
+      {title:'番茄虾仁菌菇意面（轻西式）',tag:'换换口味',meta:['30 min','西式 20%','可控量'],desc:'想换一口西式，但不想吃太腻。',ingredients:['虾仁','番茄','蘑菇','意面少量'],steps:['番茄炒成汁','下虾仁和蘑菇','意面控制份量'],why:'关键不是不能吃面，而是量别太重。'},
+      {title:'清炖排骨萝卜 + 蒜炒油菜',tag:'排骨位',meta:['55 min','家常','可接受'],desc:'既然排骨可以，那就用清一点的版本。',ingredients:['排骨','白萝卜','油菜','姜葱'],steps:['排骨焯水后炖','萝卜后放','油菜单独快炒'],why:'满足“想吃点炖菜”的时候，但不会太厚重。'},
+      {title:'清炒虾仁西葫芦 + 鸡蛋豆腐饼 + 糙米饭',tag:'清爽版',meta:['30 min','高蛋白','适合工作日'],desc:'不想吃太复杂，但也不想糊弄。',ingredients:['虾仁','西葫芦','鸡蛋','北豆腐','糙米饭'],steps:['虾仁西葫芦快炒','鸡蛋豆腐煎成饼','糙米饭少量'],why:'很稳，几乎没有雷点。'},
+      {title:'金汤花甲娃娃菜 + 凉拌海带丝',tag:'鲜味强',meta:['30 min','海鲜','汤汁'],desc:'那天想吃鲜一点的，这道很对路。',ingredients:['花甲','娃娃菜','南瓜或金汤底','海带丝'],steps:['先做汤底','下花甲和娃娃菜','海带丝凉拌'],why:'比较像外面会点的菜，但在家做也不难。'},
+      {title:'香煎鸡腿排 + 烤杏鲍菇 + 番茄黄瓜沙拉',tag:'高满足',meta:['35 min','低糖友好','有肉感'],desc:'适合“今天就是想吃肉一点”的日子。',ingredients:['鸡腿排','杏鲍菇','番茄','黄瓜'],steps:['鸡腿排煎','杏鲍菇煎或烤','番茄黄瓜简单拌'],why:'满足感高，但不至于像外卖那样油盐过重。'},
+      {title:'虾仁芦笋炒口蘑 + 玉子烧 + 小份荞麦冷面',tag:'日式一点',meta:['35 min','轻日式','蘑菇友好'],desc:'想换一口更轻一点的。',ingredients:['虾仁','芦笋','口蘑','鸡蛋','荞麦面'],steps:['虾仁芦笋口蘑快炒','鸡蛋做玉子烧','荞麦面冷吃少量'],why:'中式吃累了时，这套会很舒服。'},
+      {title:'豆豉蒸鲳鱼 + 清炒生菜 + 山药',tag:'鱼类轮换',meta:['35 min','海鲜','家常'],desc:'鱼类轮换很重要，不然菜单容易被鸡和虾霸占。',ingredients:['鲳鱼','豆豉','生菜','山药'],steps:['鱼加豆豉蒸熟','生菜快炒','山药蒸熟切块'],why:'家常、稳、也不容易踩雷。'},
+      {title:'番茄菌菇牛肉片锅 + 凉拌秋葵',tag:'温和炖煮',meta:['40 min','牛肉','适合共享'],desc:'牛肉片版比牛腩快很多，也更适合中午。',ingredients:['牛肉片','番茄','菌菇','秋葵'],steps:['番茄煮底','菌菇和牛肉片下锅','秋葵焯水凉拌'],why:'有汤有菜，适合两个人一起吃。'}
     ];
-
-    let batchIndex = 0;
-    const grid = document.getElementById('menuGrid');
-    const batchIndicator = document.getElementById('batchIndicator');
-    const shuffleBtn = document.getElementById('shuffleBtn');
-
-    function renderBatch(index) {
-      const batch = batches[index];
-      batchIndicator.textContent = `第 ${index + 1} 批 / 共 ${batches.length} 批`;
-      grid.innerHTML = batch.map(item => `
-        <article class="card">
-          <div class="card-top">
-            <h3>${item.title}</h3>
-            <span class="tag">${item.tag}</span>
-          </div>
-          <div class="meta">${item.meta.map(m => `<span>${m}</span>`).join('')}</div>
-          <div class="desc">${item.desc}</div>
-          <div class="cols">
-            <div class="box">
-              <h4>食材</h4>
-              <ul>${item.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
-            </div>
-            <div class="box">
-              <h4>做法</h4>
-              <ul>${item.steps.map(s => `<li>${s}</li>`).join('')}</ul>
-            </div>
-          </div>
-          <div class="why">为什么推荐：${item.why}</div>
-        </article>
-      `).join('');
+    let idx = 0;
+    const card = document.getElementById('menuCard');
+    const counter = document.getElementById('counter');
+    function render() {
+      const m = menus[idx];
+      counter.textContent = `方案 ${idx + 1} / ${menus.length}`;
+      card.innerHTML = `
+        <div class="card-top"><h3>${m.title}</h3><span class="tag">${m.tag}</span></div>
+        <div class="meta">${m.meta.map(x=>`<span>${x}</span>`).join('')}</div>
+        <div class="desc">${m.desc}</div>
+        <div class="cols">
+          <div class="box"><h4>食材</h4><ul>${m.ingredients.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+          <div class="box"><h4>做法</h4><ul>${m.steps.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+        </div>
+        <div class="why">为什么推荐：${m.why}</div>
+        <div class="actions">
+          <button class="btn" id="nextBtn">换一个</button>
+          <button class="btn primary" id="okBtn">这个可以</button>
+        </div>`;
+      document.getElementById('nextBtn').onclick = () => { idx = (idx + 1) % menus.length; render(); window.scrollTo({top: 0, behavior: 'smooth'}); };
+      document.getElementById('okBtn').onclick = () => { alert('那今天中午就定它啦。'); };
     }
-
-    shuffleBtn.addEventListener('click', () => {
-      batchIndex = (batchIndex + 1) % batches.length;
-      renderBatch(batchIndex);
-      window.scrollTo({ top: document.querySelector('.section-head').offsetTop - 20, behavior: 'smooth' });
-    });
-
-    renderBatch(batchIndex);
+    render();
   </script>
 </body>
 </html>
