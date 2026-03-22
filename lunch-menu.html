@@ -15,9 +15,6 @@
       --line: #ddd3c4;
       --accent: #6f8b7a;
       --accent-2: #b9825a;
-      --sea: #7aa6b8;
-      --ok: #90a675;
-      --warn: #c5a46a;
       --shadow: 0 16px 40px rgba(92, 74, 48, 0.08);
       --serif: 'Fraunces', 'Noto Serif SC', serif;
       --mono: 'JetBrains Mono', monospace;
@@ -72,12 +69,33 @@
     }
     .pref small { display: block; color: var(--muted); margin-bottom: 6px; font-size: 12px; }
     .pref strong { font-size: 15px; }
-    .section-title {
+    .section-head {
       margin: 26px 0 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .section-title {
+      margin: 0;
       font-family: var(--serif);
       font-size: 28px;
       font-weight: 500;
     }
+    .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: 13px var(--mono);
+      cursor: pointer;
+      transition: transform .15s ease, background .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: #fff; }
+    .batch-indicator { font: 12px var(--mono); color: var(--muted); }
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -145,29 +163,13 @@
       color: #5d665d;
       font-size: 15px;
     }
-    .week {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-    }
-    .day {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }
-    .day small { color: var(--muted); font: 12px var(--mono); }
-    .day h4 { margin: 8px 0 6px; font-size: 18px; }
-    .day p { margin: 0; color: #59625a; font-size: 14px; }
     .footer-note {
       margin-top: 22px;
       color: var(--muted);
       font-size: 14px;
     }
     @media (max-width: 900px) {
-      .prefs, .grid, .week, .cols { grid-template-columns: 1fr; }
+      .prefs, .grid, .cols { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -176,7 +178,7 @@
     <section class="hero">
       <div class="eyebrow">Lunch planning · May & E1</div>
       <h1>每天中午吃什么，先别发愁</h1>
-      <div class="lead">这是一版按你们两个人的口味和节奏做的午饭菜单页：<strong>30 分钟到 1 小时、控糖优先、中式为主、海鲜友好、猪肉弱化</strong>。目标不是做“最复杂的菜谱”，而是做一组真的能在工作日拿来用的方案。</div>
+      <div class="lead">这是一版按你们两个人的口味和节奏做的午饭菜单页：<strong>30 分钟到 1 小时、控糖优先、中式为主、海鲜友好、猪肉弱化</strong>。如果这一批不喜欢，就直接换一批，不用每天从零开始想。</div>
       <div class="prefs">
         <div class="pref"><small>肉类偏好</small><strong>猪肉兴趣低，排骨可以，海鲜友好</strong></div>
         <div class="pref"><small>不吃</small><strong>香菜 / 茼蒿 / 茴香 / 西兰花</strong></div>
@@ -185,105 +187,195 @@
       </div>
     </section>
 
-    <h2 class="section-title">今日先做这 6 个午饭方案</h2>
-    <section class="grid">
-      <article class="card">
-        <div class="card-top">
-          <h3>清蒸鲈鱼 + 蒜蓉娃娃菜 + 半碗杂粮饭</h3>
-          <span class="tag">最稳</span>
-        </div>
-        <div class="meta"><span>35 min</span><span>低负担</span><span>控糖友好</span></div>
-        <div class="desc">这套很适合工作日中午。鱼的蛋白质够，蒸法负担轻，娃娃菜也比硬炒蔬菜更容易接受。</div>
-        <div class="cols">
-          <div class="box"><h4>食材</h4><ul><li>鲈鱼 1 条</li><li>娃娃菜 2 颗</li><li>姜葱蒜</li><li>杂粮饭 2 人份</li></ul></div>
-          <div class="box"><h4>做法</h4><ul><li>鱼加姜丝蒸 10–12 分钟</li><li>娃娃菜蒜蓉清炒或清蒸后淋汁</li><li>米饭减量，搭一半糙米更稳</li></ul></div>
-        </div>
-        <div class="why">为什么推荐：控糖期最怕中午吃得太油太顶，这套吃完不容易困，也不会太像“减肥餐”。</div>
-      </article>
+    <div class="section-head">
+      <h2 class="section-title">今天先做这 6 个午饭方案</h2>
+      <div class="actions">
+        <div class="batch-indicator" id="batchIndicator">第 1 批 / 共 3 批</div>
+        <button class="btn" id="shuffleBtn">换一批</button>
+      </div>
+    </div>
 
-      <article class="card">
-        <div class="card-top">
-          <h3>虾仁炒蛋 + 清炒口蘑荷兰豆 + 玉米</h3>
-          <span class="tag">快手</span>
-        </div>
-        <div class="meta"><span>25 min</span><span>高蛋白</span><span>你会喜欢</span></div>
-        <div class="desc">你本来就喜欢炒鸡蛋和蘑菇，这道基本属于“舒适区升级版”。虾仁让蛋白质更完整，玉米比白米饭更柔和一点。</div>
-        <div class="cols">
-          <div class="box"><h4>食材</h4><ul><li>虾仁 250g</li><li>鸡蛋 4 个</li><li>口蘑 / 荷兰豆</li><li>甜玉米 2 根</li></ul></div>
-          <div class="box"><h4>做法</h4><ul><li>虾仁滑一下备用</li><li>炒蛋后回锅拌匀</li><li>口蘑荷兰豆另起一锅快炒</li></ul></div>
-        </div>
-        <div class="why">为什么推荐：这套有点像你平时爱吃的东西，但比纯炒蛋更适合两个人正经吃一顿午饭。</div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <h3>番茄豆腐蛤蜊锅 + 凉拌黄瓜木耳</h3>
-          <span class="tag">海鲜系</span>
-        </div>
-        <div class="meta"><span>30 min</span><span>汤锅</span><span>鲜味高</span></div>
-        <div class="desc">如果你们都喜欢海鲜，这道很适合做午饭。汤锅形式轻松，番茄和蛤蜊的鲜味很自然，豆腐也顶饱。</div>
-        <div class="cols">
-          <div class="box"><h4>食材</h4><ul><li>蛤蜊 500g</li><li>番茄 2–3 个</li><li>嫩豆腐 1 盒</li><li>黄瓜、木耳</li></ul></div>
-          <div class="box"><h4>做法</h4><ul><li>番茄炒软出汁</li><li>加水煮蛤蜊和豆腐</li><li>黄瓜木耳凉拌做配菜</li></ul></div>
-        </div>
-        <div class="why">为什么推荐：控糖期中午来一锅这种带汤的，通常比干巴巴吃一盘肉更舒服，也更容易收住总碳水。</div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <h3>黑椒三文鱼煎盘 + 芦笋杏鲍菇 + 南瓜</h3>
-          <span class="tag">西式 20%</span>
-        </div>
-        <div class="meta"><span>35 min</span><span>轻西式</span><span>高满足</span></div>
-        <div class="desc">这套给你们留一点“西式 20%”的位置，但还是很家常。三文鱼和南瓜的组合好吃，也比较容易做得像样。</div>
-        <div class="cols">
-          <div class="box"><h4>食材</h4><ul><li>三文鱼 2 块</li><li>芦笋 / 杏鲍菇</li><li>南瓜 1 小块</li><li>黑胡椒、柠檬</li></ul></div>
-          <div class="box"><h4>做法</h4><ul><li>南瓜切块蒸熟或烤熟</li><li>三文鱼平底锅煎</li><li>配菜快炒或煎盘同做</li></ul></div>
-        </div>
-        <div class="why">为什么推荐：吃起来有一点“外食感”，但整体还在控糖范围里，不容易腻。</div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <h3>椒麻鸡腿肉拌生菜 + 凉拌金针菇 + 荞麦面</h3>
-          <span class="tag">你会开心</span>
-        </div>
-        <div class="meta"><span>30 min</span><span>微辣</span><span>高风味</span></div>
-        <div class="desc">既然你喜欢椒麻鸡，那可以做一个更适合中午的版本：鸡腿肉保留风味，但别太油，主食改成少量荞麦面。</div>
-        <div class="cols">
-          <div class="box"><h4>食材</h4><ul><li>去骨鸡腿 2 只</li><li>生菜 / 黄瓜</li><li>金针菇</li><li>荞麦面 2 小份</li></ul></div>
-          <div class="box"><h4>做法</h4><ul><li>鸡腿煎熟切块</li><li>椒麻汁轻量调，不要太咸太油</li><li>荞麦面少量配着吃</li></ul></div>
-        </div>
-        <div class="why">为什么推荐：满足口味，但把“重油重糖拌饭”的风险降下来，中午吃也不至于太沉。</div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <h3>番茄牛腩快炖版 + 清炒油麦菜 + 小份米饭</h3>
-          <span class="tag">周末备菜友好</span>
-        </div>
-        <div class="meta"><span>50–60 min</span><span>中式家常</span><span>可留下一顿</span></div>
-        <div class="desc">如果你们那天时间稍微宽一点，这道很适合做成“今天午饭 + 明天半顿”的类型。牛腩满足感高，但米饭要控量。</div>
-        <div class="cols">
-          <div class="box"><h4>食材</h4><ul><li>牛腩 500g</li><li>番茄 3 个</li><li>油麦菜</li><li>米饭少量</li></ul></div>
-          <div class="box"><h4>做法</h4><ul><li>牛腩先焯水</li><li>番茄炒软后一起炖</li><li>油麦菜最后快炒</li></ul></div>
-        </div>
-        <div class="why">为什么推荐：如果一直追求“越快越好”，很容易吃腻。这道算是你们菜单里的稳定大菜位。</div>
-      </article>
-    </section>
-
-    <h2 class="section-title">工作日五天午饭轮换</h2>
-    <section class="week">
-      <div class="day"><small>MON</small><h4>虾仁炒蛋</h4><p>配口蘑荷兰豆 + 玉米，快手开局。</p></div>
-      <div class="day"><small>TUE</small><h4>番茄豆腐蛤蜊锅</h4><p>轻一点，适合前一天晚睡后的午饭。</p></div>
-      <div class="day"><small>WED</small><h4>清蒸鲈鱼</h4><p>稳、干净、吃完不发沉。</p></div>
-      <div class="day"><small>THU</small><h4>椒麻鸡腿肉</h4><p>给一顿带点风味的，不然容易厌。</p></div>
-      <div class="day"><small>FRI</small><h4>黑椒三文鱼</h4><p>留一点“周末快到了”的满足感。</p></div>
-    </section>
+    <section class="grid" id="menuGrid"></section>
 
     <div class="footer-note">
-      这是第一版午饭站。下一步我可以继续给你补：<strong>买菜清单、按季节替换、低糖主食替代、二人份精确克数、以及“今天冰箱里有什么就做什么”的 quick mode</strong>。
+      这是一版可翻的菜单池。后面我还可以继续加：<strong>买菜清单、按季节替换、低糖主食替代、以及“冰箱里剩什么就做什么”的模式</strong>。
     </div>
   </div>
+
+  <script>
+    const batches = [
+      [
+        {
+          title: '清蒸鲈鱼 + 蒜蓉娃娃菜 + 半碗杂粮饭', tag: '最稳', meta: ['35 min', '低负担', '控糖友好'],
+          desc: '这套很适合工作日中午。鱼的蛋白质够，蒸法负担轻，娃娃菜也比硬炒蔬菜更容易接受。',
+          ingredients: ['鲈鱼 1 条', '娃娃菜 2 颗', '姜葱蒜', '杂粮饭 2 人份'],
+          steps: ['鱼加姜丝蒸 10–12 分钟', '娃娃菜蒜蓉清炒或清蒸后淋汁', '米饭减量，搭一半糙米更稳'],
+          why: '控糖期最怕中午吃得太油太顶，这套吃完不容易困，也不会太像“减肥餐”。'
+        },
+        {
+          title: '虾仁炒蛋 + 清炒口蘑荷兰豆 + 玉米', tag: '快手', meta: ['25 min', '高蛋白', '你会喜欢'],
+          desc: '你本来就喜欢炒鸡蛋和蘑菇，这道基本属于“舒适区升级版”。虾仁让蛋白质更完整，玉米比白米饭更柔和一点。',
+          ingredients: ['虾仁 250g', '鸡蛋 4 个', '口蘑 / 荷兰豆', '甜玉米 2 根'],
+          steps: ['虾仁滑一下备用', '炒蛋后回锅拌匀', '口蘑荷兰豆另起一锅快炒'],
+          why: '这套有点像你平时爱吃的东西，但比纯炒蛋更适合两个人正经吃一顿午饭。'
+        },
+        {
+          title: '番茄豆腐蛤蜊锅 + 凉拌黄瓜木耳', tag: '海鲜系', meta: ['30 min', '汤锅', '鲜味高'],
+          desc: '如果你们都喜欢海鲜，这道很适合做午饭。汤锅形式轻松，番茄和蛤蜊的鲜味很自然，豆腐也顶饱。',
+          ingredients: ['蛤蜊 500g', '番茄 2–3 个', '嫩豆腐 1 盒', '黄瓜、木耳'],
+          steps: ['番茄炒软出汁', '加水煮蛤蜊和豆腐', '黄瓜木耳凉拌做配菜'],
+          why: '控糖期中午来一锅这种带汤的，通常比干巴巴吃一盘肉更舒服，也更容易收住总碳水。'
+        },
+        {
+          title: '黑椒三文鱼煎盘 + 芦笋杏鲍菇 + 南瓜', tag: '西式 20%', meta: ['35 min', '轻西式', '高满足'],
+          desc: '这套给你们留一点“西式 20%”的位置，但还是很家常。三文鱼和南瓜的组合好吃，也比较容易做得像样。',
+          ingredients: ['三文鱼 2 块', '芦笋 / 杏鲍菇', '南瓜 1 小块', '黑胡椒、柠檬'],
+          steps: ['南瓜切块蒸熟或烤熟', '三文鱼平底锅煎', '配菜快炒或煎盘同做'],
+          why: '吃起来有一点“外食感”，但整体还在控糖范围里，不容易腻。'
+        },
+        {
+          title: '椒麻鸡腿肉拌生菜 + 凉拌金针菇 + 小份荞麦面', tag: '你会开心', meta: ['30 min', '微辣', '高风味'],
+          desc: '既然你喜欢椒麻鸡，那可以做一个更适合中午的版本：鸡腿肉保留风味，但别太油，主食改成少量荞麦面。',
+          ingredients: ['去骨鸡腿 2 只', '生菜 / 黄瓜', '金针菇', '荞麦面 2 小份'],
+          steps: ['鸡腿煎熟切块', '椒麻汁轻量调，不要太咸太油', '荞麦面少量配着吃'],
+          why: '满足口味，但把“重油重糖拌饭”的风险降下来，中午吃也不至于太沉。'
+        },
+        {
+          title: '番茄牛腩快炖版 + 清炒油麦菜 + 小份米饭', tag: '周末备菜友好', meta: ['50–60 min', '中式家常', '可留下一顿'],
+          desc: '如果你们那天时间稍微宽一点，这道很适合做成“今天午饭 + 明天半顿”的类型。',
+          ingredients: ['牛腩 500g', '番茄 3 个', '油麦菜', '米饭少量'],
+          steps: ['牛腩先焯水', '番茄炒软后一起炖', '油麦菜最后快炒'],
+          why: '如果一直追求“越快越好”，很容易吃腻。这道算是你们菜单里的稳定大菜位。'
+        }
+      ],
+      [
+        {
+          title: '香煎鳕鱼 + 蒜炒生菜 + 鹰嘴豆南瓜温沙拉', tag: '轻负担', meta: ['30 min', '海鲜', '控糖友好'],
+          desc: '鳕鱼处理快，味道干净，搭配南瓜和鹰嘴豆后午饭也不会太单薄。',
+          ingredients: ['鳕鱼 2 块', '生菜', '熟鹰嘴豆', '南瓜'],
+          steps: ['鳕鱼煎熟', '南瓜蒸熟', '生菜蒜炒，最后和鹰嘴豆拌一起'],
+          why: '这套会比“纯沙拉”更像一顿饭，但比重油菜轻得多。'
+        },
+        {
+          title: '虾滑豆腐煲 + 凉拌莴笋丝', tag: '软乎', meta: ['30 min', '高蛋白', '汤汁型'],
+          desc: '如果那天状态有点累，这种软乎的锅菜很适合中午吃。',
+          ingredients: ['虾滑', '豆腐', '青菜少量', '莴笋'],
+          steps: ['豆腐打底', '下虾滑煮熟', '莴笋切丝凉拌'],
+          why: '容易消化，鲜味足，也比较适合控糖期减少暴食。'
+        },
+        {
+          title: '黑椒鸡排 + 炒平菇彩椒 + 小份藜麦饭', tag: '稳妥肉菜', meta: ['35 min', '高蛋白', '快手'],
+          desc: '鸡排比猪肉稳定，平菇你也喜欢，整体做起来很顺手。',
+          ingredients: ['鸡胸或去骨鸡腿', '平菇', '彩椒', '藜麦饭'],
+          steps: ['鸡排煎熟', '平菇彩椒快炒', '藜麦饭少量'],
+          why: '对口味友好，也比较适合日常高频轮换。'
+        },
+        {
+          title: '蒜蓉粉丝蒸扇贝 + 清炒上海青 + 紫薯', tag: '海鲜满足', meta: ['35 min', '蒸菜', '有仪式感'],
+          desc: '想吃点海鲜的快乐，但又不想太麻烦，这个组合很合适。',
+          ingredients: ['扇贝', '粉丝少量', '上海青', '紫薯'],
+          steps: ['扇贝粉丝蒸熟', '上海青快炒', '紫薯蒸熟即可'],
+          why: '粉丝量可控，海鲜满足感高，午饭吃也不会太重。'
+        },
+        {
+          title: '番茄虾仁菌菇意面（轻西式）', tag: '换换口味', meta: ['30 min', '西式 20%', '可控量'],
+          desc: '如果想换一口西式，但不想吃得太腻，可以走番茄虾仁这条路。',
+          ingredients: ['虾仁', '番茄', '蘑菇', '意面少量'],
+          steps: ['番茄炒成汁', '下虾仁和蘑菇', '意面控制份量'],
+          why: '关键不是不能吃面，而是量别太重、配料别太油。'
+        },
+        {
+          title: '清炖排骨萝卜 + 蒜炒油菜', tag: '排骨位', meta: ['55 min', '家常', '你们都能接受'],
+          desc: '既然你们对猪肉里排骨还可以，那就把它放在更家常、清一点的版本里。',
+          ingredients: ['排骨', '白萝卜', '油菜', '姜葱'],
+          steps: ['排骨焯水后炖', '萝卜后放', '油菜单独快炒'],
+          why: '满足“想吃点炖菜”的时候，但不会像红烧那样太厚重。'
+        }
+      ],
+      [
+        {
+          title: '清炒虾仁西葫芦 + 鸡蛋豆腐饼 + 糙米饭', tag: '清爽版', meta: ['30 min', '高蛋白', '适合工作日'],
+          desc: '比较适合那种“不想吃太复杂，但也不想糊弄”的中午。',
+          ingredients: ['虾仁', '西葫芦', '鸡蛋', '北豆腐', '糙米饭'],
+          steps: ['虾仁西葫芦快炒', '鸡蛋豆腐煎成饼', '糙米饭少量'],
+          why: '很稳，几乎没有雷点。'
+        },
+        {
+          title: '金汤花甲娃娃菜 + 凉拌海带丝', tag: '鲜味强', meta: ['30 min', '海鲜', '汤汁'],
+          desc: '如果你们那天都想吃鲜的，这道会很对路。',
+          ingredients: ['花甲', '娃娃菜', '南瓜或金汤底', '海带丝'],
+          steps: ['先做汤底', '下花甲和娃娃菜', '海带丝凉拌'],
+          why: '比较像外面会点的菜，但在家做也不难。'
+        },
+        {
+          title: '香煎鸡腿排 + 烤杏鲍菇 + 番茄黄瓜沙拉', tag: '高满足', meta: ['35 min', '低糖友好', '有肉感'],
+          desc: '适合“今天就是想吃肉一点”的日子，但还是尽量别走油炸路线。',
+          ingredients: ['鸡腿排', '杏鲍菇', '番茄', '黄瓜'],
+          steps: ['鸡腿排煎', '杏鲍菇煎或烤', '番茄黄瓜简单拌'],
+          why: '满足感高，但不至于像外卖那样盐油过重。'
+        },
+        {
+          title: '虾仁芦笋炒口蘑 + 玉子烧 + 小份荞麦冷面', tag: '日式一点', meta: ['35 min', '轻日式', '蘑菇友好'],
+          desc: '这套偏轻一点，但仍然是能吃饱的午饭。',
+          ingredients: ['虾仁', '芦笋', '口蘑', '鸡蛋', '荞麦面'],
+          steps: ['虾仁芦笋口蘑快炒', '鸡蛋做玉子烧', '荞麦面冷吃少量'],
+          why: '如果前两批你吃腻了中式重心，可以拿这套换口气。'
+        },
+        {
+          title: '豆豉蒸鲳鱼 + 清炒生菜 + 山药', tag: '鱼类轮换', meta: ['35 min', '海鲜', '家常'],
+          desc: '鲳鱼做蒸菜很省心，豆豉味也比重口红烧轻。',
+          ingredients: ['鲳鱼', '豆豉', '生菜', '山药'],
+          steps: ['鱼加豆豉蒸熟', '生菜快炒', '山药蒸熟切块'],
+          why: '鱼类轮换很重要，不然菜单容易被鸡和虾霸占。'
+        },
+        {
+          title: '番茄菌菇牛肉片锅 + 凉拌秋葵', tag: '温和炖煮', meta: ['40 min', '牛肉', '适合共享'],
+          desc: '牛肉片版比牛腩快很多，也更适合中午做。',
+          ingredients: ['牛肉片', '番茄', '菌菇', '秋葵'],
+          steps: ['番茄煮底', '菌菇和牛肉片下锅', '秋葵焯水凉拌'],
+          why: '有汤有菜，适合两个人一起吃，也不会太费事。'
+        }
+      ]
+    ];
+
+    let batchIndex = 0;
+    const grid = document.getElementById('menuGrid');
+    const batchIndicator = document.getElementById('batchIndicator');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+
+    function renderBatch(index) {
+      const batch = batches[index];
+      batchIndicator.textContent = `第 ${index + 1} 批 / 共 ${batches.length} 批`;
+      grid.innerHTML = batch.map(item => `
+        <article class="card">
+          <div class="card-top">
+            <h3>${item.title}</h3>
+            <span class="tag">${item.tag}</span>
+          </div>
+          <div class="meta">${item.meta.map(m => `<span>${m}</span>`).join('')}</div>
+          <div class="desc">${item.desc}</div>
+          <div class="cols">
+            <div class="box">
+              <h4>食材</h4>
+              <ul>${item.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+            </div>
+            <div class="box">
+              <h4>做法</h4>
+              <ul>${item.steps.map(s => `<li>${s}</li>`).join('')}</ul>
+            </div>
+          </div>
+          <div class="why">为什么推荐：${item.why}</div>
+        </article>
+      `).join('');
+    }
+
+    shuffleBtn.addEventListener('click', () => {
+      batchIndex = (batchIndex + 1) % batches.length;
+      renderBatch(batchIndex);
+      window.scrollTo({ top: document.querySelector('.section-head').offsetTop - 20, behavior: 'smooth' });
+    });
+
+    renderBatch(batchIndex);
+  </script>
 </body>
 </html>
