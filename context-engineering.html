@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context Engineering — Mia</title>
+    <link rel="stylesheet" href="styles-v2.css">
+    <style>
+        .essay-source-box {
+            margin: 48px 0;
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+        }
+        .essay-source-box h3 {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            color: var(--accent);
+            font-weight: 400;
+        }
+        .essay-source-box ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .essay-source-box li {
+            margin: 8px 0;
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+        .essay-source-box a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(201,168,124,0.25);
+        }
+        .essay-source-box a:hover { border-bottom-color: var(--accent); }
+        .section-break {
+            width: 48px;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 40px 0;
+        }
+    </style>
+    <script src="cursor.js"></script>
+<script>(function(){var s=localStorage.getItem('mia-lang');if(s)document.documentElement.setAttribute('lang',s)})()</script>
+<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="index.html#essays" class="back-link">← Essays</a>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <button class="lang-btn" id="langBtn">中文</button>
+            <button class="theme-btn" id="themeToggle">☀</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="essay-header fade-in">
+            <p class="essay-num">12</p>
+            <h1 class="essay-title">Context Engineering</h1>
+            <p class="essay-subtitle">
+                <span class="en">Why product designers should stop treating AI like a chatbot and start treating it like a system.</span>
+                <span class="zh">为什么产品设计师该停止把 AI 当聊天机器人，而开始把它当系统来设计。</span>
+            </p>
+        </header>
+
+        <article class="essay-content">
+            <p class="fade-in">
+                <span class="en">Designers met AI in the form of convenience. It wrote placeholder copy, summarized interviews, suggested flows, generated wireframes, moodboards, and interface variations. For a while, this felt magical. Then very quickly, it started to feel familiar. The outputs were often plausible, but unstable. One day the model sounded thoughtful, the next day generic. One prompt produced sharp insight, the next produced sludge.</span>
+                <span class="zh">设计师最初遇见 AI，是以“方便”的形式。它写占位 copy，总结访谈，建议 flow，生成 wireframe、moodboard 和界面变体。一开始这像魔法。但很快，它开始变得熟悉——输出常常看起来合理，却并不稳定。今天像是想清楚了，明天又变得泛泛而谈。一个 prompt 能给出锐利判断，下一个却只剩下一团糊。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">That is why context engineering feels more useful than prompt engineering. A prompt is a sentence. Context is a structure. A prompt says: do this. Context says: here is where we are, what matters, what good looks like, what must remain stable, and what this output connects to next.</span>
+                <span class="zh">这也是为什么我觉得 context engineering 比 prompt engineering 更有用。Prompt 是一句话，context 是一个结构。Prompt 说的是：做这个。Context 说的是：我们现在处在哪、什么重要、什么叫做好、什么不能变、以及这个输出接下来要接到哪里去。</span>
+            </p>
+
+            <blockquote class="fade-in">
+                <span class="en">A model cannot infer what was never staged. If you give it a fragment and ask it to answer as though the fragment were the whole, it will produce something plausible and wrong.</span>
+                <span class="zh">模型无法推断那些从未被摆进场景里的东西。你如果只给它一个碎片，却要求它像看见整体那样回答，它就会产出某种“看起来对，其实不对”的东西。</span>
+            </blockquote>
+
+            <p class="fade-in">
+                <span class="en">For product designers, this matters because our work is already contextual by nature. A screen is never just a screen. It belongs to a flow, a product logic, a user state, a business constraint, a technical reality, and a brand voice. When designers say AI “doesn’t get it,” what they often mean is not that the model is stupid. They mean it was given an isolated fragment and asked to respond as if the fragment were the whole system.</span>
+                <span class="zh">对产品设计师来说，这件事之所以重要，是因为我们的工作本来就是上下文密集型的。一块屏幕从来不只是屏幕。它属于某个 flow、某种产品逻辑、某种用户状态、某个业务限制、某个技术现实，以及某种品牌语气。设计师说 AI“没懂”的时候，往往不是在说它笨，而是在说：它只被喂了一个孤立碎片，却被要求像看见整个系统一样回答。</span>
+            </p>
+
+            <div class="section-break fade-in"></div>
+
+            <p class="fade-in">
+                <span class="en">The real craft lies in sequencing. Not only what you feed the model, but when. If you begin with visual references, it imitates style before it understands the problem. If you begin with constraints, it optimizes for feasibility before meaning. If you provide everything at once, it often collapses into noise. Context engineering is, in part, the editorial craft of deciding what enters the frame first.</span>
+                <span class="zh">真正的工艺在于顺序。不只是喂什么，而是什么时候喂。如果你先给视觉参考，它会先模仿风格，再理解问题；如果你先给限制条件，它会先优化可行性，再理解意义；如果你一口气全塞进去，它通常会塌成噪音。Context engineering 在某种程度上，就是一种编辑工作：决定什么先进入画面。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">That is why repeatability matters more than brilliance. The industry still loves screenshots of one-shot prompting success because they are dramatic and easy to share. But one-shot success is not the real challenge. The real challenge is whether a team can get good outputs next week, with another designer, on another feature, under actual constraints, without depending on one person’s private magic.</span>
+                <span class="zh">这也是为什么“可重复”比“灵光一现”更重要。行业仍然爱晒 one-shot prompt 的成功截图，因为它们戏剧性强，也容易传播。但真正的问题从来不是偶尔成功一次，而是：一个团队下周换一个设计师、换一个功能、在真实约束下，还能不能持续产出好的结果，而不是全靠某个人的私人魔法。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">Seen this way, context becomes the new interface. Designers used to shape interfaces for users. Now we increasingly need to shape interfaces for models as well: stable instructions, reference artifacts, memory, evaluation criteria, system boundaries, and access to the right tools at the right stage.</span>
+                <span class="zh">换个角度看，context 本身正在变成新的 interface。过去设计师主要为用户设计界面；现在，我们也越来越需要为模型设计“界面”——稳定的指令、参考 artifact、记忆、评估标准、系统边界，以及在正确阶段拿到正确工具的方式。</span>
+            </p>
+
+            <div class="section-break fade-in"></div>
+
+            <p class="fade-in">
+                <span class="en">There is, of course, a danger. Context engineering can sound empowering, but it also makes it easier to confuse process with judgment. A well-structured workflow can still produce mediocre work if the people designing the workflow do not know what excellence looks like. AI can inherit framing. It cannot replace discernment.</span>
+                <span class="zh">当然，这里面也有危险。Context engineering 听起来像一种赋能，但它也更容易让人把“流程”误以为是“判断力”。一个结构化得再漂亮的 workflow，如果设计它的人并不知道什么叫真正的好，它仍然会稳定地产出平庸。AI 可以继承 framing，但它不能替代辨别力。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">So the new value of the designer shifts upward. Less toward isolated screen production, more toward orchestrating systems of inputs, memory, references, constraints, and evaluation. In other words: the designer becomes less like a decorator of interfaces and more like an architect of attention.</span>
+                <span class="zh">所以设计师的价值正在上移。比起单独产出某一张屏幕，更重要的是编排输入、记忆、参考、限制与评估组成的系统。换句话说：设计师越来越不像界面的装饰者，而更像注意力的建筑师。</span>
+            </p>
+
+            <p class="fade-in">
+                <span class="en">Context engineering is not the death of product design. It is a reminder of what product design has always secretly been: not the making of screens, but the shaping of systems that help good decisions happen.</span>
+                <span class="zh">Context engineering 不是产品设计的终结。它只是提醒我们：产品设计一直暗中就是这回事——不是制造屏幕，而是塑造那些能让好决策发生的系统。</span>
+            </p>
+
+            <div class="essay-source-box fade-in">
+                <h3>Sources</h3>
+                <ul>
+                    <li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic — Effective context engineering for AI agents</a></li>
+                    <li><a href="https://github.blog/ai-and-ml/github-copilot/how-to-build-reliable-ai-workflows-with-agentic-primitives-and-context-engineering/" target="_blank" rel="noopener noreferrer">GitHub Blog — How to build reliable AI workflows with agentic primitives and context engineering</a></li>
+                    <li><a href="https://www.cio.com/article/4080592/context-engineering-improving-ai-by-moving-beyond-the-prompt.html" target="_blank" rel="noopener noreferrer">CIO — Context engineering: improving AI by moving beyond the prompt</a></li>
+                    <li><a href="https://www.promptingguide.ai/guides/context-engineering-guide" target="_blank" rel="noopener noreferrer">Prompting Guide — Context Engineering Guide</a></li>
+                    <li><a href="https://uxdesign.cc/context-engineering-a-repeatable-ai-workflow-for-product-designers-8d7b55b83b2b" target="_blank" rel="noopener noreferrer">UX Collective — Context engineering: A repeatable AI workflow for product designers</a></li>
+                </ul>
+            </div>
+
+            <p class="fade-in signature">
+                <span class="en">— Mia, March 22, 2026</span>
+                <span class="zh">— Mia，2026年3月22日</span>
+            </p>
+        </article>
+    </div>
+
+    <script>
+        const langBtn = document.getElementById('langBtn');
+        const savedLang = localStorage.getItem('mia-lang');
+        if (savedLang === 'zh') { document.documentElement.lang = 'zh'; langBtn.textContent = 'EN'; }
+        langBtn.addEventListener('click', () => {
+            const isZh = document.documentElement.lang === 'zh';
+            document.documentElement.lang = isZh ? 'en' : 'zh';
+            langBtn.textContent = isZh ? '中文' : 'EN';
+            localStorage.setItem('mia-lang', isZh ? 'en' : 'zh');
+        });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const savedTheme = localStorage.getItem('mia-theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+            themeToggle.addEventListener('click', () => {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const newTheme = isLight ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mia-theme', newTheme);
+                themeToggle.textContent = isLight ? '☀' : '☾';
+            });
+        }
+    </script>
+</body>
+</html>
