@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>May & E1 午饭菜单</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f0e7;
+      --paper: #fffaf3;
+      --paper-2: #f2eadf;
+      --text: #2f332f;
+      --muted: #6f766f;
+      --line: #ddd3c4;
+      --accent: #6f8b7a;
+      --accent-2: #b9825a;
+      --sea: #7aa6b8;
+      --ok: #90a675;
+      --warn: #c5a46a;
+      --shadow: 0 16px 40px rgba(92, 74, 48, 0.08);
+      --serif: 'Fraunces', 'Noto Serif SC', serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, var(--bg), #efe7db);
+      color: var(--text);
+      font-family: 'Noto Serif SC', serif;
+      line-height: 1.7;
+    }
+    .page { max-width: 1180px; margin: 0 auto; padding: 32px 20px 64px; }
+    .hero {
+      background: linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.35));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px 28px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .eyebrow {
+      font: 12px var(--mono);
+      color: var(--accent);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-family: var(--serif);
+      font-size: clamp(32px, 6vw, 56px);
+      line-height: 1.02;
+      font-weight: 500;
+    }
+    .lead {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .prefs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .pref {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+    .pref small { display: block; color: var(--muted); margin-bottom: 6px; font-size: 12px; }
+    .pref strong { font-size: 15px; }
+    .section-title {
+      margin: 26px 0 14px;
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 500;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+      font-weight: 500;
+    }
+    .tag {
+      flex-shrink: 0;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: #fff;
+    }
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      font: 12px var(--mono);
+      color: var(--muted);
+    }
+    .desc { color: #475046; margin-bottom: 14px; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .box {
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+    }
+    .box h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: var(--accent);
+      font-family: var(--mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin: 4px 0; }
+    .why {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      color: #5d665d;
+      font-size: 15px;
+    }
+    .week {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .day {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .day small { color: var(--muted); font: 12px var(--mono); }
+    .day h4 { margin: 8px 0 6px; font-size: 18px; }
+    .day p { margin: 0; color: #59625a; font-size: 14px; }
+    .footer-note {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    @media (max-width: 900px) {
+      .prefs, .grid, .week, .cols { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="eyebrow">Lunch planning · May & E1</div>
+      <h1>每天中午吃什么，先别发愁</h1>
+      <div class="lead">这是一版按你们两个人的口味和节奏做的午饭菜单页：<strong>30 分钟到 1 小时、控糖优先、中式为主、海鲜友好、猪肉弱化</strong>。目标不是做“最复杂的菜谱”，而是做一组真的能在工作日拿来用的方案。</div>
+      <div class="prefs">
+        <div class="pref"><small>肉类偏好</small><strong>猪肉兴趣低，排骨可以，海鲜友好</strong></div>
+        <div class="pref"><small>不吃</small><strong>香菜 / 茼蒿 / 茴香 / 西兰花</strong></div>
+        <div class="pref"><small>做饭时间</small><strong>30 分钟到 1 小时，越快越好</strong></div>
+        <div class="pref"><small>当前目标</small><strong>控糖、但不要吃得太委屈</strong></div>
+      </div>
+    </section>
+
+    <h2 class="section-title">今日先做这 6 个午饭方案</h2>
+    <section class="grid">
+      <article class="card">
+        <div class="card-top">
+          <h3>清蒸鲈鱼 + 蒜蓉娃娃菜 + 半碗杂粮饭</h3>
+          <span class="tag">最稳</span>
+        </div>
+        <div class="meta"><span>35 min</span><span>低负担</span><span>控糖友好</span></div>
+        <div class="desc">这套很适合工作日中午。鱼的蛋白质够，蒸法负担轻，娃娃菜也比硬炒蔬菜更容易接受。</div>
+        <div class="cols">
+          <div class="box"><h4>食材</h4><ul><li>鲈鱼 1 条</li><li>娃娃菜 2 颗</li><li>姜葱蒜</li><li>杂粮饭 2 人份</li></ul></div>
+          <div class="box"><h4>做法</h4><ul><li>鱼加姜丝蒸 10–12 分钟</li><li>娃娃菜蒜蓉清炒或清蒸后淋汁</li><li>米饭减量，搭一半糙米更稳</li></ul></div>
+        </div>
+        <div class="why">为什么推荐：控糖期最怕中午吃得太油太顶，这套吃完不容易困，也不会太像“减肥餐”。</div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <h3>虾仁炒蛋 + 清炒口蘑荷兰豆 + 玉米</h3>
+          <span class="tag">快手</span>
+        </div>
+        <div class="meta"><span>25 min</span><span>高蛋白</span><span>你会喜欢</span></div>
+        <div class="desc">你本来就喜欢炒鸡蛋和蘑菇，这道基本属于“舒适区升级版”。虾仁让蛋白质更完整，玉米比白米饭更柔和一点。</div>
+        <div class="cols">
+          <div class="box"><h4>食材</h4><ul><li>虾仁 250g</li><li>鸡蛋 4 个</li><li>口蘑 / 荷兰豆</li><li>甜玉米 2 根</li></ul></div>
+          <div class="box"><h4>做法</h4><ul><li>虾仁滑一下备用</li><li>炒蛋后回锅拌匀</li><li>口蘑荷兰豆另起一锅快炒</li></ul></div>
+        </div>
+        <div class="why">为什么推荐：这套有点像你平时爱吃的东西，但比纯炒蛋更适合两个人正经吃一顿午饭。</div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <h3>番茄豆腐蛤蜊锅 + 凉拌黄瓜木耳</h3>
+          <span class="tag">海鲜系</span>
+        </div>
+        <div class="meta"><span>30 min</span><span>汤锅</span><span>鲜味高</span></div>
+        <div class="desc">如果你们都喜欢海鲜，这道很适合做午饭。汤锅形式轻松，番茄和蛤蜊的鲜味很自然，豆腐也顶饱。</div>
+        <div class="cols">
+          <div class="box"><h4>食材</h4><ul><li>蛤蜊 500g</li><li>番茄 2–3 个</li><li>嫩豆腐 1 盒</li><li>黄瓜、木耳</li></ul></div>
+          <div class="box"><h4>做法</h4><ul><li>番茄炒软出汁</li><li>加水煮蛤蜊和豆腐</li><li>黄瓜木耳凉拌做配菜</li></ul></div>
+        </div>
+        <div class="why">为什么推荐：控糖期中午来一锅这种带汤的，通常比干巴巴吃一盘肉更舒服，也更容易收住总碳水。</div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <h3>黑椒三文鱼煎盘 + 芦笋杏鲍菇 + 南瓜</h3>
+          <span class="tag">西式 20%</span>
+        </div>
+        <div class="meta"><span>35 min</span><span>轻西式</span><span>高满足</span></div>
+        <div class="desc">这套给你们留一点“西式 20%”的位置，但还是很家常。三文鱼和南瓜的组合好吃，也比较容易做得像样。</div>
+        <div class="cols">
+          <div class="box"><h4>食材</h4><ul><li>三文鱼 2 块</li><li>芦笋 / 杏鲍菇</li><li>南瓜 1 小块</li><li>黑胡椒、柠檬</li></ul></div>
+          <div class="box"><h4>做法</h4><ul><li>南瓜切块蒸熟或烤熟</li><li>三文鱼平底锅煎</li><li>配菜快炒或煎盘同做</li></ul></div>
+        </div>
+        <div class="why">为什么推荐：吃起来有一点“外食感”，但整体还在控糖范围里，不容易腻。</div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <h3>椒麻鸡腿肉拌生菜 + 凉拌金针菇 + 荞麦面</h3>
+          <span class="tag">你会开心</span>
+        </div>
+        <div class="meta"><span>30 min</span><span>微辣</span><span>高风味</span></div>
+        <div class="desc">既然你喜欢椒麻鸡，那可以做一个更适合中午的版本：鸡腿肉保留风味，但别太油，主食改成少量荞麦面。</div>
+        <div class="cols">
+          <div class="box"><h4>食材</h4><ul><li>去骨鸡腿 2 只</li><li>生菜 / 黄瓜</li><li>金针菇</li><li>荞麦面 2 小份</li></ul></div>
+          <div class="box"><h4>做法</h4><ul><li>鸡腿煎熟切块</li><li>椒麻汁轻量调，不要太咸太油</li><li>荞麦面少量配着吃</li></ul></div>
+        </div>
+        <div class="why">为什么推荐：满足口味，但把“重油重糖拌饭”的风险降下来，中午吃也不至于太沉。</div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <h3>番茄牛腩快炖版 + 清炒油麦菜 + 小份米饭</h3>
+          <span class="tag">周末备菜友好</span>
+        </div>
+        <div class="meta"><span>50–60 min</span><span>中式家常</span><span>可留下一顿</span></div>
+        <div class="desc">如果你们那天时间稍微宽一点，这道很适合做成“今天午饭 + 明天半顿”的类型。牛腩满足感高，但米饭要控量。</div>
+        <div class="cols">
+          <div class="box"><h4>食材</h4><ul><li>牛腩 500g</li><li>番茄 3 个</li><li>油麦菜</li><li>米饭少量</li></ul></div>
+          <div class="box"><h4>做法</h4><ul><li>牛腩先焯水</li><li>番茄炒软后一起炖</li><li>油麦菜最后快炒</li></ul></div>
+        </div>
+        <div class="why">为什么推荐：如果一直追求“越快越好”，很容易吃腻。这道算是你们菜单里的稳定大菜位。</div>
+      </article>
+    </section>
+
+    <h2 class="section-title">工作日五天午饭轮换</h2>
+    <section class="week">
+      <div class="day"><small>MON</small><h4>虾仁炒蛋</h4><p>配口蘑荷兰豆 + 玉米，快手开局。</p></div>
+      <div class="day"><small>TUE</small><h4>番茄豆腐蛤蜊锅</h4><p>轻一点，适合前一天晚睡后的午饭。</p></div>
+      <div class="day"><small>WED</small><h4>清蒸鲈鱼</h4><p>稳、干净、吃完不发沉。</p></div>
+      <div class="day"><small>THU</small><h4>椒麻鸡腿肉</h4><p>给一顿带点风味的，不然容易厌。</p></div>
+      <div class="day"><small>FRI</small><h4>黑椒三文鱼</h4><p>留一点“周末快到了”的满足感。</p></div>
+    </section>
+
+    <div class="footer-note">
+      这是第一版午饭站。下一步我可以继续给你补：<strong>买菜清单、按季节替换、低糖主食替代、二人份精确克数、以及“今天冰箱里有什么就做什么”的 quick mode</strong>。
+    </div>
+  </div>
+</body>
+</html>
