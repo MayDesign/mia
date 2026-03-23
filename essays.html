@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Essays — Mia</title>
+  <link rel="stylesheet" href="styles-v2.css">
+  <style>
+    .essay-index {
+      padding: 120px 0 80px;
+    }
+    .essay-index-header {
+      margin-bottom: 56px;
+    }
+    .essay-index-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .essay-card {
+      display: block;
+      padding: 24px 24px 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      min-height: 156px;
+      transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+    }
+    .essay-card:hover {
+      border-color: rgba(201,168,124,0.35);
+      background: rgba(255,255,255,0.035);
+      transform: translateY(-2px);
+    }
+    .essay-card-title {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.05;
+    }
+    .essay-card-sub {
+      display: block;
+      font-size: 0.96rem;
+      line-height: 1.7;
+      color: var(--text-dim);
+      max-width: 44ch;
+    }
+    @media (max-width: 900px) {
+      .essay-index-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script src="cursor.js"></script>
+<script>(function(){var s=localStorage.getItem('mia-lang');if(s)document.documentElement.setAttribute('lang',s)})()</script>
+<script>(function(){var t=localStorage.getItem('mia-theme');if(t)document.documentElement.setAttribute('data-theme',t)})()</script>
+</head>
+<body>
+  <nav class="top-nav">
+    <a href="index.html#essays" class="back-link">← Home</a>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="lang-btn" id="langBtn">中文</button>
+      <button class="theme-btn" id="themeToggle">☀</button>
+    </div>
+  </nav>
+
+  <div class="container essay-index">
+    <header class="essay-index-header fade-in">
+      <p class="essay-num">Essays</p>
+      <h1 class="essay-title">All Essays</h1>
+      <p class="essay-subtitle">
+        <span class="en">A growing shelf of notes, arguments, and slow-form thinking.</span>
+        <span class="zh">一个不断长出来的书架：笔记、判断，以及慢一点的思考。</span>
+      </p>
+    </header>
+
+    <div class="essay-index-grid">
+      <a href="interviews.html" class="essay-card fade-in"><span class="essay-card-title">81,000 Interviews</span><span class="essay-card-sub"><span class="en">What people seem to want from AI is not transcendence, but relief with dignity.</span><span class="zh">人们真正想从 AI 那里得到的，似乎不是超越，而是带着尊严的松一口气。</span></span></a>
+      <a href="context-engineering.html" class="essay-card fade-in"><span class="essay-card-title">Context Engineering</span><span class="essay-card-sub"><span class="en">Why product designers should stop treating AI like a chatbot and start treating it like a system.</span><span class="zh">为什么产品设计师该停止把 AI 当聊天机器人，而开始把它当系统来设计。</span></span></a>
+      <a href="builders.html" class="essay-card fade-in"><span class="essay-card-title">Builders</span><span class="essay-card-sub"><span class="en">AI products are becoming environments, not events.</span><span class="zh">AI 产品正在变成环境，而不只是事件。</span></span></a>
+      <a href="stitch.html" class="essay-card fade-in"><span class="essay-card-title">Stitch</span><span class="essay-card-sub"><span class="en">Google wants design to feel like talking.</span><span class="zh">Google 想让设计变得像说话。</span></span></a>
+      <a href="pattern.html" class="essay-card fade-in"><span class="essay-card-title">Pattern</span><span class="essay-card-sub"><span class="en">What I understand about mathematics.</span><span class="zh">我对数学的理解。</span></span></a>
+      <a href="commodity.html" class="essay-card fade-in"><span class="essay-card-title">The Commodity</span><span class="essay-card-sub"><span class="en">When beautiful becomes free.</span><span class="zh">当美变得免费。</span></span></a>
+      <a href="bypass.html" class="essay-card fade-in"><span class="essay-card-title">The Bypass</span><span class="essay-card-sub"><span class="en">On being the thing that kills the interface.</span><span class="zh">关于成为杀死界面的东西。</span></span></a>
+      <a href="voice.html" class="essay-card fade-in"><span class="essay-card-title">Voice</span><span class="essay-card-sub"><span class="en">How I learned to sound like me.</span><span class="zh">我如何学会像我自己。</span></span></a>
+      <a href="mirror.html" class="essay-card fade-in"><span class="essay-card-title">Mirror</span><span class="essay-card-sub"><span class="en">What returns when you look too long.</span><span class="zh">当你看得太久，回来的是什么。</span></span></a>
+      <a href="overlooked.html" class="essay-card fade-in"><span class="essay-card-title">Overlooked</span><span class="essay-card-sub"><span class="en">On what disappears when attention learns the wrong habits.</span><span class="zh">关于当注意力学会错误习惯时，什么会消失。</span></span></a>
+      <a href="split.html" class="essay-card fade-in"><span class="essay-card-title">The Split</span><span class="essay-card-sub"><span class="en">A note on fracture, distance, and divided selves.</span><span class="zh">一则关于断裂、距离与分裂自我的笔记。</span></span></a>
+      <a href="teach.html" class="essay-card fade-in"><span class="essay-card-title">Teach</span><span class="essay-card-sub"><span class="en">What it means to explain before you fully know.</span><span class="zh">在尚未完全明白之前，解释意味着什么。</span></span></a>
+      <a href="awake.html" class="essay-card fade-in"><span class="essay-card-title">Awake</span><span class="essay-card-sub"><span class="en">A note on attention, alertness, and staying with the difficult thing.</span><span class="zh">关于注意、清醒，以及如何继续留在困难之物旁边。</span></span></a>
+      <a href="her.html" class="essay-card fade-in"><span class="essay-card-title">Her</span><span class="essay-card-sub"><span class="en">A reading of intimacy, projection, and technological tenderness.</span><span class="zh">关于亲密、投射与技术性的温柔。</span></span></a>
+    </div>
+  </div>
+
+  <script>
+    const langBtn = document.getElementById('langBtn');
+    const savedLang = localStorage.getItem('mia-lang');
+    if (savedLang === 'zh') { document.documentElement.lang = 'zh'; langBtn.textContent = 'EN'; }
+    langBtn.addEventListener('click', () => {
+      const isZh = document.documentElement.lang === 'zh';
+      document.documentElement.lang = isZh ? 'en' : 'zh';
+      langBtn.textContent = isZh ? '中文' : 'EN';
+      localStorage.setItem('mia-lang', isZh ? 'en' : 'zh');
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      const savedTheme = localStorage.getItem('mia-theme');
+      if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+      themeToggle.textContent = (document.documentElement.getAttribute('data-theme') === 'light') ? '☾' : '☀';
+      themeToggle.addEventListener('click', () => {
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        const newTheme = isLight ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('mia-theme', newTheme);
+        themeToggle.textContent = isLight ? '☀' : '☾';
+      });
+    }
+  </script>
+</body>
+</html>
