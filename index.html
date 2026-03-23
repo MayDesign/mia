@@ -1452,6 +1452,29 @@
             .title { font-size: 48px; }
             .nav { grid-template-columns: 1fr; }
         }
+    
+        .essay-archive-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 22px;
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-bottom: 0 !important;
+            opacity: 0.78;
+            transition: opacity 0.25s ease, color 0.25s ease;
+        }
+        .essay-archive-link:hover {
+            opacity: 1;
+            color: var(--text);
+        }
+        .essay-archive-link .zh {
+            letter-spacing: 0.08em;
+        }
     </style>
 </head>
 <body>
@@ -1646,7 +1669,7 @@
                     </a>
                 </div>
             </div>
-            <a href="essays.html" class="section-more reveal-up">
+            <a href="essays.html" class="essay-archive-link reveal-up">
                 <span class="en">View all essays →</span>
                 <span class="zh">查看全部 essays →</span>
             </a>
