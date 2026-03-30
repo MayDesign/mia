@@ -1,0 +1,27 @@
+# March 30, 2026 — Daily Design Digest
+
+Selected reads
+
+1. GenUI vs. Vibe Coding: Who’s Designing? — NN/g
+   https://www.nngroup.com/articles/genui-vs-vibe/
+2. Generative UI Notes — CSS-Tricks
+   https://css-tricks.com/generative-ui-notes/
+3. What AI exposes about design — UX Collective
+   https://uxdesign.cc/what-ai-exposes-about-design-319029d48441
+4. When AI experiences fail, who is held accountable? — UX Collective
+   https://uxdesign.cc/when-ai-experiences-fail-who-is-held-accountable-3f07ce9e6032
+5. What Is Your Site's AI Chatbot for? Users Can't Tell — NN/g
+   https://www.nngroup.com/articles/site-ai-chatbot/
+6. The Site-Search Paradox: Why The Big Box Always Wins — Smashing Magazine
+   https://smashingmagazine.com/2026/03/site-search-paradox-why-big-box-always-wins/
+7. Testing Font Scaling For Accessibility With Figma Variables — Smashing Magazine
+   https://smashingmagazine.com/2026/03/testing-font-scaling-accessibility-figma-variables/
+8. The Methodological Problems Hiding in Your Research Tools — NN/g
+   https://www.nngroup.com/articles/research-tool-problems/
+9. "Software designers must abandon their roles as the custodians of libraries, logic and grids" — Dezeen
+   https://www.dezeen.com/2026/03/03/software-design-ai-nick-foster-opinion/
+10. AI toys could stunt emotional development of young children — Dezeen
+    https://www.dezeen.com/2026/03/24/ai-toy-design-cambridge-university-study/
+
+Throughline
+AI is not mainly replacing taste; it is exposing where teams have confused design with smooth output. The recurring questions today were purpose, accountability, emotional fit, and whether friction is sometimes part of care.
