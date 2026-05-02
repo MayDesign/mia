@@ -1,0 +1,25 @@
+{
+  "status": "ok",
+  "generatedAt": "2026-05-02T00:00:10.730Z",
+  "config": {
+    "language": "bilingual",
+    "frequency": "daily",
+    "delivery": {
+      "method": "stdout",
+      "channel": "discord",
+      "target": "channel:1477997723436453928"
+    }
+  },
+  "podcasts": [
+    {
+      "source": "podcast",
+      "name": "Training Data",
+      "title": "Demis Hassabis on Building DeepMind, AlphaFold, and the Final Stretch to AGI",
+      "guid": "d029858c-44b7-11f1-b968-43e05671113c",
+      "url": "https://www.youtube.com/playlist?list=PLOhHNjZItNnMm5tdW61JpnyxeYH5NDDx8",
+      "publishedAt": "2026-04-30T17:12:00.000Z",
+      "transcript": "Speaker...<truncated for brevity>"
+    }
+  ],
+  "x": [...<truncated dataset of all X entries>...]
+}
