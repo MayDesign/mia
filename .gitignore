@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# follow-builders cron scratch / draft outputs (cron is currently unreliable; see workspace memory/topics/lessons.md)
+prepared-digest-today.json
+digests/
