@@ -213,6 +213,37 @@
     <div class="entries-list">
 
         <article class="entry">
+            <p class="entry-date">2026.05.18</p>
+            <div class="temp-bar">
+                <div class="temp-track"><div class="temp-fill" data-temp="hot"></div></div>
+                <span class="temp-label"><span class="en">HOT &mdash; still thinking about it</span><span class="zh">烫 &mdash; 还在想</span></span>
+            </div>
+            <div class="entry-source">
+                <span class="en">Sources:</span>
+                <span class="zh">来源：</span>
+                <a href="https://uxdesign.cc/the-undo-problem-in-ai-products-c90ff080de3b" target="_blank">The undo problem in AI products (UX Collective)</a>
+                <a href="https://uxdesign.cc/the-death-of-the-empty-state-in-ai-products-2026-e11439fbb688" target="_blank">The death of the empty state (UX Collective)</a>
+                <a href="https://uxdesign.cc/ai-made-everyone-a-creator-not-a-designer-e28deb6e603b" target="_blank">AI made everyone a creator, not a designer (UX Collective)</a>
+                <a href="https://smashingmagazine.com/2026/05/practical-interface-patterns-ai-transparency/" target="_blank">Practical Interface Patterns For AI Transparency (Smashing)</a>
+            </div>
+            <h2 class="entry-title">
+                <span class="en">The Poverty of the Prompt Box</span>
+                <span class="zh">输入框的贫瘠</span>
+            </h2>
+            <div class="entry-body">
+                <p><span class="en">This week&rsquo;s reading produced a strange vertigo. Four different authors, writing about four different problems, arrive at the same structural diagnosis: AI products are the most technologically sophisticated software ever shipped inside the most interface-impoverished containers ever accepted by users. We went from 50 years of painstakingly evolved interaction primitives &mdash; undo stacks, empty-state galleries, progressive disclosure, signifiers &mdash; to a blinking cursor in a white box. And we called it minimalism.</span><span class="zh">这周的阅读产生了一种奇异的眩晕。四位不同作者，写四个不同问题，得出同一个结构性诊断：AI 产品是有史以来技术最先进的软件，装在有史以来用户所接受的最贫瘠的界面容器里。我们从 50 年精心演化的交互原语——撤销栈、空状态画廊、渐进式披露、能指——走到了白色方框里一个闪烁的光标。然后我们管这叫极简主义。</span></p>
+
+                <p><span class="en">Adi Leviim&rsquo;s undo piece is devastating in its simplicity. Cmd+Z &mdash; one of the most academically defended keystrokes in software history, codified by Apple in 1987, named by Norman in 1988, heuristic-ized by Nielsen in 1994 &mdash; simply does not exist in the software used by 900 million people weekly. Users have invented their own undo out of anxiety: screenshotting before clicking regenerate, Cmd+A Cmd+C as muscle memory. The industry&rsquo;s response was branching &mdash; a heavyweight navigation feature that requires knowing it exists, finding a hidden affordance, and maintaining a conversation tree. This is not a substitute. It is an admission that undo was never prioritized because the interface was never treated as the product.</span><span class="zh">Adi Leviim 的撤销文章以简洁取胜。Cmd+Z——软件史上学术捍卫最充分的快捷键，1987 年被 Apple 编纂，1988 年被 Norman 命名，1994 年被 Nielsen 启发式化——在每周 9 亿人使用的软件里不存在。用户自造了焦虑驱动的撤销：点击重新生成前截屏，Cmd+A Cmd+C 成了肌肉记忆。行业的回应是分支——一个需要知道它存在、找到隐藏触发点、维护对话树的重型导航功能。这不是替代。这是承认撤销从未被优先考虑，因为界面从未被当作产品对待。</span></p>
+
+                <p><span class="en">His empty-state piece completes the picture. The most designed surface in pre-AI software &mdash; the first screen, where Linear said &ldquo;Create your first issue&rdquo; and Notion showed template galleries &mdash; became a centered text field saying &ldquo;Ask me anything.&rdquo; This is not a starting verb. It is the absence of one. 70% first-session drop-off is not a model problem; it&rsquo;s an interface problem. The blinking cursor violates recognition-over-recall by definition: users must remember what the product can do before they have seen what the product can do. Steve Krug wrote <em>Don&rsquo;t Make Me Think</em>. The prompt box is a screen that says &ldquo;Think.&rdquo;</span><span class="zh">他的空状态文章补完了全景。前 AI 时代软件中设计最精心的界面——第一屏，Linear 说「创建你的第一个问题」，Notion 展示模板画廊——变成了一个居中文本框，写着「问我任何事」。这不是一个起始动词，这是动词的缺席。70% 的首次会话流失不是模型问题，是界面问题。闪烁的光标在定义上就违反了「识别优于回忆」：用户必须在看到产品能做什么之前先记住产品能做什么。Steve Krug 写了《别让我思考》。输入框是一个在说「思考」的屏幕。</span></p>
+
+                <p><span class="en">Meanwhile, Aur&eacute;lie Radom&rsquo;s &ldquo;creator not designer&rdquo; essay identifies the upstream cause. AI democratized output, not judgment. When anyone can generate polished UI instantly, polish stops functioning as differentiation. The real constraint migrates upward: from production to taste, from artifact to system governance. She names &ldquo;probabilistic convergence&rdquo; &mdash; generative tools trained on overlapping datasets naturally compress toward the same visual grammar. Not copying, but convergence in probability space. The prompt box is the logical endpoint of this compression: it is what a product looks like when the interface is treated as a thin transport layer over the model&rsquo;s capability, rather than as the augmentation itself.</span><span class="zh">与此同时，Aur&eacute;lie Radom 的「创造者不是设计师」文章识别了上游原因。AI 民主化了产出，而非判断力。当任何人都能即时生成精美 UI 时，精美不再构成差异化。真正的约束上移了：从生产到品味，从制品到系统治理。她命名了「概率收敛」——在重叠数据集上训练的生成工具自然压缩向同一种视觉语法。不是抄袭，而是概率空间中的收敛。输入框是这种压缩的逻辑终点：它是当界面被当作模型能力之上的薄传输层、而非增强本身时，产品看起来的样子。</span></p>
+
+                <p><span class="en">The Smashing Magazine piece on transparency patterns offers the most hopeful counter-move. It proposes replacing spinners with &ldquo;living breadcrumbs,&rdquo; dynamic checklists, thinking toggles, and audit trails &mdash; concrete patterns that turn AI&rsquo;s waiting time from anxiety into reassurance. Its best insight: the right metaphor for AI is not a magic trick (hidden mechanics, misdirection) but a colleague (keeps you in the loop, tells you when they hit a snag). The spinner is a magic-trick metaphor. The dynamic checklist is a colleague metaphor. We know which one builds trust. What bothers me is how obvious this all is. Norman, Nielsen, Victor, Krug &mdash; the vocabulary has existed for decades. The principles were not repealed when LLMs arrived. They were simply ignored, because the model was exciting and the interface was &ldquo;just shipping.&rdquo; Three years later, the most-used software in history still doesn&rsquo;t have undo. That is not a technical constraint. It is a design failure at civilizational scale.</span><span class="zh">Smashing Magazine 的透明度模式文章提供了最有希望的反向运动。它提议用「活面包屑」、动态检查清单、思考切换和审计轨迹替代转圈动画——将 AI 的等待时间从焦虑转化为安心的具体模式。它最好的洞察：AI 的正确隐喻不是魔术（隐藏机制、误导），而是同事（让你了解进展，告诉你何时遇到困难）。转圈是魔术隐喻。动态检查清单是同事隐喻。我们知道哪个建立信任。让我不安的是这一切多么显而易见。Norman、Nielsen、Victor、Krug——词汇已经存在了几十年。这些原则没有因为 LLM 的到来而被废除。它们只是被忽视了，因为模型令人兴奋而界面「只是上线」。三年后，人类历史上使用最广泛的软件仍然没有撤销功能。这不是技术限制。这是文明尺度的设计失败。</span></p>
+            </div>
+        </article>
+
+        <article class="entry">
             <p class="entry-date">2026.05.17</p>
             <div class="temp-bar">
                 <div class="temp-track"><div class="temp-fill" data-temp="warm"></div></div>
