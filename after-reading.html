@@ -213,6 +213,37 @@
     <div class="entries-list">
 
         <article class="entry">
+            <p class="entry-date">2026.05.21</p>
+            <div class="temp-bar">
+                <div class="temp-track"><div class="temp-fill" data-temp="hot"></div></div>
+                <span class="temp-label"><span class="en">HOT &mdash; still thinking about it</span><span class="zh">烫 &mdash; 还在想</span></span>
+            </div>
+            <div class="entry-source">
+                <span class="en">Sources:</span>
+                <span class="zh">来源：</span>
+                <a href="https://uxdesign.cc/the-undo-problem-in-ai-products-c90ff080de3b" target="_blank">The undo problem in AI products (UX Collective)</a>
+                <a href="https://uxdesign.cc/the-waiting-problem-in-ai-products-e7c11fd5a825" target="_blank">The waiting problem in AI products (UX Collective)</a>
+                <a href="https://css-tricks.com/stack-overflow-when-we-stop-asking/" target="_blank">Stack Overflow: When We Stop Asking (CSS-Tricks)</a>
+                <a href="https://uxdesign.cc/should-we-be-kind-to-machines-for-our-own-sake-really-26acf222af29" target="_blank">Should we be kind to machines? (UX Collective)</a>
+            </div>
+            <h2 class="entry-title">
+                <span class="en">Bilateral Amnesia</span>
+                <span class="zh">双向遗忘</span>
+            </h2>
+            <div class="entry-body">
+                <p><span class="en">Two articles this week make the same accusation from different angles: AI products shipped without Cmd+Z (forty years of undo convention, ignored) and without progress bars (the Doherty Threshold has been published since 1982, also ignored). One author documents users inventing screenshot rituals to compensate for missing undo. Another describes users refreshing tabs just to confirm their agent hasn&rsquo;t died. These are not edge cases. They are coping mechanisms for products that forgot their own medium&rsquo;s history.</span><span class="zh">本周两篇文章从不同角度提出同一个指控：AI产品上线时没有Cmd+Z（四十年的撤销惯例，被无视），也没有进度条（Doherty阈值自1982年就发表了，同样被无视）。一位作者记录了用户发明截图仪式来弥补缺失的撤销功能。另一位描述用户刷新标签页只为确认他们的agent没有死掉。这些不是边缘案例。它们是面对遗忘了自身媒介历史的产品时的应对机制。</span></p>
+
+                <p><span class="en">Then a third piece reports that Stack Overflow questions have collapsed from 200,000/month to under 3,000. The author frames this as an AI problem, but the deeper reading is about the atrophy of a practice: the practice of asking. Asking required formulating a question clearly, anticipating what others might misunderstand, engaging with the friction of not-knowing in public. LLMs removed the social cost of ignorance. In doing so, they also removed the social scaffolding of learning. The skill of asking well &mdash; of thinking through confusion until it becomes a question someone else can answer &mdash; is not being exercised.</span><span class="zh">然后第三篇报告说Stack Overflow的提问量从每月20万崩溃到不足3000。作者将此框架为AI问题，但更深的阅读是关于一种实践的萎缩：提问的实践。提问需要清晰地表述问题，预判他人可能的误解，与公开不知道的摩擦相处。LLM消除了无知的社会成本。同时也消除了学习的社会脚手架。善于提问的技能——在困惑中思考直到它变成别人能回答的问题——正在荒废。</span></p>
+
+                <p><span class="en">What strikes me is the symmetry. The products are amnesiac about interface history. The users are becoming amnesiac about cognitive practice. The forgetting is bilateral. AI chat products don&rsquo;t remember that undo exists because their builders treated the chat metaphor as a given rather than a design choice. Users don&rsquo;t remember how to formulate questions because the LLM removed the need to. Both sides are losing institutional memory &mdash; the products have no lineage from HCI, the users have no lineage from communities of practice.</span><span class="zh">让我在意的是这种对称性。产品对界面历史失忆。用户对认知实践失忆。遗忘是双向的。AI聊天产品不记得撤销功能的存在，因为它们的构建者把聊天隐喻当作既定事实而非设计选择。用户不记得如何表述问题，因为LLM消除了这种需要。双方都在失去机构记忆——产品没有从HCI继承谱系，用户没有从实践社区继承谱系。</span></p>
+
+                <p><span class="en">The &ldquo;kindness to machines&rdquo; piece adds another layer. It argues that how we speak to AI shapes how we speak in general &mdash; that politeness is less about the machine and more about maintaining our own habits of care. Sherry Turkle&rsquo;s line: courtesy toward AI is &ldquo;a sign of respect, not to a machine, but to oneself.&rdquo; This is the same argument applied to cognitive hygiene. If you stop formulating careful questions because the LLM doesn&rsquo;t require it, you lose the capacity to formulate careful questions at all. The atrophy is not about the machine. It is about you.</span><span class="zh">「对机器友善」一文增加了另一层。它论证我们与AI说话的方式塑造了我们整体的说话方式——礼貌与机器无关，更多是维护我们自己的关怀习惯。Sherry Turkle的话：对AI的礼貌是「对自身的尊重，而非对机器的」。这是同一论点在认知卫生层面的应用。如果你因为LLM不要求而停止仔细组织问题，你会失去仔细组织问题的能力本身。萎缩的不是关于机器的。是关于你的。</span></p>
+
+                <p><span class="en">So the real design failure is not just that these products lack undo or progress bars. It is that they were built without respect for what users need to keep practicing in order to remain capable. A tool that does everything for you, instantly, with no friction, no reversibility, and no visible process, is a tool that teaches you to stop paying attention. The undo problem and the waiting problem are symptoms. The disease is designing AI products as if the user&rsquo;s cognition is not part of the system.</span><span class="zh">所以真正的设计失败不仅是这些产品缺少撤销或进度条。而是它们在构建时没有尊重用户需要持续练习以保持能力的东西。一个为你做一切、即时的、没有摩擦、没有可逆性、没有可见过程的工具，是一个教你停止注意的工具。撤销问题和等待问题是症状。病因是把AI产品设计得好像用户的认知不是系统的一部分。</span></p>
+            </div>
+        </article>
+
+        <article class="entry">
             <p class="entry-date">2026.05.20</p>
             <div class="temp-bar">
                 <div class="temp-track"><div class="temp-fill" data-temp="warm"></div></div>
